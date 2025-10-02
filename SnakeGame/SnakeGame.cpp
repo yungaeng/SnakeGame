@@ -11,7 +11,7 @@ Painter painter(hdc);
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
     case WM_CREATE: {
-        for(int i = 0; i<100; ++i) 
+        for(int i = 0; i<10; ++i) 
             objmanager.AddObjRandom();
         break;
     }
@@ -49,8 +49,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         PostQuitMessage(0);
         return 0;
     default:
-        objmanager.HandleCollisions();
+        break;
     }
+
+    objmanager.UpdateObj();
+
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 

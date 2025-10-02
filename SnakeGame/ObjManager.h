@@ -11,7 +11,9 @@ public:
 	void AddObj(int x, int y, int size, int r, int g, int b);
 	void AddObjRandom();
 	void MoveObj(int index, char dir);
+	void UpdateObj();
 
+private:
 	void HandleCollisions();
 };
 

@@ -8,7 +8,8 @@ public:
 	int m_size;
 	int m_speed = 10;
 	char m_dir;
-	Object* tail = nullptr;
+	int m_target = -1;
+	int m_tail_len = 10;
 public:
 	Object(int x, int y, int size, int r, int g,  int b);
 	bool CheckCollision(const Object& other) const;
