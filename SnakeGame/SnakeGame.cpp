@@ -13,6 +13,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: {
         for(int i = 0; i<10; ++i) 
             objmanager.AddObjRandom(i);
+
+        objmanager.AddSnake();
+
         break;
     }
     case WM_PAINT: {
@@ -26,16 +29,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_KEYDOWN: {
         switch (wParam) {
         case VK_UP:
-            objmanager.MoveObj(0, 0);
+            objmanager.MoveSnake(0);
             break;
         case VK_DOWN:
-            objmanager.MoveObj(0, 1);
+            objmanager.MoveSnake(1);
             break;
         case VK_LEFT:
-            objmanager.MoveObj(0, 2);
+            objmanager.MoveSnake(2);
             break;
         case VK_RIGHT:
-            objmanager.MoveObj(0, 3);
+            objmanager.MoveSnake(3);
             break;
         case 'Q':
             PostQuitMessage(0);

@@ -25,4 +25,11 @@ void Painter::DrawObject()
         FillRect(m_hdc, &ObjRect, ObjBrush);
         DeleteObject(ObjBrush);
     }
+
+    for (auto o : ObjManager::snake) {
+        RECT ObjRect = { o.m_x - o.m_size, o.m_y - o.m_size, o.m_x + o.m_size, o.m_y + o.m_size };
+        HBRUSH ObjBrush = CreateSolidBrush(RGB(o.m_r, o.m_g, o.m_b));
+        FillRect(m_hdc, &ObjRect, ObjBrush);
+        DeleteObject(ObjBrush);
+    }
 }
