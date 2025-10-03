@@ -19,9 +19,9 @@ void Painter::DrawBackGround()
 
 void Painter::DrawObject()
 {
-    for (Object obj : ObjManager::objs) {
-        RECT ObjRect = { obj.m_x - obj.m_size, obj.m_y - obj.m_size, obj.m_x + obj.m_size, obj.m_y + obj.m_size };
-        HBRUSH ObjBrush = CreateSolidBrush(RGB(obj.m_r, obj.m_g, obj.m_b));
+    for (auto obj : ObjManager::objs) {
+        RECT ObjRect = { obj.second.m_x - obj.second.m_size, obj.second.m_y - obj.second.m_size, obj.second.m_x + obj.second.m_size, obj.second.m_y + obj.second.m_size };
+        HBRUSH ObjBrush = CreateSolidBrush(RGB(obj.second.m_r, obj.second.m_g, obj.second.m_b));
         FillRect(m_hdc, &ObjRect, ObjBrush);
         DeleteObject(ObjBrush);
     }

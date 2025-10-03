@@ -1,4 +1,16 @@
 ﻿  ObjManager.cpp
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(38,18): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(39,29): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(41,18): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(42,18): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(63,22): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(63,45): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(66,22): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(67,29): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(69,22): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(69,36): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(70,22): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\yun\Desktop\SnakeGame\SnakeGame\ObjManager.cpp(70,36): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   SnakeGame.vcxproj -> C:\Users\yun\Desktop\SnakeGame\x64\Debug\SnakeGame.exe
   'pwsh.exe'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
   배치 파일이 아닙니다.

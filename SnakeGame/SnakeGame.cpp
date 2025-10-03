@@ -12,7 +12,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     switch (uMsg) {
     case WM_CREATE: {
         for(int i = 0; i<10; ++i) 
-            objmanager.AddObjRandom();
+            objmanager.AddObjRandom(i);
         break;
     }
     case WM_PAINT: {

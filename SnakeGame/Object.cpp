@@ -1,7 +1,8 @@
 #include "Object.h"
 
-Object::Object(int x, int y, int size, int r, int g, int b)
+Object::Object(int id, int x, int y, int size, int r, int g, int b)
 {
+    m_id = id;
 	m_x = x;
 	m_y = y;
 	m_size = size;
