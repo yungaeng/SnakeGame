@@ -7,56 +7,47 @@ PAINTSTRUCT ps;
 HDC hdc;
 ObjManager objmanager;
 Painter painter(hdc);
+bool isgameover = false;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg) {
-    case WM_CREATE: {
-        for(int i = 0; i<10; ++i) 
-            objmanager.AddObjRandom(i);
-
-        objmanager.AddSnake();
-
+    switch (uMsg) 
+    {
+    case WM_CREATE: 
+    {
         break;
     }
-    case WM_PAINT: {
+    case WM_PAINT: 
+    {
         hdc = BeginPaint(hwnd, &ps);
-
         painter.Draw(hdc);
-
         EndPaint(hwnd, &ps);
         return 0;
     }
-    case WM_KEYDOWN: {
-        switch (wParam) {
-        case VK_UP:
-            objmanager.MoveSnake(0);
-            break;
-        case VK_DOWN:
-            objmanager.MoveSnake(1);
-            break;
-        case VK_LEFT:
-            objmanager.MoveSnake(2);
-            break;
-        case VK_RIGHT:
-            objmanager.MoveSnake(3);
-            break;
-        case 'Q':
-            PostQuitMessage(0);
-            return 0;
+    case WM_KEYDOWN: 
+    {
+        switch (wParam) 
+        {
+        case VK_UP: objmanager.MoveSnake(UP); break;
+        case VK_DOWN: objmanager.MoveSnake(DOWN); break;
+        case VK_LEFT: objmanager.MoveSnake(LEFT); break;
+        case VK_RIGHT: objmanager.MoveSnake(RIGHT); break;
+        case 'Q': PostQuitMessage(0); return 0;
         }
-
         InvalidateRect(hwnd, NULL, false);
         break;
     }
     case WM_DESTROY:
-        PostQuitMessage(0);
-        return 0;
+        PostQuitMessage(0); return 0;
     default:
+    {
+        // IDLE일 때 업데이트
+        objmanager.UpDate(&isgameover);
+        // gameover check
+        if(isgameover == true)
+            PostQuitMessage(0);
         break;
     }
-
-    objmanager.UpdateObj();
-
+    }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 

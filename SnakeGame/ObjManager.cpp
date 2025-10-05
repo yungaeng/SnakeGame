@@ -1,100 +1,81 @@
 #include "ObjManager.h"
-#include <atomic>
 
-std::unordered_map<int, Object> ObjManager::objs;
-std::vector<Object> ObjManager::snake;
+std::vector<Object> ObjManager::m_foods;
+std::vector<Object> ObjManager::m_snake;
 
-void ObjManager::AddObj(int id, int x, int y, int size, int r, int g, int b)
+ObjManager::ObjManager()
 {
-	Object o(id, x, y, size, r, g, b);
-    std::pair<int, Object> p(id, o);
-	objs.insert(p);
-}
+    // 원래는 게임 씬에서 맵 초기화를 해줘야 하지만
+    // 여기서 게임 초기화 작업을 정의해 두겠다
 
-void ObjManager::AddObjRandom(int id)
-{
-	Object o(id, rand() % 700, rand() % 700, 10, rand() % 255, rand() % 255, rand() % 255);
-    std::pair<int, Object> p(id, o);
-    objs.insert(p);
-}
-
-void ObjManager::MoveObj(int index, char dir) {
-
-    objs[index].m_prev_x = objs[index].m_x;
-    objs[index].m_prev_y = objs[index].m_y;
-
-    switch (dir)
+    // 1. 음식 생성
+    for (int i = 0; i < 20; i++)
     {
-    case 0: objs[index].m_y -= objs[index].m_speed; break;
-    case 1:  objs[index].m_y += objs[index].m_speed; break;
-    case 2: objs[index].m_x -= objs[index].m_speed; break;
-    case 3: objs[index].m_x += objs[index].m_speed; break;
-    default:
-        break;
+        pos p = { rand() % 700,rand() % 700,rand() % 700 };
+        color c = { rand() % 255, rand() % 255,rand() % 255 };
+        m_foods.emplace_back(Object(p, c));
     }
 
-    objs[index].m_dir = dir;
-
-    for (size_t i = 0; i < objs.size(); ++i) {
-        if (objs[i].m_target != -1) {
-            int t_id = objs[i].m_target;
-            
-            objs[i].m_x = objs[t_id].m_prev_x;
-            objs[i].m_y = objs[t_id].m_prev_y;
-        }
-    }
+    // 2. 뱀 생성
+    AddSnake();
 }
 
-void ObjManager::UpdateObj()
+ObjManager::~ObjManager()
 {
-    HandleCollisions();
 }
+
+void ObjManager::AddFood(pos p, color c)
+{
+    m_foods.emplace_back(Object(p, c));
+}
+
 
 void ObjManager::AddSnake()
 {
     for (int i = 0; i < 10; i++) {
-        Object o(i, rand() % 700, rand() % 700, 10, rand() % 255, rand() % 255, rand() % 255);
-        snake.emplace_back(o);
+        pos p = { rand() % 700,rand() % 700,rand() % 700 };
+        color c = { rand() % 255, rand() % 255,rand() % 255 };
+        m_snake.emplace_back(Object(p,c));
     }
 }
 
-void ObjManager::MoveSnake(char dir)
+void ObjManager::MoveSnake(dir d)
 {
-    int x = snake[0].m_x, y = snake[0].m_y;
+    int x = m_snake[0].m_pos.x, y = m_snake[0].m_pos.y;
 
-    switch (dir)
+    switch (d)
     {
-    case 0: y -= snake[0].m_speed; break;
-    case 1:  y += snake[0].m_speed; break;
-    case 2: x -= snake[0].m_speed; break;
-    case 3: x += snake[0].m_speed; break;
+    case UP: y -= m_snake[0].m_speed; break;
+    case DOWN:  y += m_snake[0].m_speed; break;
+    case LEFT: x -= m_snake[0].m_speed; break;
+    case RIGHT: x += m_snake[0].m_speed; break;
     default:
         break;
     }
 
-    for (int i = 0; i < snake.size(); i++) {
-        snake[i].m_prev_x = snake[i].m_x;
-        snake[i].m_prev_y = snake[i].m_y;
+    for (int i = 0; i < m_snake.size(); i++) {
+        m_snake[i].m_pos.prev_x = m_snake[i].m_pos.x;
+        m_snake[i].m_pos.prev_y = m_snake[i].m_pos.y;
     }
 
-    snake[0].m_x = x;
-    snake[0].m_y = y;
+    m_snake[0].m_pos.x = x;
+    m_snake[0].m_pos.y = y;
 
-    if (snake.size() > 1) {
-        for (int i = 1; i < snake.size(); i++) {
-            snake[i].m_x = snake[i-1].m_prev_x;
-            snake[i].m_y = snake[i-1].m_prev_y;
+    if (m_snake.size() > 1) {
+        for (int i = 1; i < m_snake.size(); i++) {
+            m_snake[i].m_pos.x = m_snake[i-1].m_pos.prev_x;
+            m_snake[i].m_pos.y = m_snake[i-1].m_pos.prev_y;
         }
     }
 }
 
 void ObjManager::SnakeEatFood()
 {
-    int tail = snake.size();
-    int x = snake[tail - 1].m_x;
-    int y = snake[tail - 1].m_y;
+    int tail = m_snake.size() - 1;
+    int x = m_snake[tail].m_pos.x;
+    int y = m_snake[tail].m_pos.y;
 
-    switch (snake[0].m_dir)
+    switch (m_snake[0].m_dir)
     {
     case 0: y -= 20; break;
     case 1:  y += 20; break;
@@ -103,20 +84,45 @@ void ObjManager::SnakeEatFood()
     default:
         break;
     }
-    Object o(tail, x, y, 10, rand() % 255, rand() % 255, rand() % 255);
-    snake.emplace_back(o);
+    pos p = { x,y,x,y };
+    color c = { rand() % 255, rand() % 255,rand() % 255 };
+    m_snake.emplace_back(Object(p, c));
 }
 
-std::atomic<int> tail;
+void ObjManager::UpDate(bool* gamestate)
+{
+    // 업데이트 에서 해야 하는 일
+    // 1. 오브젝트 데이터 가져오기
+    // 
+    // 2. 가져온 데이터 기존 데이터와 동기화 처리
+    // 
+    // 3. 서버와 동기화된 모든 오브젝트 충돌처리
+    HandleCollisions();
+    // 4. 산출된 결과 서버로 송신처리
+    //
+    if (m_isgameover)
+        *gamestate = true;
+}
 
 void ObjManager::HandleCollisions()
 {
-    for (size_t i = 0; i < objs.size(); ++i) {
-        if (snake[0].CheckCollision(objs[i])) {
+    // 모든 음식의 충돌체크
+    for (size_t i = 0; i < m_foods.size(); ++i) {
+        // 1. 뱀 0번과 음식의 충돌체크
+        if (m_snake[0].CheckCollision(m_foods[i])) {
             // 여기에 충돌 처리 작성
-            objs.erase(i);
+            m_foods.erase(m_foods.begin() + i);
             SnakeEatFood();
         }
     }
-}
 
+    // 모든 뱀의 몸통 충돌체크
+    for (size_t i = 1; i < m_snake.size(); ++i) {
+        // 1. 뱀 0번의 머리와 몸통의 충돌체크
+        if (m_snake[0].CheckCollision(m_snake[i])) {
+            // 여기에 충돌 처리 작성
+            // 게임 종료 flag, update에서 마저 종료메시지 전달
+            m_isgameover = true;
+        }
+    }
+}

@@ -5,20 +5,22 @@
 class ObjManager
 {
 public:
-	static std::unordered_map<int, Object> objs;
-	static std::vector<Object> snake;
+	static std::vector<Object> m_foods;
+	static std::vector<Object> m_snake;
 
-	ObjManager() {};
-	void AddObj(int id, int x, int y, int size, int r, int g, int b);
-	void AddObjRandom(int id);
-	void MoveObj(int index, char dir);
-	void UpdateObj();
+	ObjManager();
+	~ObjManager();
 
+	void AddFood(pos p, color c);
 	void AddSnake();
-	void MoveSnake(char dir);
+
+	void MoveSnake(dir d);
+	
 	void SnakeEatFood();
 
+	void UpDate(bool* gamestate);
 private:
 	void HandleCollisions();
+	bool m_isgameover = false;
 };
 

@@ -11,7 +11,7 @@ void Painter::Draw(HDC hdc)
 void Painter::DrawBackGround()
 {
     RECT backgroundRect = { 0, 0, map_size, map_size };
-    HBRUSH backgroundBrush = CreateSolidBrush(RGB(0, 0, 0));
+    HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
     FillRect(m_hdc, &backgroundRect, backgroundBrush);
     DeleteObject(backgroundBrush);
 }
@@ -19,16 +19,16 @@ void Painter::DrawBackGround()
 
 void Painter::DrawObject()
 {
-    for (auto obj : ObjManager::objs) {
-        RECT ObjRect = { obj.second.m_x - obj.second.m_size, obj.second.m_y - obj.second.m_size, obj.second.m_x + obj.second.m_size, obj.second.m_y + obj.second.m_size };
-        HBRUSH ObjBrush = CreateSolidBrush(RGB(obj.second.m_r, obj.second.m_g, obj.second.m_b));
+    for (auto obj : ObjManager::m_foods) {
+        RECT ObjRect = { obj.m_pos.x - obj.m_size, obj.m_pos.y - obj.m_size, obj.m_pos.x + obj.m_size, obj.m_pos.y + obj.m_size };
+        HBRUSH ObjBrush = CreateSolidBrush(RGB(obj.m_color.r, obj.m_color.g, obj.m_color.b));
         FillRect(m_hdc, &ObjRect, ObjBrush);
         DeleteObject(ObjBrush);
     }
 
-    for (auto o : ObjManager::snake) {
-        RECT ObjRect = { o.m_x - o.m_size, o.m_y - o.m_size, o.m_x + o.m_size, o.m_y + o.m_size };
-        HBRUSH ObjBrush = CreateSolidBrush(RGB(o.m_r, o.m_g, o.m_b));
+    for (auto o : ObjManager::m_snake) {
+        RECT ObjRect = { o.m_pos.x - o.m_size, o.m_pos.y - o.m_size, o.m_pos.x + o.m_size, o.m_pos.y + o.m_size };
+        HBRUSH ObjBrush = CreateSolidBrush(RGB(o.m_color.r, o.m_color.g, o.m_color.b));
         FillRect(m_hdc, &ObjRect, ObjBrush);
         DeleteObject(ObjBrush);
     }

@@ -3,14 +3,6 @@
   "WorkspaceRootPath": "F:\\Git Repository\\SnakeGame\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\ObjManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\SnakeGame.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\SnakeGame.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -19,15 +11,24 @@
       "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\ObjManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Painter.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\ObjManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Object.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|C:\\PROGRAM FILES\\MICROSOFT VISUAL STUDIO\\2022\\COMMUNITY\\VC\\TOOLS\\MSVC\\14.36.32532\\INCLUDE\\UTILITY||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Painter.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Painter.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8EC1C965-6666-4676-AC14-D7A0A4E87A45}|SnakeGame\\SnakeGame.vcxproj|solutionrelative:SnakeGame\\Object.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -37,68 +38,71 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Object.cpp",
-              "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp",
-              "RelativeDocumentMoniker": "SnakeGame\\Object.cpp",
-              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp",
-              "RelativeToolTip": "SnakeGame\\Object.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-03T03:04:03.673Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "utility",
-              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\include\\utility",
-              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.36.32532\\include\\utility",
-              "ViewState": "AgIAACQBAAAAAAAAAAAlwDABAABDAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-10-03T03:03:52.886Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "ObjManager.h",
               "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.h",
               "RelativeDocumentMoniker": "SnakeGame\\ObjManager.h",
               "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.h",
               "RelativeToolTip": "SnakeGame\\ObjManager.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-03T02:57:11.829Z",
+              "WhenOpened": "2025-10-05T07:11:43.17Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
+              "Title": "ObjManager.cpp",
+              "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp",
+              "RelativeDocumentMoniker": "SnakeGame\\ObjManager.cpp",
+              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp",
+              "RelativeToolTip": "SnakeGame\\ObjManager.cpp",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAuwEkAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-10-05T07:11:40.409Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Object.h",
               "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.h",
               "RelativeDocumentMoniker": "SnakeGame\\Object.h",
               "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.h",
               "RelativeToolTip": "SnakeGame\\Object.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAOAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-10-02T06:27:31.262Z",
+              "WhenOpened": "2025-10-05T07:08:47.931Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ObjManager.cpp",
-              "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp",
-              "RelativeDocumentMoniker": "SnakeGame\\ObjManager.cpp",
-              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\ObjManager.cpp*",
-              "RelativeToolTip": "SnakeGame\\ObjManager.cpp*",
-              "ViewState": "AgIAAGYAAAAAAAAAAAAAAHQAAAAaAAAAAAAAAA==",
+              "DocumentIndex": 6,
+              "Title": "Object.cpp",
+              "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp",
+              "RelativeDocumentMoniker": "SnakeGame\\Object.cpp",
+              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Object.cpp",
+              "RelativeToolTip": "SnakeGame\\Object.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-10-02T06:26:13.543Z",
+              "WhenOpened": "2025-10-05T07:08:45.72Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Painter.h",
+              "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.h",
+              "RelativeDocumentMoniker": "SnakeGame\\Painter.h",
+              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.h",
+              "RelativeToolTip": "SnakeGame\\Painter.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-10-05T07:07:52.141Z",
               "EditorCaption": ""
             },
             {
@@ -109,20 +113,20 @@
               "RelativeDocumentMoniker": "SnakeGame\\Painter.cpp",
               "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\Painter.cpp",
               "RelativeToolTip": "SnakeGame\\Painter.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-02T06:26:03.169Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "SnakeGame.cpp",
               "DocumentMoniker": "F:\\Git Repository\\SnakeGame\\SnakeGame\\SnakeGame.cpp",
               "RelativeDocumentMoniker": "SnakeGame\\SnakeGame.cpp",
-              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\SnakeGame.cpp",
-              "RelativeToolTip": "SnakeGame\\SnakeGame.cpp",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACgAAAAiAAAAAAAAAA==",
+              "ToolTip": "F:\\Git Repository\\SnakeGame\\SnakeGame\\SnakeGame.cpp*",
+              "RelativeToolTip": "SnakeGame\\SnakeGame.cpp*",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAC4AAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-10-02T06:25:58.781Z",
               "EditorCaption": ""
