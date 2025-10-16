@@ -19,6 +19,7 @@ public:
 	pos m_pos;
 	color m_color;
 	dir m_dir = NOUN;
+	bool m_islive = true;
 
 	int m_size = 10;
 	int m_speed = 20;

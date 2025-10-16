@@ -6,9 +6,6 @@
 
 PAINTSTRUCT ps;
 HDC hdc;
-ObjManager objmanager;
-Painter painter(hdc);
-bool isgameover = false;
 Game g_game;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -16,38 +13,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     {
     case WM_CREATE: 
     {
-        objmanager.AddSnake();
-        for (int i = 0; i < 10; i++)
-        {
-            pos p = { rand() % 600, rand() % 600 };
-            color c = { rand() % 255, rand() % 255,rand() % 255 };
-            objmanager.AddFood(p, c);
-        }
+        g_game.InitGame(hdc);
         break;
     }
     case WM_PAINT: 
     {
         hdc = BeginPaint(hwnd, &ps);
-        painter.Draw(hdc);
+        g_game.Run(hdc);
         EndPaint(hwnd, &ps);
         return 0;
     }
     case WM_KEYDOWN: 
     {
-        switch (wParam) 
-        {
-        case VK_UP: objmanager.MoveSnake(UP); break;
-        case VK_DOWN: objmanager.MoveSnake(DOWN); break;
-        case VK_LEFT: objmanager.MoveSnake(LEFT); break;
-        case VK_RIGHT: objmanager.MoveSnake(RIGHT); break;
-
-        case 'W': objmanager.MoveOtherSnake(UP); break;
-        case 'S': objmanager.MoveOtherSnake(DOWN); break;
-        case 'A': objmanager.MoveOtherSnake(LEFT); break;
-        case 'D': objmanager.MoveOtherSnake(RIGHT); break;
-
-        case 'Q': PostQuitMessage(0); return 0;
-        }
+        g_game.InputKey(wParam);
         InvalidateRect(hwnd, NULL, false);
         break;
     }
@@ -59,7 +37,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -93,12 +71,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow) {
         }
         else {
             // 메시지가 없을 때 (Idle Time)
-
-            // 게임 업데이트 로직 실행
-            objmanager.UpDate(&isgameover);
-
+           
             // 게임 오버 체크 및 종료 처리
-            if (isgameover == true) {
+            if (0) {
                 MessageBox(hwnd, L"Game Over! Press OK to exit.", L"Game Over", MB_OK | MB_ICONINFORMATION);
                 PostQuitMessage(0);
                 continue;

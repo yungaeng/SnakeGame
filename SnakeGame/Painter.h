@@ -13,6 +13,7 @@ public:
     };
     Painter(HDC hdc) { m_hdc = hdc; };
     void Draw(HDC hdc);
+    void SetHDC(HDC hdc) { m_hdc = hdc; };
 private:
     void DrawBackGround();
     void DrawObject();

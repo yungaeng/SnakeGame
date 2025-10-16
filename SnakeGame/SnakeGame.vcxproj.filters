@@ -25,6 +25,12 @@
     <Filter Include="소스 파일\Game">
       <UniqueIdentifier>{b168ddf3-6531-4166-8fd4-87d1dc974f83}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Manager\obj">
+      <UniqueIdentifier>{cb2275a9-d9fb-4a95-ab3d-dccc9092e697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Manager\key">
+      <UniqueIdentifier>{7469a2db-5706-4905-bd3d-092069388bcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Painter.h">
@@ -33,11 +39,14 @@
     <ClInclude Include="Object.h">
       <Filter>소스 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="ObjManager.h">
-      <Filter>소스 파일\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjManager.h">
+      <Filter>소스 파일\Manager\obj</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyManager.h">
+      <Filter>소스 파일\Manager\key</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -53,11 +62,14 @@
     <ClCompile Include="Object.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
-    <ClCompile Include="ObjManager.cpp">
-      <Filter>소스 파일\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjManager.cpp">
+      <Filter>소스 파일\Manager\obj</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyManager.cpp">
+      <Filter>소스 파일\Manager\key</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -20,12 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="KeyManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjManager.h" />
     <ClInclude Include="Painter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjManager.cpp" />
     <ClCompile Include="SnakeGame.cpp" />

@@ -138,8 +138,9 @@ void ObjManager::UpDate(bool* gamestate)
     // 
     // 3. 서버와 동기화된 모든 오브젝트 충돌처리
     HandleCollisions();
+    
     // 4. 산출된 결과 서버로 송신처리
-    //
+    // 5. 게임 종료 처리
     if (m_isgameover)
         *gamestate = true;
 }
@@ -150,31 +151,30 @@ void ObjManager::HandleCollisions()
     for (size_t i = 0; i < m_foods.size(); ++i) {
         // 1. 뱀 0번과 음식의 충돌체크
         if (m_snake[0].CheckCollision(m_foods[i])) {
-            // 여기에 충돌 처리 작성
             m_foods.erase(m_foods.begin() + i);
+            //m_foods[i].m_islive = false;
             SnakeEatFood();
         }
         if (m_other_snake[0].CheckCollision(m_foods[i])) {
-            // 여기에 충돌 처리 작성
-            m_foods.erase(m_foods.begin() + i);
+            // 2. 뱀 1번과 음식의 충돌체크
+            //m_foods.erase(m_foods.begin() + i);
+            m_foods[i].m_islive = false;
             OtherSnakeEatFood();
         }
     }
 
     // 모든 뱀의 몸통 충돌체크
+      // 1. 뱀 0번의 머리(모든 뱀)와 몸통의 충돌체크
     for (int i = 2; i < m_snake.size(); ++i) {
-        // 1. 뱀 0번의 머리와 몸통의 충돌체크
         if (m_snake[0].CheckCollision(m_snake[i])) {
-            // 여기에 충돌 처리 작성
             // 게임 종료 flag, update에서 마저 종료메시지 전달
             m_isgameover = true;
         }
     }
 
-    for (int i = 2; i < m_other_snake.size(); ++i) {
-        // 1. 뱀 1번의 머리와 몸통의 충돌체크
+    // 1. 뱀 2번의 머리(모든 뱀)와 몸통의 충돌체크
+    for (int i = 2; i < m_other_snake.size(); ++i) {    
         if (m_other_snake[0].CheckCollision(m_other_snake[i])) {
-            // 여기에 충돌 처리 작성
             // 게임 종료 flag, update에서 마저 종료메시지 전달
             m_isgameover = true;
         }
