@@ -2,18 +2,29 @@
 #include <windows.h>
 #include "Painter.h"
 #include "ObjManager.h"
+#include "Game.h"
 
 PAINTSTRUCT ps;
 HDC hdc;
 ObjManager objmanager;
 Painter painter(hdc);
 bool isgameover = false;
+Game g_game;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) 
     {
     case WM_CREATE: 
     {
+        objmanager.AddSnake();
+
+        for (int i = 0; i < 10; i++)
+        {
+            pos p = { rand() % 600, rand() % 600 };
+            color c = { rand() % 255, rand() % 255,rand() % 255 };
+            objmanager.AddFood(p, c);
+        }
+       
         break;
     }
     case WM_PAINT: 
@@ -31,6 +42,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case VK_DOWN: objmanager.MoveSnake(DOWN); break;
         case VK_LEFT: objmanager.MoveSnake(LEFT); break;
         case VK_RIGHT: objmanager.MoveSnake(RIGHT); break;
+
+        case 'W': objmanager.MoveOtherSnake(UP); break;
+        case 'S': objmanager.MoveOtherSnake(DOWN); break;
+        case 'A': objmanager.MoveOtherSnake(LEFT); break;
+        case 'D': objmanager.MoveOtherSnake(RIGHT); break;
+
         case 'Q': PostQuitMessage(0); return 0;
         }
         InvalidateRect(hwnd, NULL, false);
