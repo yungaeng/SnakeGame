@@ -19,7 +19,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_PAINT: 
     {
         hdc = BeginPaint(hwnd, &ps);
-        g_game.Run(hdc);
+        g_game.Draw(hdc);
         EndPaint(hwnd, &ps);
         return 0;
     }
@@ -71,7 +71,9 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         }
         else {
             // 메시지가 없을 때 (Idle Time)
-           
+            // 업데이트에 fps 추가해야 함
+            g_game.UpdateGame();
+
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
                 MessageBox(hwnd, L"Game Over! Press OK to exit.", L"Game Over", MB_OK | MB_ICONINFORMATION);

@@ -73,7 +73,7 @@ void ObjManager::SnakeEatFood(int id)
         break;
     }
     pos p = { x,y,0,0 };
-    color c = { rand() % 255, rand() % 255,rand() % 255 };
+    color c = m_snakes[id].begin()->m_color;
     m_snakes[id].emplace_back(Object(p, c));
 }
 

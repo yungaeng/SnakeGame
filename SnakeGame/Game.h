@@ -1,6 +1,8 @@
 #pragma once
 #include "Painter.h"
 #include "KeyManager.h"
+#include <chrono>
+
 class Game
 {
 	Painter p = {};
@@ -17,16 +19,16 @@ public:
 		k = {};
 	};
 	~Game() {};
-	void SetGameOver(bool b) { m_isgameover = b; };
-
 	void InitGame(HDC hdc);
-	void Run(HDC hdc) { 
-	    UpdateGame();
+	void Draw(HDC hdc) { 
 		p.Draw(hdc);
 	};
 	void InputKey(WPARAM wParam) { k.Input(o, wParam); };
 	bool IsGameOver() { return m_isgameover; };
-private:
 	void UpdateGame();
+private:
+	double GetElapsedTime();
+	std::chrono::time_point<std::chrono::steady_clock> m_timer;
+	std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
 };
 
