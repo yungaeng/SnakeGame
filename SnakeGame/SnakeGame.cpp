@@ -73,7 +73,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
             // 메시지가 없을 때 (Idle Time)
            
             // 게임 오버 체크 및 종료 처리
-            if (0) {
+            if (g_game.IsGameOver()) {
                 MessageBox(hwnd, L"Game Over! Press OK to exit.", L"Game Over", MB_OK | MB_ICONINFORMATION);
                 PostQuitMessage(0);
                 continue;
