@@ -76,8 +76,20 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
-                MessageBox(hwnd, L"Game Over! Press OK to exit.", L"Game Over", MB_OK | MB_ICONINFORMATION);
-                PostQuitMessage(0);
+                int result = MessageBox(hwnd,
+                    L"Game Over! Do you want to restart the game?", // 문구 변경
+                    L"Game Over",
+                    MB_YESNO | MB_ICONQUESTION); // 예/아니오 버튼 사용
+
+                if (result == IDYES) {
+                    // '예'를 선택한 경우: 
+                    //  TODO : 만들어야 함.
+                    continue; // 다음 루프로 이동하여 새로운 게임 시작
+                }
+                else {
+                    // 사용자가 '아니오' (종료)을 눌렀을 때
+                    PostQuitMessage(0); // 게임 종료
+                }
                 continue;
             }
         }

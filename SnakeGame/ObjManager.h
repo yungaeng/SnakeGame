@@ -13,7 +13,7 @@ public:
 
 	void AddFood(pos p, color c);
 	void AddSnake();
-
+	
 	void MoveSnake(int id, dir d);
 
 	void SnakeEatFood(int id);
@@ -21,10 +21,11 @@ public:
 	void DeleteSnake(int id);
 
 	bool UpDate();
+	int loser_id = -2;
 private:
 	void HandleCollisions();
 	void FoodCollisions();
-	void SnakeCollisions();
+	int SnakeCollisions();
 	bool gameover = false;
 };
 

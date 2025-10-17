@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="gamedata.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjManager.h" />

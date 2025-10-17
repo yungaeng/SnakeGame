@@ -6,7 +6,6 @@ void Game::InitGame(HDC hdc)
 	p.SetHDC(hdc);
 
 	o.AddSnake();
-	o.AddSnake();
 
 	// ∏‘¿Ã ∏∏µÈ±‚
 	for (int i = 0; i < 10; i++)

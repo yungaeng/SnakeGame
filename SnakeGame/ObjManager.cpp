@@ -1,4 +1,5 @@
 #include "ObjManager.h"
+#include "gamedata.h"
 
 std::vector<Object> ObjManager::m_foods;
 std::vector<std::vector<Object>> ObjManager::m_snakes;
@@ -6,6 +7,7 @@ std::vector<std::vector<Object>> ObjManager::m_snakes;
 ObjManager::ObjManager()
 {
     gameover = false;
+    loser_id = -2;
 }
 
 ObjManager::~ObjManager()
@@ -31,30 +33,33 @@ void ObjManager::MoveSnake(int id, dir d)
 {
     int x = m_snakes[id].begin()->m_pos.x, y = m_snakes[id].begin()->m_pos.y;
 
-    switch (d)
-    {
-    case UP: y -= m_snakes[id].begin()->m_speed; break;
-    case DOWN:  y += m_snakes[id].begin()->m_speed; break;
-    case LEFT: x -= m_snakes[id].begin()->m_speed; break;
-    case RIGHT: x += m_snakes[id].begin()->m_speed; break;
-    default:
-        break;
-    }
-
-    for (int i = 0; i < m_snakes[id].size(); i++) {
-        m_snakes[id][i].m_pos.prev_x = m_snakes[id][i].m_pos.x;
-        m_snakes[id][i].m_pos.prev_y = m_snakes[id][i].m_pos.y;
-    }
-
-    m_snakes[id].begin()->m_pos.x = x;
-    m_snakes[id].begin()->m_pos.y = y;
-
-    if (m_snakes[id].size() > 1) {
-        for (int i = 1; i < m_snakes[id].size(); i++) {
-            m_snakes[id][i].m_pos.x = m_snakes[id][i-1].m_pos.prev_x;
-            m_snakes[id][i].m_pos.y = m_snakes[id][i-1].m_pos.prev_y;
+    
+        switch (d)
+        {
+        case UP: y -= m_snakes[id].begin()->m_speed; break;
+        case DOWN: y += m_snakes[id].begin()->m_speed; break;
+        case LEFT: x -= m_snakes[id].begin()->m_speed; break;
+        case RIGHT: x += m_snakes[id].begin()->m_speed; break;
+        default:
+            break;
         }
-    }
+
+        if (y > 10 && y < MAP_SIZE - 40 && x > 10 && x < MAP_SIZE - 10) {
+            for (int i = 0; i < m_snakes[id].size(); i++) {
+                m_snakes[id][i].m_pos.prev_x = m_snakes[id][i].m_pos.x;
+                m_snakes[id][i].m_pos.prev_y = m_snakes[id][i].m_pos.y;
+            }
+
+            m_snakes[id].begin()->m_pos.x = x;
+            m_snakes[id].begin()->m_pos.y = y;
+
+            if (m_snakes[id].size() > 1) {
+                for (int i = 1; i < m_snakes[id].size(); i++) {
+                    m_snakes[id][i].m_pos.x = m_snakes[id][i - 1].m_pos.prev_x;
+                    m_snakes[id][i].m_pos.y = m_snakes[id][i - 1].m_pos.prev_y;
+                }
+            }
+        }
 }
 
 void ObjManager::SnakeEatFood(int id)
@@ -91,7 +96,7 @@ void ObjManager::DeleteSnake(int id)
 void ObjManager::HandleCollisions()
 {
     FoodCollisions();
-    SnakeCollisions();
+    loser_id = SnakeCollisions();
 }
 
 void ObjManager::FoodCollisions()
@@ -108,7 +113,7 @@ void ObjManager::FoodCollisions()
     }
 }
 
-void ObjManager::SnakeCollisions()
+int ObjManager::SnakeCollisions()
 {
     // 모든 뱀들의 몸통 충돌체크
     for (int id = 0; id < m_snakes.size(); ++id) {
@@ -116,7 +121,7 @@ void ObjManager::SnakeCollisions()
             for (int head = 0; head < m_snakes.size(); ++head) {
                 if (m_snakes[id][i].CheckCollision(m_snakes[head][0])) {
                     gameover = true;
-                    return;
+                    return id;
                 }
             }
         }

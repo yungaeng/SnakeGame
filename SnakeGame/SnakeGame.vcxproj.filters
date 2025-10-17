@@ -48,6 +48,9 @@
     <ClInclude Include="KeyManager.h">
       <Filter>소스 파일\Game\Manager\key</Filter>
     </ClInclude>
+    <ClInclude Include="gamedata.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SnakeGame.cpp">

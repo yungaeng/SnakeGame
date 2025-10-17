@@ -1,6 +1,7 @@
 #pragma once
 #include <windows.h>
 #include "ObjManager.h"
+#include "gamedata.h"
 
 class Painter
 {
@@ -9,7 +10,7 @@ class Painter
 public:
     Painter() {
         m_hdc = {};
-        m_map_size = 700;
+        m_map_size = MAP_SIZE;
     };
     Painter(HDC hdc) { m_hdc = hdc; };
     void Draw(HDC hdc);
