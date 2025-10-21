@@ -38,7 +38,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    WNDCLASS wc = { 0 };
+    WNDCLASS wc = { 0 };    
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = L"SnakeGame";
@@ -72,6 +72,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         else {
             // 메시지가 없을 때 (Idle Time)
             // 업데이트에 fps 추가해야 함
+            // recv
             g_game.UpdateGame();
 
             // 게임 오버 체크 및 종료 처리
