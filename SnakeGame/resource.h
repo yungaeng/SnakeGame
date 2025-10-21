@@ -1,17 +1,11 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++에서 생성한 포함 파일입니다.
-// SnakeGame.rc에서 사용되고 있습니다.
-//
-#define IDD_DIALOG1                     101
-#define IDC_IPADDRESS1                  1001
+#pragma once
 
-// Next default values for new objects
-// 
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        103
-#define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1002
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
-#endif
+#define IDD_START_DIALOG        101 // 다이얼로그 ID
+#define IDC_NICKNAME_EDIT       1001 // 닉네임 입력 컨트롤 ID
+#define IDC_R_EDIT              1002 // R 값 입력 컨트롤 ID
+#define IDC_G_EDIT              1003 // G 값 입력 컨트롤 ID
+#define IDC_B_EDIT              1004 // B 값 입력 컨트롤 ID
+#define IDC_STATIC_R            -1 // 정적 텍스트는 보통 -1
+#define IDC_STATIC_G            -1
+#define IDC_STATIC_B            -1
+

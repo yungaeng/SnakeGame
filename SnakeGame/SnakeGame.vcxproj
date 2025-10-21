@@ -25,6 +25,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjManager.h" />
     <ClInclude Include="Painter.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
@@ -34,6 +35,9 @@
     <ClCompile Include="SnakeGame.cpp" />
     <ClCompile Include="Painter.cpp" />
     <ClCompile Include="소스.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

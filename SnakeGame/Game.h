@@ -19,13 +19,14 @@ public:
 		k = {};
 	};
 	~Game() {};
-	void InitGame(HDC hdc);
+	void InitGame(HDC hdc, const WCHAR* nickname, COLORREF color);;
 	void Draw(HDC hdc) { 
 		p.Draw(hdc);
 	};
 	void InputKey(WPARAM wParam) { k.Input(o, wParam); };
 	bool IsGameOver() { return m_isgameover; };
 	void UpdateGame();
+	void ReStart();
 private:
 	double GetElapsedTime();
 	int GetLoser() { return o.loser_id; };

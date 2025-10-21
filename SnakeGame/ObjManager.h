@@ -22,10 +22,10 @@ public:
 
 	bool UpDate();
 	int loser_id = -2;
+	bool gameover = false;
 private:
 	void HandleCollisions();
 	void FoodCollisions();
 	int SnakeCollisions();
-	bool gameover = false;
 };
 

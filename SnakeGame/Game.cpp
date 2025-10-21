@@ -1,6 +1,6 @@
 #include "Game.h"
 
-void Game::InitGame(HDC hdc)
+void Game::InitGame(HDC hdc, const WCHAR* nickname, COLORREF c)
 {
 	m_isgameover = false;
 	p.SetHDC(hdc);
@@ -11,8 +11,8 @@ void Game::InitGame(HDC hdc)
 	for (int i = 0; i < 10; i++)
 	{
 		pos p = { rand() % 600, rand() % 600 };
-		color c = { rand() % 255, rand() % 255,rand() % 255 };
-		o.AddFood(p, c);
+		color col = { rand() % 255, rand() % 255,rand() % 255 };
+		o.AddFood(p, col);
 	}
 
 	// 타이머 시작
@@ -34,6 +34,12 @@ void Game::UpdateGame()
 
 		m_last_food_spawn_time = now;
 	}
+}
+
+void Game::ReStart()
+{
+	m_isgameover = false;
+	o.gameover = false;
 }
 
 double Game::GetElapsedTime() {
