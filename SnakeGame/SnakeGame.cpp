@@ -1,14 +1,21 @@
 #pragma once
 #include <windows.h>
+#include "Painter.h"
+#include "ObjManager.h"
 #include "Game.h"
+<<<<<<< HEAD
 #include "resource.h"
 #include <mmsystem.h>
+#include "gamedata.h"
 #pragma comment(lib, "winmm.lib")
+=======
+>>>>>>> parent of d77d0bf (music 2)
 
 PAINTSTRUCT ps;
 HDC hdc;
 Game g_game;
 
+<<<<<<< HEAD
 void PlayBGM() {
     // S_ASYNC: 비동기적으로 재생 (메인 스레드 블록 방지)
     // SND_LOOP: 무한 반복 재생
@@ -16,13 +23,10 @@ void PlayBGM() {
     // TODO: "bgm.wav" 파일을 프로젝트 폴더 또는 실행 파일 경로에 두어야 합니다.
     PlaySound(L"bgm.wav", NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
 }
-
-// 배경음악을 중지하는 함수
 void StopBGM() {
     PlaySound(NULL, NULL, 0);
 }
 
-// 게임 설정 정보를 담을 구조체
 struct GameSettings {
     WCHAR szNickName[256];
     COLORREF playerColor;
@@ -54,10 +58,32 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         SetDlgItemText(hDlg, IDC_G_EDIT, L"255");
         SetDlgItemText(hDlg, IDC_B_EDIT, L"255");
 
-        // 포커스를 닉네임 입력란으로 설정
-        SetFocus(GetDlgItem(hDlg, IDC_NICKNAME_EDIT));
+        RECT rcDlg;
+        // 1. 현재 다이얼로그 창의 크기를 얻습니다. (화면 좌표 기준)
+        GetWindowRect(hDlg, &rcDlg);
 
-        return FALSE; // 포커스를 직접 설정했으므로 FALSE 반환
+        // 2. 다이얼로그의 폭과 높이를 계산합니다.
+        int nWidth = rcDlg.right - rcDlg.left;
+        int nHeight = rcDlg.bottom - rcDlg.top;
+
+        // 3. 주 모니터의 화면 해상도를 얻습니다.
+        int nScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+        int nScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+        // 4. 다이얼로그가 화면 중앙에 위치할 좌표를 계산합니다.
+        int nX = (nScreenWidth - nWidth) / 2;
+        int nY = (nScreenHeight - nHeight) / 2;
+
+        // 5. 다이얼로그 창의 위치를 설정합니다.
+        SetWindowPos(hDlg,
+            HWND_TOP,
+            nX,
+            nY,
+            0, 0,
+            SWP_NOSIZE | SWP_NOZORDER);
+
+        // 포커스를 설정하지 않으면 TRUE 반환, 포커스를 직접 설정하면 FALSE 반환
+        return TRUE;
     }
     case WM_COMMAND: {
         switch (LOWORD(wParam)) {
@@ -103,22 +129,24 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     return FALSE;
 }
 
+=======
+>>>>>>> parent of d77d0bf (music 2)
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    switch (uMsg)
+    switch (uMsg) 
     {
-    case WM_CREATE:
+    case WM_CREATE: 
     {
-        g_game.InitGame(hdc, g_settings.szNickName, g_settings.playerColor);
+        g_game.InitGame(hdc);
         break;
     }
-    case WM_PAINT:
+    case WM_PAINT: 
     {
         hdc = BeginPaint(hwnd, &ps);
         g_game.Draw(hdc);
         EndPaint(hwnd, &ps);
         return 0;
     }
-    case WM_KEYDOWN:
+    case WM_KEYDOWN: 
     {
         g_game.InputKey(wParam);
         InvalidateRect(hwnd, NULL, false);
@@ -132,8 +160,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-<<<<<< < HEAD
-    int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+<<<<<<< HEAD
+int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // 1. 다이얼로그 박스 표시 및 설정값 입력
     // DialogBoxParam을 사용하여 g_settings의 포인터를 다이얼로그 프로시저에 전달
     INT_PTR dialogResult = DialogBoxParam(
@@ -143,88 +171,149 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         StartDialogProc,
         (LPARAM)&g_settings
     );
+=======
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    WNDCLASS wc = { 0 };    
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"SnakeGame";
+>>>>>>> parent of d77d0bf (music 2)
 
-    // 2. 다이얼로그 결과 확인
-    if (dialogResult == -1) {
-        MessageBox(NULL, L"Failed to create dialog!", L"Error", MB_ICONERROR);
+    if (!RegisterClass(&wc)) {
+        MessageBox(NULL, L"Failed to register window class!", L"Error", MB_ICONERROR);
         return -1;
     }
 
-    // 3. '종료' 버튼을 눌렀거나 에러로 다이얼로그가 종료된 경우
-    if (dialogResult == IDCANCEL || !g_settings.isGameStarted) {
-        return 0; // 프로그램 즉시 종료
+    HWND hwnd = CreateWindow(L"SnakeGame", L"SnakeGame",
+        WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 
+        700, 700, NULL, NULL, hInstance, NULL);
+    if (!hwnd) {
+        MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
+        return -1;
     }
 
+<<<<<<< HEAD
     WNDCLASS wc = { 0 };
-    ====== =
-        int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-        WNDCLASS wc = { 0 };
-        >>>>>> > daafa40e3ba6c76ba33b4a576463a95eb5e74512
-            wc.lpfnWndProc = WindowProc;
-        wc.hInstance = hInstance;
-        wc.lpszClassName = L"SnakeGame";
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"SnakeGame";
 
-        if (!RegisterClass(&wc)) {
-            MessageBox(NULL, L"Failed to register window class!", L"Error", MB_ICONERROR);
-            return -1;
-        }
+    if (!RegisterClass(&wc)) {
+        MessageBox(NULL, L"Failed to register window class!", L"Error", MB_ICONERROR);
+        return -1;
+=======
+    ShowWindow(hwnd, nCmdShow);
+    MSG msg;
 
-        HWND hwnd = CreateWindow(L"SnakeGame", L"SnakeGame",
-            WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-            700, 700, NULL, NULL, hInstance, NULL);
-        if (!hwnd) {
-            MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
-            return -1;
-        }
-
-        PlayBGM();
-        ShowWindow(hwnd, nCmdShow);
-        MSG msg;
-
-        while (true) {
-            // 1. 메시지가 있는지 확인하고 있으면 처리 (Non-blocking)
-            if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-                // WM_QUIT 메시지를 받으면 루프를 종료
-                if (msg.message == WM_QUIT) {
-                    break;
-                }
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
+    while (true) {
+        // 1. 메시지가 있는지 확인하고 있으면 처리 (Non-blocking)
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            // WM_QUIT 메시지를 받으면 루프를 종료
+            if (msg.message == WM_QUIT) {
+                break;
             }
-            else {
-                // 메시지가 없을 때 (Idle Time)
-                // 업데이트에 fps 추가해야 함
-                // recv
-                g_game.UpdateGame();
-
-                // 게임 오버 체크 및 종료 처리
-                if (g_game.IsGameOver()) {
-                    int result = MessageBox(hwnd,
-                        L"Game Over! Do you want to restart the game?", // 문구 변경
-                        L"Game Over",
-                        MB_YESNO | MB_ICONQUESTION); // 예/아니오 버튼 사용
-
-                    if (result == IDYES) {
-                        // '예'를 선택한 경우: 
-                        //  TODO : 만들어야 함.
-                        g_game.ReStart();
-
-                        continue; // 다음 루프로 이동하여 새로운 게임 시작
-                    }
-                    else {
-                        // 사용자가 '아니오' (종료)을 눌렀을 때
-                        PostQuitMessage(0); // 게임 종료
-                    }
-                    continue;
-                }
-            }
-
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
         }
+        else {
+            // 메시지가 없을 때 (Idle Time)
+            // 업데이트에 fps 추가해야 함
+            // recv
+            g_game.UpdateGame();
 
-        StopBGM();
+            // 게임 오버 체크 및 종료 처리
+            if (g_game.IsGameOver()) {
+                int result = MessageBox(hwnd,
+                    L"Game Over! Do you want to restart the game?", // 문구 변경
+                    L"Game Over",
+                    MB_YESNO | MB_ICONQUESTION); // 예/아니오 버튼 사용
 
-        // WM_QUIT 메시지의 wParam 값을 반환
-        return (int)msg.wParam;
+                if (result == IDYES) {
+                    // '예'를 선택한 경우: 
+                    //  TODO : 만들어야 함.
+                    continue; // 다음 루프로 이동하여 새로운 게임 시작
+                }
+                else {
+                    // 사용자가 '아니오' (종료)을 눌렀을 때
+                    PostQuitMessage(0); // 게임 종료
+                }
+                continue;
+            }
+        }
+>>>>>>> parent of d77d0bf (music 2)
     }
+    // WM_QUIT 메시지의 wParam 값을 반환
+    return (int)msg.wParam;
+}
+
+    // 화면 중앙 좌표 계산
+    int screen_width = GetSystemMetrics(SM_CXSCREEN);
+    int screen_height = GetSystemMetrics(SM_CYSCREEN);
+
+    int x_pos = (screen_width - WINDOW_WIDTH) / 2;
+    int y_pos = (screen_height - WINDOW_HEIGHT) / 2;
+
+    // 윈도우 생성
+    HWND hwnd = CreateWindow(L"SnakeGame", L"SnakeGame",
+        WS_OVERLAPPEDWINDOW,
+        x_pos,           // X 좌표 (화면 중앙)
+        y_pos,           // Y 좌표 (화면 중앙)
+        WINDOW_WIDTH,    // 폭
+        WINDOW_HEIGHT,   // 높이
+        NULL, NULL, hInstance, NULL);
+    if (!hwnd) {
+        MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
+        return -1;
+    }
+
+    PlayBGM();
+    ShowWindow(hwnd, nCmdShow);
+    MSG msg;
+
+    while (true) {
+        // 1. 메시지가 있는지 확인하고 있으면 처리 (Non-blocking)
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            // WM_QUIT 메시지를 받으면 루프를 종료
+            if (msg.message == WM_QUIT) {
+                break;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+        else {
+            // 메시지가 없을 때 (Idle Time)
+            // 업데이트에 fps 추가해야 함
+            // recv
+            g_game.UpdateGame();
+
+            // 게임 오버 체크 및 종료 처리
+            if (g_game.IsGameOver()) {
+                int result = MessageBox(hwnd,
+                    L"Game Over! Do you want to restart the game?", // 문구 변경
+                    L"Game Over",
+                    MB_YESNO | MB_ICONQUESTION); // 예/아니오 버튼 사용
+
+                if (result == IDYES) {
+                    // '예'를 선택한 경우: 
+                    //  TODO : 만들어야 함.
+                    g_game.ReStart();
+
+                    continue; // 다음 루프로 이동하여 새로운 게임 시작
+                }
+                else {
+                    // 사용자가 '아니오' (종료)을 눌렀을 때
+                    PostQuitMessage(0); // 게임 종료
+                }
+                continue;
+            }
+        }
+
+    }
+
+    StopBGM();
+
+    // WM_QUIT 메시지의 wParam 값을 반환
+    return (int)msg.wParam;
+}
 
 
