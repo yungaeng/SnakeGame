@@ -1,11 +1,11 @@
 #include "Game.h"
 
-void Game::InitGame(HDC hdc, const WCHAR* nickname, COLORREF c)
+void Game::InitGame(HDC hdc)
 {
 	m_isgameover = false;
 	p.SetHDC(hdc);
 
-	o.AddSnake();
+	o.AddSnake(userdata.name);
 
 	// ∏‘¿Ã ∏∏µÈ±‚
 	for (int i = 0; i < 10; i++)
@@ -40,6 +40,16 @@ void Game::ReStart()
 {
 	m_isgameover = false;
 	o.gameover = false;
+}
+
+void Game::StartBGM()
+{
+	PlaySound(L"bgm.wav", NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
+}
+
+void Game::StopBGM()
+{
+	PlaySound(NULL, NULL, 0);
 }
 
 double Game::GetElapsedTime() {

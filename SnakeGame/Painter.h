@@ -6,7 +6,7 @@
 class Painter
 {
     HDC m_hdc = {};
-    int m_map_size = 700;
+    int m_map_size = MAP_SIZE;
 public:
     Painter() {
         m_hdc = {};
@@ -18,5 +18,6 @@ public:
 private:
     void DrawBackGround();
     void DrawObject();
+    void DrawName(int x, int y, wchar_t name[MAX_NAME_SIZE], int size);
 };
 
