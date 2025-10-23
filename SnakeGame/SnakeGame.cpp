@@ -21,6 +21,16 @@ int GetIntFromEdit(HWND hDlg, int nIDDlgItem) {
 }
 
 INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+
+    // 게임 설명 텍스트
+    const wchar_t* descriptionText =
+        L"게임 설명\n"
+        L"------------------------------------------\n"
+        L"방향 키: 상하좌우 이동\n"
+        L"Q 키: 게임 종료\n"
+        L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
+        L"------------------------------------------";
+
     static UserData* pSettings = g_game.GetUserDataPtr();
     switch (message) {
     case WM_INITDIALOG: {
@@ -31,6 +41,8 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         SetDlgItemText(hDlg, IDC_R_EDIT, L"255");
         SetDlgItemText(hDlg, IDC_G_EDIT, L"255");
         SetDlgItemText(hDlg, IDC_B_EDIT, L"255");
+
+        SetDlgItemText(hDlg, IDC_DESCRIPTION_STATIC, descriptionText);
 
         RECT rcDlg;
         // 1. 현재 다이얼로그 창의 크기를 얻습니다. (화면 좌표 기준)
@@ -65,7 +77,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
             if (!pSettings) break;
 
             // 1. 닉네임 가져오기 및 확인
-            GetDlgItemText(hDlg, IDC_NICKNAME_EDIT, (LPWSTR)pSettings->name, MAX_NAME_SIZE);
+            GetDlgItemText(hDlg, IDC_NICKNAME_EDIT, pSettings->name, MAX_NAME_SIZE);
             if (pSettings->name[0] == L'\0') {
                 MessageBox(hDlg, L"닉네임을 입력해주세요.", L"입력 오류", MB_ICONWARNING);
                 SetFocus(GetDlgItem(hDlg, IDC_NICKNAME_EDIT));
