@@ -104,7 +104,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         }
         case IDCANCEL: {
             EndDialog(hDlg, IDCANCEL); // IDCANCEL로 종료
-            return TRUE;
+            return FALSE;
         }
         }
         break;
@@ -151,6 +151,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         NULL, // 메인 윈도우 생성 전이므로 NULL
         StartDialogProc,
         (LPARAM)g_game.GetUserDataPtr());
+
+    // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+    if (dialogResult != IDOK) {
+        // 다이얼로그가 취소되거나 오류 발생 시 바로 프로그램 종료
+        return 0;
+    }
 
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;

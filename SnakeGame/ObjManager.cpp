@@ -32,34 +32,47 @@ void ObjManager::AddSnake(const wchar_t* name)
 void ObjManager::MoveSnake(int id, dir d)
 {
     int x = m_snakes[id].body.begin()->m_pos.x, y = m_snakes[id].body.begin()->m_pos.y;
+    dir currentDir = m_snakes[id].body.begin()->m_dir;
 
-    
-        switch (d)
-        {
-        case UP: y -= m_snakes[id].body.begin()->m_speed; break;
-        case DOWN: y += m_snakes[id].body.begin()->m_speed; break;
-        case LEFT: x -= m_snakes[id].body.begin()->m_speed; break;
-        case RIGHT: x += m_snakes[id].body.begin()->m_speed; break;
-        default:
-            break;
+    // 2. 새로운 방향 'd'가 현재 방향 'currentDir'의 정반대인지 확인합니다.
+    //    만약 정반대 방향이라면 함수를 즉시 종료하여 뱀이 움직이지 않게 합니다.
+    if ((currentDir == UP && d == DOWN) ||
+        (currentDir == DOWN && d == UP) ||
+        (currentDir == LEFT && d == RIGHT) ||
+        (currentDir == RIGHT && d == LEFT))
+    {
+        // 정반대 방향 키 입력 무시
+        return;
+    }
+
+    //m_snakes[id].body.begin()->m_dir = d;
+
+    switch (d)
+    {
+    case UP: y -= m_snakes[id].body.begin()->m_speed; break;
+    case DOWN: y += m_snakes[id].body.begin()->m_speed; break;
+    case LEFT: x -= m_snakes[id].body.begin()->m_speed; break;
+    case RIGHT: x += m_snakes[id].body.begin()->m_speed; break;
+    default:
+        break;
+    }
+
+    if (y > 10 && y < MAP_SIZE - 40 && x > 5 && x < MAP_SIZE - 10) {
+        for (int i = 0; i < m_snakes[id].body.size(); i++) {
+            m_snakes[id].body[i].m_pos.prev_x = m_snakes[id].body[i].m_pos.x;
+            m_snakes[id].body[i].m_pos.prev_y = m_snakes[id].body[i].m_pos.y;
         }
 
-        if (y > 10 && y < MAP_SIZE - 40 && x > 10 && x < MAP_SIZE - 10) {
-            for (int i = 0; i < m_snakes[id].body.size(); i++) {
-                m_snakes[id].body[i].m_pos.prev_x = m_snakes[id].body[i].m_pos.x;
-                m_snakes[id].body[i].m_pos.prev_y = m_snakes[id].body[i].m_pos.y;
-            }
+        m_snakes[id].body.begin()->m_pos.x = x;
+        m_snakes[id].body.begin()->m_pos.y = y;
 
-            m_snakes[id].body.begin()->m_pos.x = x;
-            m_snakes[id].body.begin()->m_pos.y = y;
-
-            if (m_snakes[id].body.size() > 1) {
-                for (int i = 1; i < m_snakes[id].body.size(); i++) {
-                    m_snakes[id].body[i].m_pos.x = m_snakes[id].body[i - 1].m_pos.prev_x;
-                    m_snakes[id].body[i].m_pos.y = m_snakes[id].body[i - 1].m_pos.prev_y;
-                }
+        if (m_snakes[id].body.size() > 1) {
+            for (int i = 1; i < m_snakes[id].body.size(); i++) {
+                m_snakes[id].body[i].m_pos.x = m_snakes[id].body[i - 1].m_pos.prev_x;
+                m_snakes[id].body[i].m_pos.y = m_snakes[id].body[i - 1].m_pos.prev_y;
             }
         }
+    }
 }
 
 void ObjManager::SnakeEatFood(int id)
