@@ -2,7 +2,7 @@
 
 void Game::InitGame(HDC hdc)
 {
-	m_isgameover = false;
+	m_isgameover = -1;
 
 	o.AddSnake(userdata);
 
@@ -22,9 +22,10 @@ void Game::InitGame(HDC hdc)
 void Game::UpdateGame()
 {
 	m_isgameover = o.UpDate();
+	m_killer_id = o.DeathBy;
 
 	auto now = std::chrono::steady_clock::now();
-	const std::chrono::milliseconds SPAWN_INTERVAL(2000);
+	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
 
 	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
 		pos p{ rand() % 700, rand() % 700, 0, 0 };

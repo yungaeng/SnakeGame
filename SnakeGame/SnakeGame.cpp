@@ -125,42 +125,22 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     {
         g_game.InitGame(hdc);
 
-        // 더블 버퍼링 - 초기화
-        // 1. 윈도우 DC를 가져옴
         HDC hdc = GetDC(hwnd);
-
-        // 2. 메모리 DC 생성
         g_hMemDC = CreateCompatibleDC(hdc);
-
-        // 3. 메모리 비트맵 생성 (WINDOW_WIDTH, WINDOW_HEIGHT는 이미 정의된 상수 사용)
         g_hBitmap = CreateCompatibleBitmap(hdc, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        // 4. 메모리 DC에 비트맵 연결
         g_hOldBitmap = (HBITMAP)SelectObject(g_hMemDC, g_hBitmap);
-
-        ReleaseDC(hwnd, hdc); // 사용 후 DC 해제
-
+        ReleaseDC(hwnd, hdc);
         return 0;
     }
     case WM_PAINT: 
     {
         hdc = BeginPaint(hwnd, &ps);
-
-        // 1. 메모리 DC(백 버퍼)를 흰색으로 지움 (배경 초기화)
         RECT rc = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
-        FillRect(g_hMemDC, &rc, (HBRUSH)GetStockObject(WHITE_BRUSH)); // 배경색에 따라 변경 가능
+        FillRect(g_hMemDC, &rc, (HBRUSH)GetStockObject(WHITE_BRUSH));
 
-        // 2. 모든 그리기 작업을 메모리 DC에 수행
         g_game.Draw(g_hMemDC);
 
-        // 3. 완성된 이미지를 실제 윈도우 DC로 한 번에 고속 복사
-        BitBlt(hdc,
-            0, 0,
-            WINDOW_WIDTH, WINDOW_HEIGHT,
-            g_hMemDC,
-            0, 0,
-            SRCCOPY);
-
+        BitBlt(hdc,0, 0,WINDOW_WIDTH, WINDOW_HEIGHT,g_hMemDC,0, 0,SRCCOPY);
         EndPaint(hwnd, &ps);
         return 0;
     }
@@ -171,12 +151,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
     }
     case WM_DESTROY:
-        // 더블 버퍼링 - 정리
-        SelectObject(g_hMemDC, g_hOldBitmap); // 이전 비트맵으로 복원
+        SelectObject(g_hMemDC, g_hOldBitmap);
         DeleteObject(g_hBitmap);
         DeleteDC(g_hMemDC);
-
-        PostQuitMessage(0); return 0;
+        PostQuitMessage(0);
+        return 0;
     default:
         break;
     }
@@ -258,17 +237,21 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
+                int killid = g_game.IsGameOver();
+                wchar_t message_buffer[256];
+                swprintf_s(message_buffer,
+                    256,
+                    L"당신은 ID %d 에게 죽었습니다!! 다시하시겠습니까?",
+                    killid);
                 int result = MessageBox(hwnd,
-                    L"Game Over! Do you want to restart the game?", // 문구 변경
+                    message_buffer,
                     L"Game Over",
-                    MB_YESNO | MB_ICONQUESTION); // 예/아니오 버튼 사용
+                    MB_YESNO | MB_ICONQUESTION);
 
                 if (result == IDYES) {
                     // '예'를 선택한 경우: 
-                    //  TODO : 재시작 만들어야 함.
-                    g_game.ReStart();
-
-                    continue; // 다음 루프로 이동하여 새로운 게임 시작
+                    g_game.ReStart(); // TODO : 재시작 구현
+                    continue;
                 }
                 else {
                     // 사용자가 '아니오' (종료)을 눌렀을 때
@@ -277,7 +260,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 }
                 continue;
             }
-
             // 업데이트 후 화면 무효화.
             InvalidateRect(hwnd, NULL, false);
         }

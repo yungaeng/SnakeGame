@@ -32,9 +32,11 @@ class Game
 
 public:
 	bool m_isgameover = false;
+	int m_killer_id = -1;
 
 	Game() {
 		m_isgameover = false;
+		m_killer_id = -1;
 		p = {};
 		o = {};
 		k = {};

@@ -80,33 +80,40 @@ bool ObjManager::UpDate()
 void ObjManager::HandleCollisions()
 {
     FoodCollisions();
-    SnakeCollisions();
+    DeathBy = SnakeCollisions();
 }
 void ObjManager::FoodCollisions()
 {
-    // 모든 음식의 충돌체크
-    for (size_t i = 0; i < m_foods.size(); ++i) {
-        // 모든 뱀
-        for (int id = 0; id < m_snakes.size(); ++id) {
-            if (m_snakes[id].body.begin()->CheckCollision(m_foods[i])) {
-                m_foods.erase(m_foods.begin() + i);
+    // 모든 뱀
+    for (int id = 0; id < m_snakes.size(); ++id) {
+        auto& snake_head = *m_snakes[id].body.begin();
+
+        auto it = m_foods.begin();
+        while (it != m_foods.end()) {
+            // 뱀의 머리와 현재 먹이(*it) 충돌 체크
+            if (snake_head.CheckCollision(*it)) {
                 SnakeEatFood(id);
+                it = m_foods.erase(it);
+                return;
+            }
+            else {
+                ++it;
             }
         }
     }
 }
+
 int ObjManager::SnakeCollisions()
 {
     // 모든 뱀들의 몸통 충돌체크
-    for (int id = 0; id < m_snakes.size(); ++id) {
-        for (int i = 2; i < m_snakes[id].body.size(); ++i) {
-            // 테스트를 위해 head를 0 -> 1로 설정 (0번 뱀, 자기 자신 충돌 무시) 
-            for (int head = 1; head < m_snakes.size(); ++head) {
-                if (m_snakes[id].body[i].CheckCollision(m_snakes[head].body[0])) {
-                    gameover = true;
-                    return id;
-                }
+    for (int id = 0; id < m_snakes.size(); id++) {
+        for (int i = 2; i < m_snakes[id].body.size(); i++) {
+            if (m_snakes[id].body.begin()->CheckCollision(m_snakes[id].body[i])) {
+                gameover = true;
+                return i;
             }
         }
     }
+
+    return -1; // 충돌 없음
 }

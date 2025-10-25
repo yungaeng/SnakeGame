@@ -20,7 +20,7 @@ public:
 	static std::vector<Object> m_foods;
 	static std::vector<Snake> m_snakes;
 
-	ObjManager() { gameover = false; };
+	ObjManager() { gameover = false; DeathBy = -1; };
 
 	void AddFood(pos p, COLORREF c);
 
@@ -31,6 +31,7 @@ public:
 
 	bool UpDate();
 	bool gameover = false;
+	int DeathBy = -1;
 private:
 	void HandleCollisions();
 	void FoodCollisions();
