@@ -49,7 +49,7 @@ void ObjManager::MoveSnake(int id, dir d)
 }
 void ObjManager::SnakeEatFood(int id)
 {
-    int tail = m_snakes[id].body.size() - 1;
+    int tail = m_snakes[id].body.end();
     int x = m_snakes[id].body[tail].m_pos.x;
     int y = m_snakes[id].body[tail].m_pos.y;
 
@@ -107,7 +107,7 @@ int ObjManager::SnakeCollisions()
 {
     // 모든 뱀들의 몸통 충돌체크
     for (int id = 0; id < m_snakes.size(); id++) {
-        for (int i = 2; i < m_snakes[id].body.size(); i++) {
+        for (int i = 1; i < m_snakes[id].body.size(); i++) {
             if (m_snakes[id].body.begin()->CheckCollision(m_snakes[id].body[i])) {
                 gameover = true;
                 return i;
