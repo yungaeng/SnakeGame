@@ -1,5 +1,4 @@
 #pragma once
-#include <windows.h>
 #include "Game.h"
 #include "resource.h"
 #include "gamedata.h"
@@ -110,6 +109,10 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         break;
     }
     }
+
+
+    // 오케이 버튼을 누르고, 로그인 패킷을 보낸 뒤, 대기.
+    // 서버가 GameSetting을 보내주면 게임 데이터에 반영 후 게임 시작. 
     return FALSE;
 }
 
@@ -143,6 +146,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
+    // 여기서  서버와 커넥트
+    g_game.InitNetwork();
+
+
+    // 2. 다이얼 로그
     // 1. 다이얼로그 박스 표시 및 설정값 입력
     // DialogBoxParam을 사용하여 g_settings의 포인터를 다이얼로그 프로시저에 전달
     INT_PTR dialogResult = DialogBoxParam(
@@ -157,6 +166,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         // 다이얼로그가 취소되거나 오류 발생 시 바로 프로그램 종료
         return 0;
     }
+
+    // 케넥트 후->
+    // 로그인 정보 서버로 보내기
+
+
 
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
@@ -228,6 +242,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 }
                 continue;
             }
+
+            // 업데이트 후 페인트 메시지 추가.
         }
 
     }

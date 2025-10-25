@@ -1,4 +1,13 @@
 #pragma once
+//Network
+#include <winsock2.h> // 윈속2 메인 헤더
+#include <ws2tcpip.h> // 윈속2 확장 헤더
+#pragma comment(lib, "ws2_32") //ws2_32.lib 링크
+
+#define SERVER_IP "127.0.0.1" // 서버의 ip주소
+#define SERVER_PORT 9000 // 서버의 포트번호(서버와 동일)
+#define BUF_SIZE 512 // 송수신 버퍼의 크기
+
 #include "Painter.h"
 #include "KeyManager.h"
 #include <mmsystem.h>
@@ -6,6 +15,15 @@
 
 class Game
 {
+	//Network
+
+	bool m_isconnect;
+	SOCKET m_socket;
+	char m_send_buf[BUF_SIZE];
+	char m_recv_buf[BUF_SIZE];
+
+	//------------------------------
+
 	Painter p = {};
 	ObjManager o = {};
 	KeyManager k = {};
@@ -35,6 +53,15 @@ public:
 	void StopBGM();
 
 	UserData* GetUserDataPtr() { return &userdata; };
+
+	// Network
+
+	bool InitNetwork();
+	void Recv();
+	void Send();
+	void End();
+
+	//------------------------------
 private:
 	double GetElapsedTime();
 	std::chrono::time_point<std::chrono::steady_clock> m_timer;

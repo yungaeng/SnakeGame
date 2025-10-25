@@ -13,7 +13,7 @@ public:
 	~ObjManager();
 
 	void AddFood(pos p, color c);
-	void AddSnake(const wchar_t* name);
+	void AddSnake(UserData ud);
 	
 	void MoveSnake(int id, dir d);
 

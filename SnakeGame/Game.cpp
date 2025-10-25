@@ -5,7 +5,7 @@ void Game::InitGame(HDC hdc)
 	m_isgameover = false;
 	p.SetHDC(hdc);
 
-	o.AddSnake(userdata.name);
+	o.AddSnake(userdata);
 
 	// 먹이 만들기
 	for (int i = 0; i < 10; i++)
@@ -50,6 +50,46 @@ void Game::StartBGM()
 void Game::StopBGM()
 {
 	PlaySound(NULL, NULL, 0);
+}
+
+bool Game::InitNetwork()
+{
+	// 윈속 초기화
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return false;
+
+	// 소켓 생성
+	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock == INVALID_SOCKET) return false;
+
+	// connect()
+	struct sockaddr_in serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVER_PORT);
+	int retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) return false;
+
+	return true;
+}
+
+void Game::Recv()
+{
+	recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
+}
+
+void Game::Send()
+{
+	send(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
+}
+
+void Game::End()
+{
+	// 소켓 닫기
+	closesocket(m_socket);
+	WSACleanup();
 }
 
 double Game::GetElapsedTime() {

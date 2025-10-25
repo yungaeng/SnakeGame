@@ -34,6 +34,9 @@
     <Filter Include="리소스 파일\StartMenu">
       <UniqueIdentifier>{4c20dd77-c3a7-4560-ae2a-a10115f52ea8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{d49e47fb-4db8-49e4-9b57-8091ec7c91f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Painter.h">

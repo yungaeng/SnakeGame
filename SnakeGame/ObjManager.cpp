@@ -19,13 +19,13 @@ void ObjManager::AddFood(pos p, color c)
 }
 
 
-void ObjManager::AddSnake(const wchar_t* name)
+void ObjManager::AddSnake(UserData ud)
 {
     pos p{ 350, rand() % 700 };
-    color c = { 255, 255, 255 };
+    color c = { ud.r, ud.g, ud.b };
     std::vector<Object> new_snake;
     new_snake.emplace_back(Object(p, c));
-    Snake s = { name, new_snake };
+    Snake s = { ud.name, new_snake };
     m_snakes.emplace_back(s);
 }
 
