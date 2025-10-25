@@ -3,7 +3,6 @@
 void Game::InitGame(HDC hdc)
 {
 	m_isgameover = false;
-	p.SetHDC(hdc);
 
 	o.AddSnake(userdata);
 
@@ -11,7 +10,7 @@ void Game::InitGame(HDC hdc)
 	for (int i = 0; i < 10; i++)
 	{
 		pos p = { rand() % 600, rand() % 600 };
-		color col = { rand() % 255, rand() % 255,rand() % 255 };
+		COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
 		o.AddFood(p, col);
 	}
 
@@ -29,7 +28,7 @@ void Game::UpdateGame()
 
 	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
 		pos p{ rand() % 700, rand() % 700, 0, 0 };
-		color c = { rand() % 255, rand() % 255, rand() % 255 };
+		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
 		o.AddFood(p, c);
 
 		m_last_food_spawn_time = now;

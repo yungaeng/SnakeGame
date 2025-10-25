@@ -1,7 +1,8 @@
 #pragma once
+#include <wtypes.h>
 
 typedef enum Direction {
-	UP, DOWN, LEFT, RIGHT, NOUN
+	UP, DOWN, LEFT, RIGHT
 } dir;
 
 typedef struct Position {
@@ -9,22 +10,17 @@ typedef struct Position {
 	int prev_x, prev_y;
 } pos;
 
-typedef struct Color {
-	int r, g, b;
-} color;
-
 class Object
 {
 public:
 	pos m_pos;
-	color m_color;
-	dir m_dir = NOUN;
+	COLORREF m_color;
+	dir m_dir = DOWN;
 
 	int m_size = 10;
 	int m_speed = 20;
-	int m_target = -1;
 public:
-	Object(pos p, color c);
+	Object(pos p, COLORREF c);
 	bool CheckCollision(const Object& other) const;
 };
 

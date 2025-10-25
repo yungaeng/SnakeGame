@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="gamedata.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjManager.h" />
@@ -34,7 +33,6 @@
     <ClCompile Include="ObjManager.cpp" />
     <ClCompile Include="SnakeGame.cpp" />
     <ClCompile Include="Painter.cpp" />
-    <ClCompile Include="소스.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

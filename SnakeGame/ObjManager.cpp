@@ -1,51 +1,24 @@
 #include "ObjManager.h"
-#include "gamedata.h"
 
 std::vector<Object> ObjManager::m_foods;
 std::vector<Snake> ObjManager::m_snakes;
 
-ObjManager::ObjManager()
-{
-    gameover = false;
-}
-
-ObjManager::~ObjManager()
-{
-}
-
-void ObjManager::AddFood(pos p, color c)
+void ObjManager::AddFood(pos p, COLORREF c)
 {
     m_foods.emplace_back(Object(p, c));
 }
 
-
 void ObjManager::AddSnake(UserData ud)
 {
     pos p{ 350, rand() % 700 };
-    color c = { ud.r, ud.g, ud.b };
     std::vector<Object> new_snake;
-    new_snake.emplace_back(Object(p, c));
+    new_snake.emplace_back(Object(p, ud.color));
     Snake s = { ud.name, new_snake };
     m_snakes.emplace_back(s);
 }
-
 void ObjManager::MoveSnake(int id, dir d)
 {
     int x = m_snakes[id].body.begin()->m_pos.x, y = m_snakes[id].body.begin()->m_pos.y;
-    dir currentDir = m_snakes[id].body.begin()->m_dir;
-
-    // 2. 새로운 방향 'd'가 현재 방향 'currentDir'의 정반대인지 확인합니다.
-    //    만약 정반대 방향이라면 함수를 즉시 종료하여 뱀이 움직이지 않게 합니다.
-    if ((currentDir == UP && d == DOWN) ||
-        (currentDir == DOWN && d == UP) ||
-        (currentDir == LEFT && d == RIGHT) ||
-        (currentDir == RIGHT && d == LEFT))
-    {
-        // 정반대 방향 키 입력 무시
-        return;
-    }
-
-    //m_snakes[id].body.begin()->m_dir = d;
 
     switch (d)
     {
@@ -74,7 +47,6 @@ void ObjManager::MoveSnake(int id, dir d)
         }
     }
 }
-
 void ObjManager::SnakeEatFood(int id)
 {
     int tail = m_snakes[id].body.size() - 1;
@@ -91,8 +63,12 @@ void ObjManager::SnakeEatFood(int id)
         break;
     }
     pos p = { x,y,0,0 };
-    color c = m_snakes[id].body.begin()->m_color;
+    COLORREF c = m_snakes[id].body.begin()->m_color;
     m_snakes[id].body.emplace_back(Object(p, c));
+}
+void ObjManager::DeleteSnake(int id)
+{
+    m_snakes.erase(m_snakes.begin() + id);
 }
 
 bool ObjManager::UpDate()
@@ -101,17 +77,11 @@ bool ObjManager::UpDate()
     return gameover;
 }
 
-void ObjManager::DeleteSnake(int id)
-{
-    m_snakes.erase(m_snakes.begin() + id);
-}
-
 void ObjManager::HandleCollisions()
 {
     FoodCollisions();
     SnakeCollisions();
 }
-
 void ObjManager::FoodCollisions()
 {
     // 모든 음식의 충돌체크
@@ -125,13 +95,13 @@ void ObjManager::FoodCollisions()
         }
     }
 }
-
 int ObjManager::SnakeCollisions()
 {
     // 모든 뱀들의 몸통 충돌체크
     for (int id = 0; id < m_snakes.size(); ++id) {
         for (int i = 2; i < m_snakes[id].body.size(); ++i) {
-            for (int head = 0; head < m_snakes.size(); ++head) {
+            // 테스트를 위해 head를 0 -> 1로 설정 (0번 뱀, 자기 자신 충돌 무시) 
+            for (int head = 1; head < m_snakes.size(); ++head) {
                 if (m_snakes[id].body[i].CheckCollision(m_snakes[head].body[0])) {
                     gameover = true;
                     return id;

@@ -1,12 +1,16 @@
 #pragma once
 #include "Game.h"
 #include "resource.h"
-#include "gamedata.h"
 #pragma comment(lib, "winmm.lib")
+const int WINDOW_WIDTH = 700;
+const int WINDOW_HEIGHT = 700;
 
 PAINTSTRUCT ps;
 HDC hdc;
 Game g_game;
+HDC g_hMemDC = NULL;
+HBITMAP g_hBitmap = NULL;
+HBITMAP g_hOldBitmap = NULL;
 
 // 헬퍼 함수: Edit Control에서 텍스트를 가져와 정수로 변환하고 0~255 범위 확인
 int GetIntFromEdit(HWND hDlg, int nIDDlgItem) {
@@ -95,9 +99,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
             }
 
             // 3. GameSettings에 저장 및 다이얼로그 종료
-            pSettings->r = r;
-            pSettings->g = g;
-            pSettings->b = b;
+            pSettings->color = RGB(r,g,b);
             EndDialog(hDlg, IDOK); // IDOK로 종료
             return TRUE;
         }
@@ -122,12 +124,43 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: 
     {
         g_game.InitGame(hdc);
-        break;
+
+        // 더블 버퍼링 - 초기화
+        // 1. 윈도우 DC를 가져옴
+        HDC hdc = GetDC(hwnd);
+
+        // 2. 메모리 DC 생성
+        g_hMemDC = CreateCompatibleDC(hdc);
+
+        // 3. 메모리 비트맵 생성 (WINDOW_WIDTH, WINDOW_HEIGHT는 이미 정의된 상수 사용)
+        g_hBitmap = CreateCompatibleBitmap(hdc, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        // 4. 메모리 DC에 비트맵 연결
+        g_hOldBitmap = (HBITMAP)SelectObject(g_hMemDC, g_hBitmap);
+
+        ReleaseDC(hwnd, hdc); // 사용 후 DC 해제
+
+        return 0;
     }
     case WM_PAINT: 
     {
         hdc = BeginPaint(hwnd, &ps);
-        g_game.Draw(hdc);
+
+        // 1. 메모리 DC(백 버퍼)를 흰색으로 지움 (배경 초기화)
+        RECT rc = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+        FillRect(g_hMemDC, &rc, (HBRUSH)GetStockObject(WHITE_BRUSH)); // 배경색에 따라 변경 가능
+
+        // 2. 모든 그리기 작업을 메모리 DC에 수행
+        g_game.Draw(g_hMemDC);
+
+        // 3. 완성된 이미지를 실제 윈도우 DC로 한 번에 고속 복사
+        BitBlt(hdc,
+            0, 0,
+            WINDOW_WIDTH, WINDOW_HEIGHT,
+            g_hMemDC,
+            0, 0,
+            SRCCOPY);
+
         EndPaint(hwnd, &ps);
         return 0;
     }
@@ -138,6 +171,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         break;
     }
     case WM_DESTROY:
+        // 더블 버퍼링 - 정리
+        SelectObject(g_hMemDC, g_hOldBitmap); // 이전 비트맵으로 복원
+        DeleteObject(g_hBitmap);
+        DeleteDC(g_hMemDC);
+
         PostQuitMessage(0); return 0;
     default:
         break;
@@ -147,29 +185,25 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
-    // 여기서  서버와 커넥트
+    // 서버와 연결
     g_game.InitNetwork();
 
-
-    // 2. 다이얼 로그
-    // 1. 다이얼로그 박스 표시 및 설정값 입력
-    // DialogBoxParam을 사용하여 g_settings의 포인터를 다이얼로그 프로시저에 전달
+    // 다이얼로그 박스 표시 및 설정값 입력
     INT_PTR dialogResult = DialogBoxParam(
         hInstance,
-        MAKEINTRESOURCE(IDD_START_DIALOG), // resource.h에 정의된 ID
-        NULL, // 메인 윈도우 생성 전이므로 NULL
+        MAKEINTRESOURCE(IDD_START_DIALOG),
+        NULL,
         StartDialogProc,
         (LPARAM)g_game.GetUserDataPtr());
 
     // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
     if (dialogResult != IDOK) {
-        // 다이얼로그가 취소되거나 오류 발생 시 바로 프로그램 종료
         return 0;
     }
 
     // 케넥트 후->
     // 로그인 정보 서버로 보내기
-
+    g_game.Send();
 
 
     WNDCLASS wc = { 0 };
@@ -221,7 +255,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 업데이트에 fps 추가해야 함
             // recv
             g_game.UpdateGame();
-
+            
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
                 int result = MessageBox(hwnd,
@@ -238,18 +272,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 }
                 else {
                     // 사용자가 '아니오' (종료)을 눌렀을 때
+                    g_game.End();       // 네트워크 종료
                     PostQuitMessage(0); // 게임 종료
                 }
                 continue;
             }
 
-            // 업데이트 후 페인트 메시지 추가.
+            // 업데이트 후 화면 무효화.
+            InvalidateRect(hwnd, NULL, false);
         }
-
     }
-
     g_game.StopBGM();
-
     // WM_QUIT 메시지의 wParam 값을 반환
     return (int)msg.wParam;
 }

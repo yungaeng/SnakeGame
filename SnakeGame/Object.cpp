@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(pos p, color c)
+Object::Object(pos p, COLORREF c)
 {
     m_pos = p;
     m_color = c;

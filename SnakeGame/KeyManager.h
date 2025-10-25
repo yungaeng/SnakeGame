@@ -6,7 +6,6 @@ class KeyManager
 {
 public:
 	KeyManager() {};
-	~KeyManager() {};
 	void Input(ObjManager o, WPARAM wParam);
 };
 

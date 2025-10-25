@@ -9,6 +9,7 @@
 #define BUF_SIZE 512 // 송수신 버퍼의 크기
 
 #include "Painter.h"
+#include "ObjManager.h"
 #include "KeyManager.h"
 #include <mmsystem.h>
 #include <chrono>
