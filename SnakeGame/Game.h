@@ -46,6 +46,7 @@ public:
 	void InitGame(HDC hdc);
 	void Draw(HDC hdc) { p.Draw(hdc); };
 	void InputKey(WPARAM wParam) { k.Input(o, wParam); };
+	void InputMouse(LPARAM lParam) { k.MouseInput(o, lParam); };
 
 	bool IsGameOver() { return m_isgameover; };
 	void UpdateGame();

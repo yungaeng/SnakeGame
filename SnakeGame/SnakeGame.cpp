@@ -150,6 +150,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         InvalidateRect(hwnd, NULL, false);
         break;
     }
+    case WM_LBUTTONDOWN:
+    {
+        g_game.InputMouse(lParam);
+        break;
+    }
     case WM_DESTROY:
         SelectObject(g_hMemDC, g_hOldBitmap);
         DeleteObject(g_hBitmap);

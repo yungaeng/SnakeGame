@@ -7,5 +7,6 @@ class KeyManager
 public:
 	KeyManager() {};
 	void Input(ObjManager o, WPARAM wParam);
+	void MouseInput(ObjManager o, LPARAM lParam);
 };
 

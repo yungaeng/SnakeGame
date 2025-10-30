@@ -17,10 +17,12 @@ void Painter::DrawBackGround(HDC hdc)
 void Painter::DrawObject(HDC hdc)
 {
     for (auto& obj : ObjManager::m_foods) {
-        RECT ObjRect = { obj.m_pos.x - obj.m_size, obj.m_pos.y - obj.m_size, obj.m_pos.x + obj.m_size, obj.m_pos.y + obj.m_size };
-        HBRUSH ObjBrush = CreateSolidBrush(obj.m_color);
-        FillRect(hdc, &ObjRect, ObjBrush);
-        DeleteObject(ObjBrush);
+        if (obj.isalive) {
+            RECT ObjRect = { obj.m_pos.x - obj.m_size, obj.m_pos.y - obj.m_size, obj.m_pos.x + obj.m_size, obj.m_pos.y + obj.m_size };
+            HBRUSH ObjBrush = CreateSolidBrush(obj.m_color);
+            FillRect(hdc, &ObjRect, ObjBrush);
+            DeleteObject(ObjBrush);
+        }
     }
 
     for (auto& s : ObjManager::m_snakes) {

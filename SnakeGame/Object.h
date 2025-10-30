@@ -1,10 +1,6 @@
 #pragma once
 #include <wtypes.h>
 
-typedef enum Direction {
-	UP, DOWN, LEFT, RIGHT
-} dir;
-
 typedef struct Position {
 	int x, y;
 	int prev_x, prev_y;
@@ -15,7 +11,7 @@ class Object
 public:
 	pos m_pos;
 	COLORREF m_color;
-	dir m_dir = DOWN;
+	bool isalive = true;
 
 	int m_size = 10;
 	int m_speed = 20;

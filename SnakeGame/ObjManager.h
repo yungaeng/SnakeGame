@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cmath>
 #include "Object.h"
 
 #define MAP_SIZE 700
@@ -25,7 +26,7 @@ public:
 	void AddFood(pos p, COLORREF c);
 
 	void AddSnake(UserData ud);
-	void MoveSnake(int id, dir d);
+	void MoveSnake(int id, int x, int y);
 	void SnakeEatFood(int id);
 	void DeleteSnake(int id);
 
@@ -36,5 +37,6 @@ private:
 	void HandleCollisions();
 	void FoodCollisions();
 	int SnakeCollisions();
+	void ReorderIterater();
 };
 

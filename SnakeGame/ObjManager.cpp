@@ -16,31 +16,42 @@ void ObjManager::AddSnake(UserData ud)
     Snake s = { ud.name, new_snake };
     m_snakes.emplace_back(s);
 }
-void ObjManager::MoveSnake(int id, dir d)
+void ObjManager::MoveSnake(int id, int target_x, int target_y)
 {
-    int x = m_snakes[id].body.begin()->m_pos.x, y = m_snakes[id].body.begin()->m_pos.y;
+    // 뱀의 현재 위치 (cx, cy)와 이동 속도 (d)
+    double cx = m_snakes[id].body.begin()->m_pos.x; // double 사용을 위해 타입 변경
+    double cy = m_snakes[id].body.begin()->m_pos.y; // double 사용을 위해 타입 변경
+    double d = m_snakes[id].body.begin()->m_speed; // 이동할 거리 (m_speed)
 
-    switch (d)
-    {
-    case UP: y -= m_snakes[id].body.begin()->m_speed; break;
-    case DOWN: y += m_snakes[id].body.begin()->m_speed; break;
-    case LEFT: x -= m_snakes[id].body.begin()->m_speed; break;
-    case RIGHT: x += m_snakes[id].body.begin()->m_speed; break;
-    default:
-        break;
+    double dx = target_x - cx;
+    double dy = target_y - cy;
+    double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
+
+    if (distance == 0.0) {
+        return; 
     }
 
-    if (y > 10 && y < MAP_SIZE - 40 && x > 5 && x < MAP_SIZE - 10) {
-        for (int i = 0; i < m_snakes[id].body.size(); i++) {
+    double unit_dx = dx / distance;
+    double unit_dy = dy / distance;
+
+    double new_x = cx + (unit_dx * d);
+    double new_y = cy + (unit_dy * d);
+
+    if (new_y > 10 && new_y < MAP_SIZE - 40 && new_x > 5 && new_x < MAP_SIZE - 10) {
+
+        // 7. 이동 전 현재 위치를 이전 위치로 저장 (이동이 확정된 후에만 실행)
+        for (size_t i = 0; i < m_snakes[id].body.size(); i++) {
             m_snakes[id].body[i].m_pos.prev_x = m_snakes[id].body[i].m_pos.x;
             m_snakes[id].body[i].m_pos.prev_y = m_snakes[id].body[i].m_pos.y;
         }
 
-        m_snakes[id].body.begin()->m_pos.x = x;
-        m_snakes[id].body.begin()->m_pos.y = y;
+        // 8. 뱀의 머리를 'm_speed'만큼 이동시킨 새 위치로 업데이트
+        m_snakes[id].body.begin()->m_pos.x = new_x;
+        m_snakes[id].body.begin()->m_pos.y = new_y; 
 
+        // 9. 몸통 따라오기
         if (m_snakes[id].body.size() > 1) {
-            for (int i = 1; i < m_snakes[id].body.size(); i++) {
+            for (size_t i = 1; i < m_snakes[id].body.size(); i++) {
                 m_snakes[id].body[i].m_pos.x = m_snakes[id].body[i - 1].m_pos.prev_x;
                 m_snakes[id].body[i].m_pos.y = m_snakes[id].body[i - 1].m_pos.prev_y;
             }
@@ -49,21 +60,14 @@ void ObjManager::MoveSnake(int id, dir d)
 }
 void ObjManager::SnakeEatFood(int id)
 {
-    int tail = m_snakes[id].body.end();
-    int x = m_snakes[id].body[tail].m_pos.x;
-    int y = m_snakes[id].body[tail].m_pos.y;
+    size_t tailIndex = m_snakes[id].body.size() - 1;
 
-    switch (m_snakes[id].body.begin()->m_dir)
-    {
-    case 0: y -= 20; break;
-    case 1:  y += 20; break;
-    case 2: x -= 20; break;
-    case 3: x += 20; break;
-    default:
-        break;
-    }
-    pos p = { x,y,0,0 };
+    int new_x = m_snakes[id].body[tailIndex].m_pos.prev_x;
+    int new_y = m_snakes[id].body[tailIndex].m_pos.prev_y;
+
+    pos p = { new_x, new_y, 0, 0 };
     COLORREF c = m_snakes[id].body.begin()->m_color;
+
     m_snakes[id].body.emplace_back(Object(p, c));
 }
 void ObjManager::DeleteSnake(int id)
@@ -74,6 +78,7 @@ void ObjManager::DeleteSnake(int id)
 bool ObjManager::UpDate()
 {
     HandleCollisions();
+    
     return gameover;
 }
 
@@ -81,39 +86,31 @@ void ObjManager::HandleCollisions()
 {
     FoodCollisions();
     DeathBy = SnakeCollisions();
+    ReorderIterater();
 }
 void ObjManager::FoodCollisions()
 {
-    // 모든 뱀
-    for (int id = 0; id < m_snakes.size(); ++id) {
-        auto& snake_head = *m_snakes[id].body.begin();
-
-        auto it = m_foods.begin();
-        while (it != m_foods.end()) {
-            // 뱀의 머리와 현재 먹이(*it) 충돌 체크
-            if (snake_head.CheckCollision(*it)) {
-                SnakeEatFood(id);
-                it = m_foods.erase(it);
-                return;
-            }
-            else {
-                ++it;
-            }
-        }
+    auto snake = m_snakes[0].body.begin();
+    for (int f=0;f<m_foods.size(); f++)
+    {
+        if (snake->CheckCollision(m_foods[f]))
+        {
+            m_foods[f].isalive = false;
+            SnakeEatFood(0);
+        } 
     }
 }
 
 int ObjManager::SnakeCollisions()
 {
-    // 모든 뱀들의 몸통 충돌체크
-    for (int id = 0; id < m_snakes.size(); id++) {
-        for (int i = 1; i < m_snakes[id].body.size(); i++) {
-            if (m_snakes[id].body.begin()->CheckCollision(m_snakes[id].body[i])) {
-                gameover = true;
-                return i;
-            }
-        }
-    }
+    return -1;
+}
 
-    return -1; // 충돌 없음
+void ObjManager::ReorderIterater()
+{
+    for (int f = 0; f < m_foods.size(); f++)
+    {
+        if (m_foods[f].isalive == false)
+            m_foods.erase(m_foods.begin() + f);
+    }
 }
