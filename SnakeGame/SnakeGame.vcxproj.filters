@@ -48,7 +48,7 @@
     <ClInclude Include="ObjManager.h">
       <Filter>소스 파일\Game\Manager\obj</Filter>
     </ClInclude>
-    <ClInclude Include="KeyManager.h">
+    <ClInclude Include="UIManager.h">
       <Filter>소스 파일\Game\Manager\ui</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -71,7 +71,7 @@
     <ClCompile Include="ObjManager.cpp">
       <Filter>소스 파일\Game\Manager\obj</Filter>
     </ClCompile>
-    <ClCompile Include="KeyManager.cpp">
+    <ClCompile Include="UIManager.cpp">
       <Filter>소스 파일\Game\Manager\ui</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,7 +10,7 @@
 
 #include "Painter.h"
 #include "ObjManager.h"
-#include "KeyManager.h"
+#include "UIManager.h"
 #include <mmsystem.h>
 #include <chrono>
 
@@ -23,7 +23,7 @@ class Game
 
 	Painter p = {};
 	ObjManager o = {};
-	KeyManager k = {};
+	UIManager k = {};
 public:
 	bool m_isgameover = false;
 	int m_killer_id = -1;

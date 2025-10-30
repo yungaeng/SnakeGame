@@ -16,39 +16,67 @@ void ObjManager::AddSnake(UserData ud)
     Snake s = { ud.name, new_snake };
     m_snakes.emplace_back(s);
 }
-void ObjManager::MoveSnake(int id, int target_x, int target_y)
+void ObjManager::MoveSnake(int id, double deltaTime)
 {
-    // 뱀의 현재 위치 (cx, cy)와 이동 속도 (d)
-    double cx = m_snakes[id].body.begin()->m_x; // double 사용을 위해 타입 변경
-    double cy = m_snakes[id].body.begin()->m_y; // double 사용을 위해 타입 변경
-    double d = m_snakes[id].body.begin()->m_speed; // 이동할 거리 (m_speed)
+    int mx = m_snakes[id].m_target_x;
+    int my = m_snakes[id].m_target_y;
+    int& x = m_snakes[id].body.front().m_x;
+    int& y = m_snakes[id].body.front().m_y;
+    int vel = m_snakes[id].body.front().m_speed;
 
-    double dx = target_x - cx;
-    double dy = target_y - cy;
+    double dx = (double)mx - x;
+    double dy = (double)my - y;
     double distance = std::sqrt(std::pow(dx, 2) + std::pow(dy, 2));
 
-    if (distance == 0.0) {
-        return; 
+    if (distance < 1.0) {
+        x = mx;
+        y = my;
+        return;
     }
 
-    double unit_dx = dx / distance;
-    double unit_dy = dy / distance;
+    double moveDistance = 0.01 * (double)vel * deltaTime;
+    double finalMoveDistance = std::min(moveDistance, distance);
+    double ratio = finalMoveDistance / distance;
 
-    double new_x = cx + (unit_dx * d);
-    double new_y = cy + (unit_dy * d);
+    int next_x = x + (int)std::round(dx * ratio);
+    int next_y = y + (int)std::round(dy * ratio);
 
-    if (new_y > 10 && new_y < MAP_SIZE - 40 && new_x > 5 && new_x < MAP_SIZE - 10) {
+    if (finalMoveDistance == distance) {
+        next_x = mx;
+        next_y = my;
+    }
+
+    bool isInBounds = (next_y > 10 && next_y < MAP_SIZE - 40 &&
+        next_x > 5 && next_x < MAP_SIZE - 10);
+    if (isInBounds) {
+        // A. 몸통 이동: 머리가 움직이기 전, 꼬리부터 머리 바로 뒤 조각까지 
+        //    '이전 조각의 현재 위치'를 따라가게 합니다. (매우 중요)
+
         if (m_snakes[id].body.size() > 1) {
             for (size_t i = m_snakes[id].body.size() - 1; i > 0; i--) {
-                // i 번째 조각의 현재 위치는 바로 앞 조각 (i-1)의 현재 위치를 따라갑니다.
-                m_snakes[id].body[i].m_x = m_snakes[id].body[i - 1].m_x;
-                m_snakes[id].body[i].m_y = m_snakes[id].body[i - 1].m_y;
+                const double SEGMENT_SIZE = m_snakes[id].body.front().m_size;
+
+                double prev_x = m_snakes[id].body[i - 1].m_x;
+                double prev_y = m_snakes[id].body[i - 1].m_y;
+                double current_x = m_snakes[id].body[i].m_x;
+                double current_y = m_snakes[id].body[i].m_y;
+
+                double vec_x = current_x - prev_x;
+                double vec_y = current_y - prev_y;
+                double dist = std::sqrt(vec_x * vec_x + vec_y * vec_y);
+
+                if (dist > 0.0) {
+                    double unit_vec_x = vec_x / dist;
+                    double unit_vec_y = vec_y / dist;
+
+                    m_snakes[id].body[i].m_x = (int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE);
+                    m_snakes[id].body[i].m_y = (int)std::round(prev_y + unit_vec_y * SEGMENT_SIZE);
+                }
+                // dist가 0이면 두 조각이 겹친 상태이므로 이동할 필요가 없습니다.
             }
         }
-
-        // 10. 뱀의 머리를 'm_speed'만큼 이동시킨 새 위치로 업데이트 (몸통 이동 후에 실행)
-        m_snakes[id].body.front().m_x = new_x;
-        m_snakes[id].body.front().m_y = new_y;
+        x = next_x;
+        y = next_y;
     }
 }
 void ObjManager::DeleteSnake(int id)

@@ -145,7 +145,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         return 0;
     }
     case WM_KEYDOWN: 
-    case WM_LBUTTONDOWN:
+    case WM_MOUSEMOVE:
         g_game.Input(wParam, lParam);
         InvalidateRect(hwnd, NULL, false);
         break;

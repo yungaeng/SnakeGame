@@ -1,6 +1,9 @@
 #pragma once
+#define NOMINMAX
+
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include "Object.h"
 
 #define MAP_SIZE 700
@@ -12,8 +15,12 @@ struct UserData {
 struct Snake {
 	UserData userdata;
 	std::vector<Object> body;
-
-	Snake(const wchar_t* name, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name); body = b; };
+	int m_target_x, m_target_y;
+	Snake(const wchar_t* name, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name);
+	body = b;
+	m_target_x = b.front().m_x;
+	m_target_y = b.front().m_y;
+	};
 };
 
 class ObjManager
@@ -27,7 +34,7 @@ public:
 	void AddFood(int x, int y, COLORREF c);
 
 	void AddSnake(UserData ud);
-	void MoveSnake(int id, int x, int y);
+	void MoveSnake(int id, double deltaTime);
 	void SnakeEatFood(int id);
 	void DeleteSnake(int id);
 

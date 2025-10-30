@@ -106,7 +106,6 @@ void Game::EndNetwork()
 double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
-	m_timer = now;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
 }
 

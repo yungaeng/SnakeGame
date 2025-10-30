@@ -6,7 +6,7 @@ class UIManager
 {
 public:
 	UIManager() {};
-	void KeyInput(ObjManager o, WPARAM wParam);
-	void MouseInput(ObjManager o, LPARAM lParam, double deltaTime);
+	void Input(ObjManager o, WPARAM wParam);
+	void MouseInput(ObjManager o, LPARAM lParam);
 };
 
