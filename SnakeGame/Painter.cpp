@@ -12,6 +12,15 @@ void Painter::DrawBackGround(HDC hdc)
     HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
     FillRect(hdc, &backgroundRect, backgroundBrush);
     DeleteObject(backgroundBrush);
+
+    // --- 텍스트 출력 추가 부분 ---
+    char textBuffer[32];
+    sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d",
+        (int)ObjManager::m_foods.size(), (int)ObjManager::m_snakes.size());
+    SetBkMode(hdc, OPAQUE);
+    COLORREF textColorBg = RGB(255, 255, 200);
+    SetBkColor(hdc, textColorBg);
+    TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
 }
 
 void Painter::DrawObject(HDC hdc)
@@ -46,7 +55,6 @@ void Painter::DrawName(HDC hdc, int x, int y, wchar_t name[MAX_NAME_SIZE], int s
 
     std::wstringstream ssOffset;
     ssOffset << L"(" << name << L")";
-
     std::wstring offsetText = ssOffset.str();
     TextOut(hdc, x - 2 * size, y - 2 * size, offsetText.c_str(), offsetText.length());
 }

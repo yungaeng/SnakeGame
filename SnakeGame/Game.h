@@ -30,6 +30,11 @@ public:
 	UserData userdata = {};
 
 	Game() {
+		m_isconnect = false;
+		m_socket = {};
+		m_send_buf[0] = '\0';
+		m_recv_buf[0] = '\0';
+
 		m_isgameover = false;
 		m_killer_id = -1;
 		p = {};

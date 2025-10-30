@@ -9,7 +9,7 @@ void ObjManager::AddFood(int x, int y, COLORREF c)
 }
 void ObjManager::AddSnake(UserData ud)
 {
-    int x = 350;
+    int x = rand() % 700;
     int y = rand() % 700;
     std::vector<Object> new_snake;
     new_snake.emplace_back(Object(x, y, ud.color));
@@ -46,12 +46,9 @@ void ObjManager::MoveSnake(int id, double deltaTime)
         next_y = my;
     }
 
-    bool isInBounds = (next_y > 10 && next_y < MAP_SIZE - 40 &&
-        next_x > 5 && next_x < MAP_SIZE - 10);
-    if (isInBounds) {
-        // A. 몸통 이동: 머리가 움직이기 전, 꼬리부터 머리 바로 뒤 조각까지 
-        //    '이전 조각의 현재 위치'를 따라가게 합니다. (매우 중요)
-
+    if (next_y > 10 && next_y < MAP_SIZE - 40 &&
+        next_x > 5 && next_x < MAP_SIZE - 10) 
+    {
         if (m_snakes[id].body.size() > 1) {
             for (size_t i = m_snakes[id].body.size() - 1; i > 0; i--) {
                 const double SEGMENT_SIZE = m_snakes[id].body.front().m_size;
@@ -72,7 +69,6 @@ void ObjManager::MoveSnake(int id, double deltaTime)
                     m_snakes[id].body[i].m_x = (int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE);
                     m_snakes[id].body[i].m_y = (int)std::round(prev_y + unit_vec_y * SEGMENT_SIZE);
                 }
-                // dist가 0이면 두 조각이 겹친 상태이므로 이동할 필요가 없습니다.
             }
         }
         x = next_x;

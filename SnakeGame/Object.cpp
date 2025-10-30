@@ -5,6 +5,10 @@ Object::Object(int x, int y, COLORREF c)
     m_x = x;
     m_y = y;
     m_color = c;
+
+    isalive = true;
+    m_size = 10;
+    m_speed = 20;
 }
 
 bool Object::CheckCollision(const Object& other) const

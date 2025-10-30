@@ -6,8 +6,9 @@
 #include <algorithm>
 #include "Object.h"
 
-#define MAP_SIZE 700
-#define MAX_NAME_SIZE 10
+constexpr auto MAP_SIZE = 700;
+constexpr auto MAX_NAME_SIZE = 10;
+
 struct UserData {
 	wchar_t name[MAX_NAME_SIZE];
 	COLORREF color;
@@ -16,6 +17,7 @@ struct Snake {
 	UserData userdata;
 	std::vector<Object> body;
 	int m_target_x, m_target_y;
+
 	Snake(const wchar_t* name, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name);
 	body = b;
 	m_target_x = b.front().m_x;
