@@ -12,6 +12,7 @@ struct UserData {
 struct Snake {
 	UserData userdata;
 	std::vector<Object> body;
+
 	Snake(const wchar_t* name, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name); body = b; };
 };
 
@@ -23,7 +24,7 @@ public:
 
 	ObjManager() { gameover = false; DeathBy = -1; };
 
-	void AddFood(pos p, COLORREF c);
+	void AddFood(int x, int y, COLORREF c);
 
 	void AddSnake(UserData ud);
 	void MoveSnake(int id, int x, int y);

@@ -9,9 +9,10 @@ void Game::InitGame(HDC hdc)
 	// 먹이 만들기
 	for (int i = 0; i < 10; i++)
 	{
-		pos p = { rand() % 600, rand() % 600 };
+		int x = rand() % 600;
+		int y = rand() % 600;
 		COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(p, col);
+		o.AddFood(x, y, col);
 	}
 
 	// 타이머 시작
@@ -28,9 +29,11 @@ void Game::UpdateGame()
 	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
 
 	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
-		pos p{ rand() % 700, rand() % 700, 0, 0 };
+		int x = rand() % 700;
+		int y = rand() % 700;
+	
 		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(p, c);
+		o.AddFood(x, y, c);
 
 		m_last_food_spawn_time = now;
 	}

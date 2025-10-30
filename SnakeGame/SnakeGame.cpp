@@ -153,6 +153,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_LBUTTONDOWN:
     {
         g_game.InputMouse(lParam);
+        InvalidateRect(hwnd, NULL, false);
         break;
     }
     case WM_DESTROY:
@@ -243,11 +244,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
                 int killid = g_game.m_killer_id;
+
                 wchar_t message_buffer[256];
+                wchar_t* name = g_game.GetName(killid);
                 swprintf_s(message_buffer,
                     256,
-                    L"당신은 ID %d 에게 죽었습니다!! 다시하시겠습니까?",
-                    killid);
+                    L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?",
+                    name);
                 int result = MessageBox(hwnd,
                     message_buffer,
                     L"Game Over",
@@ -264,6 +267,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                     PostQuitMessage(0); // 게임 종료
                 }
                 continue;
+
             }
             // 업데이트 후 화면 무효화.
             InvalidateRect(hwnd, NULL, false);

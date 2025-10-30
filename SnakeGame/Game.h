@@ -47,7 +47,7 @@ public:
 	void Draw(HDC hdc) { p.Draw(hdc); };
 	void InputKey(WPARAM wParam) { k.Input(o, wParam); };
 	void InputMouse(LPARAM lParam) { k.MouseInput(o, lParam); };
-
+	wchar_t* GetName(int id) { return o.m_snakes[id].userdata.name; };
 	bool IsGameOver() { return m_isgameover; };
 	void UpdateGame();
 	
