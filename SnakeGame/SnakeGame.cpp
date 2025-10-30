@@ -34,7 +34,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
         L"------------------------------------------";
 
-    static UserData* pSettings = g_game.GetUserDataPtr();
+    static UserData* pSettings = &g_game.userdata;
     switch (message) {
     case WM_INITDIALOG: {
         // DialogBoxParam으로 전달된 lParam을 GameSettings 구조체 포인터에 저장
@@ -145,17 +145,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         return 0;
     }
     case WM_KEYDOWN: 
-    {
-        g_game.InputKey(wParam);
-        InvalidateRect(hwnd, NULL, false);
-        break;
-    }
     case WM_LBUTTONDOWN:
-    {
-        g_game.InputMouse(lParam);
+        g_game.Input(wParam, lParam);
         InvalidateRect(hwnd, NULL, false);
         break;
-    }
     case WM_DESTROY:
         SelectObject(g_hMemDC, g_hOldBitmap);
         DeleteObject(g_hBitmap);
@@ -179,7 +172,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         MAKEINTRESOURCE(IDD_START_DIALOG),
         NULL,
         StartDialogProc,
-        (LPARAM)g_game.GetUserDataPtr());
+        (LPARAM)&g_game.userdata);
 
     // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
     if (dialogResult != IDOK) {
@@ -239,14 +232,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 메시지가 없을 때 (Idle Time)
             // 업데이트에 fps 추가해야 함
             // recv
-            g_game.UpdateGame();
+            g_game.Update();
             
             // 게임 오버 체크 및 종료 처리
-            if (g_game.IsGameOver()) {
-                int killid = g_game.m_killer_id;
+            if (g_game.m_isgameover) {
+                int killer_id = g_game.m_killer_id;
 
                 wchar_t message_buffer[256];
-                wchar_t* name = g_game.GetName(killid);
+                wchar_t* name = g_game.GetNameById(killer_id);
                 swprintf_s(message_buffer,
                     256,
                     L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?",
@@ -263,8 +256,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 }
                 else {
                     // 사용자가 '아니오' (종료)을 눌렀을 때
-                    g_game.End();       // 네트워크 종료
-                    PostQuitMessage(0); // 게임 종료
+                    g_game.EndNetwork();       // 네트워크 종료
+                    PostQuitMessage(0);        // 게임 종료
                 }
                 continue;
 

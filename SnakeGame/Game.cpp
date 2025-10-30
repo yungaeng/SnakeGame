@@ -20,8 +20,12 @@ void Game::InitGame(HDC hdc)
 	m_last_food_spawn_time = std::chrono::steady_clock::now();
 }
 
-void Game::UpdateGame()
+void Game::Update()
 {
+	double deltaTime = GetElapsedTime();
+	for (int id = 0; id < o.m_snakes.size(); id++)
+		o.MoveSnake(id, deltaTime);
+
 	m_isgameover = o.UpDate();
 	m_killer_id = o.DeathBy;
 
@@ -92,7 +96,7 @@ void Game::Send()
 	send(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
 }
 
-void Game::End()
+void Game::EndNetwork()
 {
 	// ¼ÒÄÏ ´Ý±â
 	closesocket(m_socket);
@@ -102,6 +106,7 @@ void Game::End()
 double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
+	m_timer = now;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
 }
 

@@ -16,23 +16,18 @@
 
 class Game
 {
-	//Network
-
 	bool m_isconnect;
 	SOCKET m_socket;
 	char m_send_buf[BUF_SIZE];
 	char m_recv_buf[BUF_SIZE];
 
-	//------------------------------
-
 	Painter p = {};
 	ObjManager o = {};
 	KeyManager k = {};
-	UserData userdata = {};
-
 public:
 	bool m_isgameover = false;
 	int m_killer_id = -1;
+	UserData userdata = {};
 
 	Game() {
 		m_isgameover = false;
@@ -45,25 +40,20 @@ public:
 	~Game() {};
 	void InitGame(HDC hdc);
 	void Draw(HDC hdc) { p.Draw(hdc); };
-	void InputKey(WPARAM wParam) { k.Input(o, wParam); };
-	void InputMouse(LPARAM lParam) { k.MouseInput(o, lParam); };
-	wchar_t* GetName(int id) { return o.m_snakes[id].userdata.name; };
-	bool IsGameOver() { return m_isgameover; };
-	void UpdateGame();
+	void Input(WPARAM wParam, LPARAM lParam) { k.Input(o, wParam); k.MouseInput(o, lParam); };
+
+	void Update();
 	
 	void ReStart();
 
 	void StartBGM();
 	void StopBGM();
-
-	UserData* GetUserDataPtr() { return &userdata; };
-
-	// Network
-
+	wchar_t* GetNameById(int id) { return o.m_snakes[id].userdata.name; };
+	
 	bool InitNetwork();
 	void Recv();
 	void Send();
-	void End();
+	void EndNetwork();
 
 	//------------------------------
 private:
