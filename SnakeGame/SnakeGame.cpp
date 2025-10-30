@@ -242,7 +242,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             
             // 게임 오버 체크 및 종료 처리
             if (g_game.IsGameOver()) {
-                int killid = g_game.IsGameOver();
+                int killid = g_game.m_killer_id;
                 wchar_t message_buffer[256];
                 swprintf_s(message_buffer,
                     256,

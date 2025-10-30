@@ -38,8 +38,12 @@ void Game::UpdateGame()
 
 void Game::ReStart()
 {
-	m_isgameover = false;
 	o.gameover = false;
+	m_isgameover = false;
+	m_killer_id = -1;
+
+	o.DeleteSnake(0);
+	o.AddSnake(userdata);
 }
 
 void Game::StartBGM()

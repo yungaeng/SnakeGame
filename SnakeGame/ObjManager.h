@@ -37,6 +37,6 @@ private:
 	void HandleCollisions();
 	void FoodCollisions();
 	int SnakeCollisions();
-	void ReorderIterater();
+	void GarbageCollector();
 };
 

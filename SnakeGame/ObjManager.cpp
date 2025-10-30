@@ -78,7 +78,7 @@ void ObjManager::DeleteSnake(int id)
 bool ObjManager::UpDate()
 {
     HandleCollisions();
-    
+    GarbageCollector();
     return gameover;
 }
 
@@ -86,7 +86,6 @@ void ObjManager::HandleCollisions()
 {
     FoodCollisions();
     DeathBy = SnakeCollisions();
-    ReorderIterater();
 }
 void ObjManager::FoodCollisions()
 {
@@ -103,10 +102,30 @@ void ObjManager::FoodCollisions()
 
 int ObjManager::SnakeCollisions()
 {
+    Snake my_snake = m_snakes[0];
+    for (int i = 2; i < my_snake.body.size(); i++)
+    {
+        if (my_snake.body.begin()->CheckCollision(my_snake.body[i]))
+        {
+            gameover = true;
+            return 0;
+        }
+    }
+
+    for (int other = 1; other < m_snakes.size(); other++) {
+        for (int i = 2; i < my_snake.body.size(); i++)
+        {
+            if (m_snakes[other].body.begin()->CheckCollision(my_snake.body[i]))
+            {
+                gameover = true;
+                return other;
+            }
+        }
+    }
     return -1;
 }
 
-void ObjManager::ReorderIterater()
+void ObjManager::GarbageCollector()
 {
     for (int f = 0; f < m_foods.size(); f++)
     {
