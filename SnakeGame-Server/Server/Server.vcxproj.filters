@@ -1,22 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <ClCompile Include="main.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>Session</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>GameMap</Filter>
+    </ClCompile>
+    <ClCompile Include="RecvBuffer.cpp">
+      <Filter>RecvBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="SendBuffer.cpp">
+      <Filter>SendBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerManager.cpp">
+      <Filter>ServerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="LockQueue.cpp">
+      <Filter>LockQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>Session</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
+      <Filter>GameMap</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvBuffer.h">
+      <Filter>RecvBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="SendBuffer.h">
+      <Filter>SendBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\protocol\protocol.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerManager.h">
+      <Filter>ServerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="LockQueue.h">
+      <Filter>LockQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="main">
+      <UniqueIdentifier>{7a87780c-610e-44c0-8b70-c952e7b80b44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="pch">
+      <UniqueIdentifier>{05611874-717b-40b4-a9dc-7b85dc5a8bf9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Session">
+      <UniqueIdentifier>{64146e37-927f-430d-8e06-b8dfd0adec11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameMap">
+      <UniqueIdentifier>{e5a0cca7-c5b2-4fb7-82e8-981eabd824f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RecvBuffer">
+      <UniqueIdentifier>{00bbc366-e83f-4607-a113-c62c11d5369e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SendBuffer">
+      <UniqueIdentifier>{4d387ab6-2506-4efd-a5b4-4983cd746029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{eff2511f-32a5-4540-ad8f-b295ebe9d28e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ServerManager">
+      <UniqueIdentifier>{d4b1a730-7f63-4e9a-bf6a-c419b7654697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LockQueue">
+      <UniqueIdentifier>{c87dd9f7-5d0f-48ea-96ec-843b1c1d751e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{b2163046-071f-4805-ac62-b296a785e610}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
+    <Text Include="readme.txt" />
   </ItemGroup>
 </Project>
