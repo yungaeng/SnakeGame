@@ -4,7 +4,7 @@ void Game::InitGame(HDC hdc)
 {
 	m_isgameover = -1;
 
-	o.AddSnake(userdata);
+	o.AddSnake(m_userdata);
 
 	// 먹이 만들기
 	for (int i = 0; i < 10; i++)
@@ -29,18 +29,7 @@ void Game::Update()
 	m_isgameover = o.UpDate();
 	m_killer_id = o.DeathBy;
 
-	auto now = std::chrono::steady_clock::now();
-	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
-
-	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
-		int x = rand() % 700;
-		int y = rand() % 700;
-	
-		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(x, y, c);
-
-		m_last_food_spawn_time = now;
-	}
+	SpawnFood();
 }
 
 void Game::ReStart()
@@ -50,7 +39,8 @@ void Game::ReStart()
 	m_killer_id = -1;
 
 	o.DeleteSnake(0);
-	o.AddSnake(userdata);
+
+	o.AddSnake(m_userdata);
 }
 
 void Game::StartBGM()
@@ -67,12 +57,23 @@ bool Game::InitNetwork()
 {
 	// 윈속 초기화
 	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		MessageBox(NULL, L"WSADATA Init Error", L"Error", MB_ICONERROR);
 		return false;
+	}
 
 	// 소켓 생성
 	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET) return false;
+	if (sock == INVALID_SOCKET) {
+		MessageBox(NULL, L"Socket Error", L"Error", MB_ICONERROR);
+		return false;
+	}
+
+	u_long non_blocking_mode = 1;
+	if (ioctlsocket(sock, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
+		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
+		return false;
+	}
 
 	// connect()
 	struct sockaddr_in serveraddr;
@@ -81,19 +82,22 @@ bool Game::InitNetwork()
 	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVER_PORT);
 	int retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) return false;
+	if (retval == SOCKET_ERROR) {
+		MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
+		return false;
+	}
 
+	m_isconnect = true;
 	return true;
 }
 
 void Game::Recv()
 {
-	recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
+	//recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
 }
 
-void Game::Send()
+void Game::Send(SENDTYPE type)
 {
-	send(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
 }
 
 void Game::EndNetwork()
@@ -107,5 +111,21 @@ double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
+}
+
+void Game::SpawnFood()
+{
+	auto now = std::chrono::steady_clock::now();
+	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
+
+	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
+		int x = rand() % 700;
+		int y = rand() % 700;
+
+		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
+		o.AddFood(x, y, c);
+
+		m_last_food_spawn_time = now;
+	}
 }
 

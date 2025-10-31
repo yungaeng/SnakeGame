@@ -34,7 +34,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
         L"------------------------------------------";
 
-    static UserData* pSettings = &g_game.userdata;
+    static UserData* pSettings = &g_game.m_userdata;
     switch (message) {
     case WM_INITDIALOG: {
         // DialogBoxParam으로 전달된 lParam을 GameSettings 구조체 포인터에 저장
@@ -164,15 +164,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
     // 서버와 연결
-    g_game.InitNetwork();
-
+    if (!g_game.InitNetwork())
+        return 0;
+      
     // 다이얼로그 박스 표시 및 설정값 입력
     INT_PTR dialogResult = DialogBoxParam(
         hInstance,
         MAKEINTRESOURCE(IDD_START_DIALOG),
         NULL,
         StartDialogProc,
-        (LPARAM)&g_game.userdata);
+        (LPARAM)&g_game.m_userdata);
 
     // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
     if (dialogResult != IDOK) {
@@ -181,7 +182,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
     // 케넥트 후->
     // 로그인 정보 서버로 보내기
-    g_game.Send();
+    //g_game.Send();
 
 
     WNDCLASS wc = { 0 };
@@ -230,11 +231,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         }
         else {
             // 메시지가 없을 때 (Idle Time)
-            // 업데이트에 fps 추가해야 함
-            // recv
+            g_game.Recv();
             g_game.Update();
-            
-            // 게임 오버 체크 및 종료 처리
+
             if (g_game.m_isgameover) {
                 int killer_id = g_game.m_killer_id;
 
@@ -242,8 +241,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 wchar_t* name = g_game.GetNameById(killer_id);
                 swprintf_s(message_buffer,
                     256,
-                    L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?",
-                    name);
+                    L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d",
+                    name, g_game.GetScoreById(0));
                 int result = MessageBox(hwnd,
                     message_buffer,
                     L"Game Over",
@@ -251,7 +250,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
                 if (result == IDYES) {
                     // '예'를 선택한 경우: 
-                    g_game.ReStart(); // TODO : 재시작 구현
+                    g_game.ReStart();
                     continue;
                 }
                 else {

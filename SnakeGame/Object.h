@@ -10,7 +10,7 @@ public:
 	bool isalive = true;
 
 	int m_size = 10;
-	int m_speed = 20;
+	double m_speed = 20.0;
 public:
 	Object(int x, int y, COLORREF c);
 	bool CheckCollision(const Object& other) const;

@@ -14,9 +14,9 @@ void Painter::DrawBackGround(HDC hdc)
     DeleteObject(backgroundBrush);
 
     // --- 텍스트 출력 추가 부분 ---
-    char textBuffer[32];
-    sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d",
-        (int)ObjManager::m_foods.size(), (int)ObjManager::m_snakes.size());
+    char textBuffer[50];
+    sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
+        (int)ObjManager::m_foods.size(), (int)ObjManager::m_snakes.size(), (int)ObjManager::m_snakes[0].body.size() * 10);
     SetBkMode(hdc, OPAQUE);
     COLORREF textColorBg = RGB(255, 255, 200);
     SetBkColor(hdc, textColorBg);

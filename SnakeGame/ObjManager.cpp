@@ -22,7 +22,7 @@ void ObjManager::MoveSnake(int id, double deltaTime)
     int my = m_snakes[id].m_target_y;
     int& x = m_snakes[id].body.front().m_x;
     int& y = m_snakes[id].body.front().m_y;
-    int vel = m_snakes[id].body.front().m_speed;
+    double vel = m_snakes[id].body.front().m_speed;
 
     double dx = (double)mx - x;
     double dy = (double)my - y;
@@ -34,7 +34,7 @@ void ObjManager::MoveSnake(int id, double deltaTime)
         return;
     }
 
-    double moveDistance = 0.01 * (double)vel * deltaTime;
+    double moveDistance = vel * deltaTime;
     double finalMoveDistance = std::min(moveDistance, distance);
     double ratio = finalMoveDistance / distance;
 
