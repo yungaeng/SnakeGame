@@ -22,6 +22,9 @@ void Game::InitGame(HDC hdc)
 
 void Game::Update()
 {
+	memcpy(m_send_buf, "hello", sizeof(6));
+	send(m_socket, m_send_buf, sizeof(m_send_buf), 0);
+
 	double deltaTime = GetElapsedTime();
 	for (int id = 0; id < o.m_snakes.size(); id++)
 		o.MoveSnake(id, deltaTime);
@@ -69,11 +72,11 @@ bool Game::InitNetwork()
 		return false;
 	}
 
-	u_long non_blocking_mode = 1;
+	/*u_long non_blocking_mode = 1;
 	if (ioctlsocket(sock, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
 		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
 		return false;
-	}
+	}*/
 
 	// connect()
 	struct sockaddr_in serveraddr;
@@ -96,16 +99,32 @@ void Game::Recv()
 	//recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
 }
 
-void Game::Send()
+void Game::Send(PACKET_ID pid)
 {
-	CS_LOGIN login;
-	wcstombs(login.name, m_userdata.name, sizeof(login.name));
-	login.color = m_userdata.color;
-
-	memcpy(m_send_buf, &login, sizeof(CS_LOGIN));
-
 	if (m_isconnect)
+	{
+		switch (pid)
+		{
+		case PACKET_ID::CS_LOGIN: {
+			CS_LOGIN_PACKET p;
+			memcpy(p.name, m_userdata.name, sizeof(m_userdata.name));
+			p.color = m_userdata.color;
+			memcpy(m_send_buf, &p, sizeof(p));
+			break;
+		}
+		case PACKET_ID::CS_MOVE:
+			break;
+		case PACKET_ID::CS_RESTART:
+			break;
+		case PACKET_ID::CS_LEAVE:
+			break;
+		default:
+			break;
+		}
+
+		memcpy(m_send_buf, "hello", sizeof(6));
 		send(m_socket, m_send_buf, sizeof(m_send_buf), 0);
+	}
 }
 
 void Game::EndNetwork()

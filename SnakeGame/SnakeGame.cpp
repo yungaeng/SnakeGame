@@ -124,6 +124,9 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: 
     {
         g_game.InitGame(hdc);
+        
+        // 로그인 정보 서버로 보내기
+        g_game.Send(PACKET_ID::CS_LOGIN);
 
         HDC hdc = GetDC(hwnd);
         g_hMemDC = CreateCompatibleDC(hdc);
@@ -180,9 +183,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         return 0;
     }
 
-    // 로그인 정보 서버로 보내기
-    g_game.Send();
-
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -214,6 +214,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     }
 
     g_game.StartBGM();
+
     ShowWindow(hwnd, nCmdShow);
     MSG msg;
 
@@ -231,7 +232,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 메시지가 없을 때 (Idle Time)
             g_game.Recv();
             g_game.Update();
-
+           
             if (g_game.m_isgameover) {
                 int killer_id = g_game.m_killer_id;
 

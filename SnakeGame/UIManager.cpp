@@ -4,7 +4,6 @@ void UIManager::Input(ObjManager o, WPARAM wParam)
 {
 	switch (wParam)
 	{
-
 	case 'Q': PostQuitMessage(0);
 	}
 }

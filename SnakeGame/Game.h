@@ -3,10 +3,10 @@
 #include <winsock2.h>			// 윈속2 메인 헤더
 #include <ws2tcpip.h>			// 윈속2 확장 헤더
 #pragma comment(lib, "ws2_32")	//ws2_32.lib 링크
-#include "..\protocol\protocol.h"
+#include "..\SnakeGame-Server\Server\pch.h"
 #include <cstdlib> // For wcstombs
 
-#define SERVER_IP "192.168.64.59"	// 서버의 ip주소
+#define SERVER_IP "127.0.0.1"	// 서버의 ip주소
 #define SERVER_PORT 9000		// 서버의 포트번호
 #define BUF_SIZE 512			// 송수신 버퍼의 크기
 
@@ -59,7 +59,7 @@ public:
 
 	bool InitNetwork();
 	void Recv();
-	void Send();
+	void Send(PACKET_ID pid);
 	void EndNetwork();
 
 private:
