@@ -3,6 +3,8 @@
 #include <winsock2.h>			// 윈속2 메인 헤더
 #include <ws2tcpip.h>			// 윈속2 확장 헤더
 #pragma comment(lib, "ws2_32")	//ws2_32.lib 링크
+#include "..\protocol\protocol.h"
+#include <cstdlib> // For wcstombs
 
 #define SERVER_IP "192.168.64.59"	// 서버의 ip주소
 #define SERVER_PORT 9000		// 서버의 포트번호
@@ -13,10 +15,6 @@
 #include "UIManager.h"
 #include <mmsystem.h>
 #include <chrono>
-
-enum SENDTYPE {
-	ENTER, MOVE, RESTART, LEAVE
-};
 
 class Game
 {
@@ -61,7 +59,7 @@ public:
 
 	bool InitNetwork();
 	void Recv();
-	void Send(SENDTYPE type);
+	void Send();
 	void EndNetwork();
 
 private:

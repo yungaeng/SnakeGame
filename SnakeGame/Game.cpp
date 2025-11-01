@@ -96,8 +96,16 @@ void Game::Recv()
 	//recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
 }
 
-void Game::Send(SENDTYPE type)
+void Game::Send()
 {
+	CS_LOGIN login;
+	wcstombs(login.name, m_userdata.name, sizeof(login.name));
+	login.color = m_userdata.color;
+
+	memcpy(m_send_buf, &login, sizeof(CS_LOGIN));
+
+	if (m_isconnect)
+		send(m_socket, m_send_buf, sizeof(m_send_buf), 0);
 }
 
 void Game::EndNetwork()
