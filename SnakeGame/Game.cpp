@@ -66,8 +66,8 @@ bool Game::InitNetwork()
 	}
 
 	// 家南 积己
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET) {
+	m_socket = socket(AF_INET, SOCK_STREAM, 0);
+	if (m_socket == INVALID_SOCKET) {
 		MessageBox(NULL, L"Socket Error", L"Error", MB_ICONERROR);
 		return false;
 	}
@@ -84,7 +84,7 @@ bool Game::InitNetwork()
 	serveraddr.sin_family = AF_INET;
 	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVER_PORT);
-	int retval = connect(sock, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) {
 		MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
 		return false;
@@ -103,13 +103,13 @@ void Game::Send(PACKET_ID pid)
 {
 	if (m_isconnect)
 	{
+		CS_LOGIN_PACKET sendPkt;	
 		switch (pid)
 		{
 		case PACKET_ID::CS_LOGIN: {
-			CS_LOGIN_PACKET p;
-			memcpy(p.name, m_userdata.name, sizeof(m_userdata.name));
-			p.color = m_userdata.color;
-			memcpy(m_send_buf, &p, sizeof(p));
+			memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
+			sendPkt.color = m_userdata.color;
+			memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
 			break;
 		}
 		case PACKET_ID::CS_MOVE:
@@ -122,8 +122,7 @@ void Game::Send(PACKET_ID pid)
 			break;
 		}
 
-		memcpy(m_send_buf, "hello", sizeof(6));
-		send(m_socket, m_send_buf, sizeof(m_send_buf), 0);
+		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
 
