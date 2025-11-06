@@ -7,10 +7,8 @@ void ObjManager::AddFood(int x, int y, COLORREF c)
 {
     m_foods.emplace_back(Object(x, y, c));
 }
-void ObjManager::AddSnake(UserData ud)
+void ObjManager::AddSnake(UserData ud, int x, int y)
 {
-    int x = rand() % 700;
-    int y = rand() % 700;
     std::vector<Object> new_snake;
     new_snake.emplace_back(Object(x, y, ud.color));
     Snake s = { ud.name, new_snake };
@@ -124,10 +122,12 @@ void ObjManager::FoodCollisions()
     auto& snake_head = m_snakes[0].body.front(); // 참조를 사용하고 front() 사용
     for (int f = (int)m_foods.size() - 1; f >= 0; f--)
     {
-        if (snake_head.CheckCollision(m_foods[f]))
-        {
-            m_foods[f].isalive = false;
-            SnakeEatFood(0);
+        if (&snake_head) {
+            if (snake_head.CheckCollision(m_foods[f]))
+            {
+                m_foods[f].isalive = false;
+                SnakeEatFood(0);
+            }
         }
     }
 }

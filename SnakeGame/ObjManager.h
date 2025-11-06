@@ -35,7 +35,7 @@ public:
 
 	void AddFood(int x, int y, COLORREF c);
 
-	void AddSnake(UserData ud);
+	void AddSnake(UserData ud, int x, int y);
 	void MoveSnake(int id, double deltaTime);
 	void SnakeEatFood(int id);
 	void DeleteSnake(int id);

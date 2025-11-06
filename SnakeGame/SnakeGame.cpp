@@ -124,9 +124,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     case WM_CREATE: 
     {
         g_game.InitGame(hdc);
-        
-        // 로그인 정보 서버로 보내기
-        g_game.Send(PACKET_ID::CS_LOGIN);
 
         HDC hdc = GetDC(hwnd);
         g_hMemDC = CreateCompatibleDC(hdc);
@@ -147,7 +144,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         EndPaint(hwnd, &ps);
         return 0;
     }
-    case WM_KEYDOWN: 
     case WM_MOUSEMOVE:
         g_game.Input(wParam, lParam);
         InvalidateRect(hwnd, NULL, false);
@@ -183,6 +179,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         return 0;
     }
 
+    // 로그인 정보 서버로 보내기
+    g_game.Send(PACKET_ID::CS_LOGIN);
+
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -212,9 +211,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
         return -1;
     }
-
+    
     g_game.StartBGM();
-
     ShowWindow(hwnd, nCmdShow);
     MSG msg;
 
@@ -230,7 +228,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         }
         else {
             // 메시지가 없을 때 (Idle Time)
-            g_game.Recv();
+            // 별도의 스레드에서 recv 중
+            //g_game.Recv();
             g_game.Update();
            
             if (g_game.m_isgameover) {

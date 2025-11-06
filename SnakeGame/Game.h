@@ -22,6 +22,7 @@ class Game
 	SOCKET m_socket;
 	char m_send_buf[BUF_SIZE];
 	char m_recv_buf[BUF_SIZE];
+	int m_received_bytes = 0;       // 현재 버퍼에 쌓여있는 데이터 크기
 
 	Painter p = {};
 	ObjManager o = {};
@@ -59,6 +60,7 @@ public:
 
 	bool InitNetwork();
 	void Recv();
+	void ProcessPacket(char* data);
 	void Send(PACKET_ID pid);
 	void EndNetwork();
 

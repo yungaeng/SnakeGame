@@ -4,7 +4,8 @@ void Game::InitGame(HDC hdc)
 {
 	m_isgameover = -1;
 
-	o.AddSnake(m_userdata);
+	// enter 패킷을 받으면 추가해 줌
+	//o.AddSnake(m_userdata, rand() % 700, rand() % 700);
 
 	// 먹이 만들기
 	for (int i = 0; i < 10; i++)
@@ -22,9 +23,6 @@ void Game::InitGame(HDC hdc)
 
 void Game::Update()
 {
-	memcpy(m_send_buf, "hello", sizeof(6));
-	send(m_socket, m_send_buf, sizeof(m_send_buf), 0);
-
 	double deltaTime = GetElapsedTime();
 	for (int id = 0; id < o.m_snakes.size(); id++)
 		o.MoveSnake(id, deltaTime);
@@ -43,7 +41,7 @@ void Game::ReStart()
 
 	o.DeleteSnake(0);
 
-	o.AddSnake(m_userdata);
+	Send(PACKET_ID::CS_LOGIN);
 }
 
 void Game::StartBGM()
@@ -72,11 +70,11 @@ bool Game::InitNetwork()
 		return false;
 	}
 
-	/*u_long non_blocking_mode = 1;
-	if (ioctlsocket(sock, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
+	u_long non_blocking_mode = 1;
+	if (ioctlsocket(m_socket, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
 		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
 		return false;
-	}*/
+	}
 
 	// connect()
 	struct sockaddr_in serveraddr;
@@ -85,25 +83,118 @@ bool Game::InitNetwork()
 	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVER_PORT);
 	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+
 	if (retval == SOCKET_ERROR) {
-		MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
-		return false;
+		int errCode = WSAGetLastError();
+		if (errCode != WSAEWOULDBLOCK) {
+			// 연결 시도 자체가 불가능한 심각한 오류
+			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
+			return false;
+		}
+		// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
 	}
 
-	m_isconnect = true;
+	m_isconnect = true; // 연결 시도가 시작되었으므로 true
+	std::thread([this]() { Recv(); }).detach();
+
 	return true;
 }
 
 void Game::Recv()
 {
-	//recv(m_socket, m_recv_buf, sizeof(m_recv_buf), 0);
+	while (m_isconnect)
+	{
+		int recvLen = ::recv(m_socket, m_recv_buf + m_received_bytes,BUF_SIZE - m_received_bytes, 0);
+
+		if (recvLen == 0)
+		{
+			// 연결 종료
+			EndNetwork();
+			break;
+		}
+		else if (recvLen < 0)
+		{
+			// 오류 처리 (넌블로킹 소켓이므로 WSAEWOULDBLOCK은 정상)
+			int errCode = WSAGetLastError();
+			if (errCode != WSAEWOULDBLOCK)
+			{
+				EndNetwork();
+				break;
+			}
+			// WSAEWOULDBLOCK이 발생하면 잠시 쉬고 다시 시도 (메인 스레드 블로킹 방지)
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			continue; // 재시도
+		}
+
+		// 2. 수신 성공: 누적 바이트 업데이트
+		m_received_bytes += recvLen;
+
+		// 3. 패킷 조립 및 처리 루프 (이전 논블로킹 로직 복구)
+		while (m_received_bytes > 0)
+		{
+			// 헤더가 불완전하면 다음 recv를 기다립니다.
+			if (m_received_bytes < sizeof(PacketHeader))
+			{
+				break;
+			}
+
+			PacketHeader* header = reinterpret_cast<PacketHeader*>(m_recv_buf);
+			uint8_t totalSize = header->packetSize;
+
+			// 완전한 패킷이 도착했는지 확인
+			if (m_received_bytes < totalSize)
+			{
+				break;
+			}
+
+			// 4. 완전한 패킷 처리
+			ProcessPacket(m_recv_buf);
+
+			// 5. 처리된 패킷만큼 버퍼 이동 및 잔여 바이트 갱신
+			m_received_bytes -= totalSize;
+			if (m_received_bytes > 0)
+			{
+				memmove(m_recv_buf, m_recv_buf + totalSize, m_received_bytes);
+			}
+		}
+	}
+
+	// 루프 종료 시 네트워크 정리
+	EndNetwork();
+}
+
+// 추출된 패킷을 처리하고 응답을 보내는 별도의 함수
+void Game::ProcessPacket(char* data)
+{
+	// 1. 패킷 헤더에서 ID 추출
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(data);
+	PACKET_ID pid = static_cast<PACKET_ID>(header->packetID);
+
+	// 2. 패킷 ID에 따라 적절히 처리
+	switch (pid)
+	{
+	case PACKET_ID::SC_ENTER:
+	{
+		SC_ENTER_PACKET* p = reinterpret_cast<SC_ENTER_PACKET*>(data);
+		UserData ud = {};
+		memcpy(ud.name, p->name, 20);
+		ud.color = p->color;
+		o.AddSnake(ud, p->x, p->y);
+		break;
+	}
+	default:
+	{
+		// 알 수 없는 패킷을 받았으므로 연결을 끊거나 무시할 수 있습니다.
+		break;
+	}
+	}
 }
 
 void Game::Send(PACKET_ID pid)
 {
 	if (m_isconnect)
 	{
-		CS_LOGIN_PACKET sendPkt;	
+		CS_LOGIN_PACKET sendPkt = {};
 		switch (pid)
 		{
 		case PACKET_ID::CS_LOGIN: {
@@ -128,6 +219,7 @@ void Game::Send(PACKET_ID pid)
 
 void Game::EndNetwork()
 {
+	m_isconnect = false;
 	// 소켓 닫기
 	closesocket(m_socket);
 	WSACleanup();
