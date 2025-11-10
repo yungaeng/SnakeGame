@@ -71,6 +71,14 @@ void ServerManager::DoAccept(const std::stop_token& st)
 	std::cout << "Finish Accept Thread" << std::endl;
 }
 
+void ServerManager::RemoveSesssion(const uint64 id)
+{
+	std::lock_guard<std::mutex> lk{ m_sessionMutex };
+	if(m_sessions.contains(id)) {
+		m_sessions.erase(id);
+	}
+}
+
 void ServerManager::Finish() noexcept
 {
 	shutdown(m_listenSocket, SD_BOTH);
@@ -79,29 +87,32 @@ void ServerManager::Finish() noexcept
 		std::lock_guard<std::mutex> lk{ m_sessionThreadsMutex };
 		m_sessionThreads.clear();
 	}
-	std::cout << "IOManager Finish" << std::endl;
+	std::cout << "Server Manager Finish" << std::endl;
 }
 
-void ServerManager::FlushSendBufferQueue(const std::stop_token& st)
+//void ServerManager::FlushSendBufferQueue(const std::stop_token& st)
+//{
+//	while(false == st.stop_requested()) {
+//	/*	if(m_sendBufferQueue.Empty() != false) {
+//			auto sendBuffer = m_sendBufferQueue.Pop();
+//			{
+//				if(sendBuffer) {
+//					std::lock_guard<std::mutex> lk{ m_sessionMutex };
+//					for(auto& [id, session] : m_sessions) {
+//						session->AppendToSendBuffer(sendBuffer);
+//					}
+//				}
+//			}
+//		}*/
+//	}
+//
+//	std::cout << "Finish BroadcastThread" << std::endl;
+//}
+
+void ServerManager::Broadcast(SendBuffer* sendBuffer)
 {
-	while(false == st.stop_requested()) {
-		while(m_sendBufferQueue.Empty() != false) {
-			auto sendBuffer = m_sendBufferQueue.Pop();
-			{
-				if(sendBuffer) {
-					std::lock_guard<std::mutex> lk{ m_sessionMutex };
-					for(auto& [id, session] : m_sessions) {
-						session->AppendToSendBuffer(sendBuffer);
-					}
-				}
-			}
-		}
+	std::lock_guard<std::mutex> lk{ m_sessionMutex };
+	for(auto& [id, session] : m_sessions) {
+		session->AppendToSendBuffer(sendBuffer);
 	}
-
-	std::cout << "Finish BroadcastThread" << std::endl;
-}
-
-void ServerManager::Broadcast(std::shared_ptr<SendBuffer> sendBuffer)
-{
-	m_sendBufferQueue.Push(sendBuffer);
 }

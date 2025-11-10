@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Session.h"
 
+#include "ServerManager.h"
+
 Session::Session(const uint64 id, const SOCKET socket)
 	: m_id{ id }, m_socket{ socket }
 {
@@ -16,40 +18,49 @@ Session::~Session()
 void Session::DoIO(const std::stop_token& st)
 {
 	while(false == st.stop_requested()) {
-		DoRecv();	// Recv
-		DoSend();	// Send
+		if(false == DoRecv()) {
+			std::cout << "Session: " << m_id << " DoIO Finish!" << std::endl;
+			break;
+		}
+		DoSend();
 	}
-
-	std::cout << "Finish DoIO!" << std::endl;
 }
 
-void Session::DoRecv()
+bool Session::DoRecv()
 {
 	const int recvLen = ::recv(m_socket, m_recvBuffer.GetWritePos(), m_recvBuffer.GetFreeSize(), 0);
 	
 	if(recvLen == SOCKET_ERROR) {
 		int32 errCode = ::WSAGetLastError();
-		// 지금 recv할 게 없지만, 논블로킹 소켓으로 만들었기 떄문에 이 오류 뱉어낸다.
 		if(WSAEWOULDBLOCK == errCode)
-			return;
-		else {		
-			return;
+			return true;
+		else {
+			if(WSAECONNRESET == errCode) {
+				Disconnect("Client Disconnect");
+				return false;
+			}
 		}
+	}
+	else if(recvLen == 0) {
+		Disconnect("Recv Zero");
+		return false;
 	}
 	
 	if(false == m_recvBuffer.OnWrite(recvLen)) {
 		std::cout << "OnWrite Error" << std::endl;
-		return;
+		return false;
 	}
 
 	const unsigned int dataSize = m_recvBuffer.GetDataSize();
 	const uint32 processedLen = ProcessRecv(m_recvBuffer.GetReadPos(), dataSize);
 	if(processedLen < 0 || dataSize < processedLen || m_recvBuffer.OnRead(processedLen) == false) {
-		std::cout << "OnRead Error" << std::endl;
-		return;
+		std::cout << "DoRecv Error" << std::endl;
+		return false;
 	}
 
 	m_recvBuffer.Clean();
+
+	return true;
 }
 
 void Session::DoSend()
@@ -59,7 +70,7 @@ void Session::DoSend()
 	m_sendBuffer.Clear();
 }
 
-void Session::AppendToSendBuffer(std::shared_ptr<SendBuffer> sendBuffer)
+void Session::AppendToSendBuffer(SendBuffer* sendBuffer)
 {
 	std::lock_guard<std::mutex> lk{ m_sendBufferMutex };
 	m_sendBuffer.Append(sendBuffer->GetBuffer(), sendBuffer->GetDataSize());
@@ -76,12 +87,26 @@ uint32 Session::ProcessRecv(const char* const readPos, const uint32 dataSize)
 
 		const PacketHeader* const header = reinterpret_cast<const PacketHeader*>(&readPos[processedDataLen]);
 		
-		// if(dataLen < header->size) break;
+		if(dataLen < header->packetSize) break;
 
-		// OnRecvPacket(&buffer[processLen], header.size);
+		OnRecvPacket(&readPos[processedDataLen]);
 
 		processedDataLen += dataLen;
 	}
 
 	return processedDataLen;
+}
+
+void Session::Disconnect(const std::string_view reason)
+{
+	MANAGER(ServerManager)->RemoveSesssion(m_id);
+
+	// TODO: 플레이어가 게임 종료했다는 패킷 보내줘야 함.
+
+	std::cout << reason.data() << std::endl;
+}
+
+void Session::OnRecvPacket(const char* const buffer)
+{
+	ClientPacketHandler::HandlePacket(shared_from_this(), buffer);
 }

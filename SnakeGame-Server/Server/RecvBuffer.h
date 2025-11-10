@@ -2,14 +2,14 @@
 
 class RecvBuffer {
 private:
-	static constexpr auto BUFFER_SIZE = 1024 * 64;
-	static constexpr auto BUFFER_COUNT = 10;
+	static constexpr auto	BUFFER_SIZE = 1024 * 64;
+	static constexpr auto	BUFFER_COUNT = 10;
 
-	std::vector<char>	m_buffer;
-	uint32				m_capacity;
-	uint32				m_bufferSize;
-	uint32				m_readPos;
-	uint32				m_writePos;
+	std::vector<char>		m_buffer;
+	uint32					m_capacity;
+	uint32					m_bufferSize;
+	uint32					m_readPos;
+	uint32					m_writePos;
 
 public:
 	RecvBuffer();

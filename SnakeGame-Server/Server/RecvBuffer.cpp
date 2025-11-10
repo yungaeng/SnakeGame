@@ -15,7 +15,7 @@ RecvBuffer::~RecvBuffer()
 
 bool RecvBuffer::OnWrite(const uint32 dataSize)
 {
-	if(dataSize >= GetFreeSize()) return false;
+	if(dataSize > GetFreeSize()) return false;
 	
 	m_writePos += dataSize;
 
@@ -24,7 +24,10 @@ bool RecvBuffer::OnWrite(const uint32 dataSize)
 
 bool RecvBuffer::OnRead(const uint32 dataSize)
 {
-	if(dataSize >= GetDataSize()) return false;
+	if(dataSize > GetDataSize()) {
+		std::cout << "OnRead Error" << std::endl;
+		return false;
+	}
 	
 	m_readPos += dataSize;
 

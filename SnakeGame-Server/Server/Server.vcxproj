@@ -132,6 +132,8 @@
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LockQueue.cpp" />
+    <ClCompile Include="ClientPacketHandler.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RecvBuffer.cpp" />
     <ClCompile Include="ServerManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -141,17 +143,21 @@
     </ClCompile>
     <ClCompile Include="SendBuffer.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\protocol\protocol.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="LockQueue.h" />
+    <ClInclude Include="ClientPacketHandler.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RecvBuffer.h" />
     <ClInclude Include="ServerManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SendBuffer.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt" />

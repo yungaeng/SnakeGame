@@ -3,7 +3,7 @@
 #include "RecvBuffer.h"
 #include "SendBuffer.h"
 
-class Session {
+class Session : public std::enable_shared_from_this<Session> {
 private:
 	uint64			m_id;
 	SOCKET			m_socket{ INVALID_SOCKET };
@@ -22,13 +22,21 @@ public:
 
 public:
 	void DoIO(const std::stop_token& st);
-	void AppendToSendBuffer(std::shared_ptr<SendBuffer> sendBuffer);
+	void AppendToSendBuffer(SendBuffer* sendBuffer);
+	
+	template<typename PacketType>
+	void AppendPkt(PacketType&& pkt) 
+	{
+		std::lock_guard<std::mutex> lk{ m_sendBufferMutex };
+		m_sendBuffer.Append<PacketType>(std::forward<PacketType>(pkt));
+	}
 
 private:
-	void DoRecv();
-	void DoSend();
-	uint32 ProcessRecv(const char*  const readPos, const uint32 dataSize);
-
+	bool 	DoRecv();
+	void	DoSend();
+	uint32	ProcessRecv(const char* const readPos, const uint32 dataSize);
+	void	Disconnect(const std::string_view reason);
+	void	OnRecvPacket(const char* const buffer);
 public:
 
 };
