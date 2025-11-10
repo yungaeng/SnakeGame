@@ -180,7 +180,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     }
 
     // 로그인 정보 서버로 보내기
-    g_game.Send(PACKET_ID::CS_LOGIN);
+    g_game.SendLogin();
 
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;

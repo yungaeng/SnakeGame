@@ -61,7 +61,10 @@ public:
 	bool InitNetwork();
 	void Recv();
 	void ProcessPacket(char* data);
-	void Send(PACKET_ID pid);
+	void SendLogin();
+	void SendMove(int x, int y);
+	void SendRestart();
+	void SendLeave();
 	void EndNetwork();
 
 private:

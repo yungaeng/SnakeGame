@@ -2,7 +2,7 @@
 
 void Game::InitGame(HDC hdc)
 {
-	m_isgameover = -1;
+	m_isgameover = false;
 
 	// enter 패킷을 받으면 추가해 줌
 	//o.AddSnake(m_userdata, rand() % 700, rand() % 700);
@@ -41,7 +41,7 @@ void Game::ReStart()
 
 	o.DeleteSnake(0);
 
-	Send(PACKET_ID::CS_LOGIN);
+	SendRestart();
 }
 
 void Game::StartBGM()
@@ -173,9 +173,9 @@ void Game::ProcessPacket(char* data)
 	// 2. 패킷 ID에 따라 적절히 처리
 	switch (pid)
 	{
-	case PACKET_ID::SC_ENTER:
+	case PACKET_ID::S2C_ENTER:
 	{
-		SC_ENTER_PACKET* p = reinterpret_cast<SC_ENTER_PACKET*>(data);
+		S2C_ENTER_PACKET* p = reinterpret_cast<S2C_ENTER_PACKET*>(data);
 		UserData ud = {};
 		memcpy(ud.name, p->name, 20);
 		ud.color = p->color;
@@ -190,29 +190,45 @@ void Game::ProcessPacket(char* data)
 	}
 }
 
-void Game::Send(PACKET_ID pid)
+void Game::SendLogin()
 {
 	if (m_isconnect)
 	{
-		CS_LOGIN_PACKET sendPkt = {};
-		switch (pid)
-		{
-		case PACKET_ID::CS_LOGIN: {
-			memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
-			sendPkt.color = m_userdata.color;
-			memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
-			break;
-		}
-		case PACKET_ID::CS_MOVE:
-			break;
-		case PACKET_ID::CS_RESTART:
-			break;
-		case PACKET_ID::CS_LEAVE:
-			break;
-		default:
-			break;
-		}
+		C2S_LOGIN_PACKET sendPkt = {};
+		memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
+		sendPkt.color = m_userdata.color;
+		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
+	}
+}
 
+void Game::SendMove(int x, int y)
+{
+	if (m_isconnect)
+	{
+		C2S_MOVE_PACKET sendPkt = {};
+		sendPkt.x = x; sendPkt.y = y;
+		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
+	}
+}
+
+void Game::SendRestart()
+{
+	if (m_isconnect)
+	{
+		C2S_RESTART_PACKET sendPkt = {};
+		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
+	}
+}
+
+void Game::SendLeave()
+{
+	if (m_isconnect)
+	{
+		C2S_LEAVE_PACKET sendPkt = {};
+		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
