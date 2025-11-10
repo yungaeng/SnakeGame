@@ -8,34 +8,54 @@ struct PacketHeader {
 };
 
 enum class PACKET_ID : uint8 {
-	SC_TEST,
 	//client
-	CS_LOGIN, CS_MOVE, CS_RESTART, CS_LEAVE,
+	C2S_LOGIN, C2S_MOVE, C2S_RESTART, C2S_LEAVE,
 	//server
-	SC_ENTER
-};
-
-struct SC_TEST : public PacketHeader {
-	// PacketHeader header
-	int a;
-	SC_TEST() : PacketHeader{ sizeof(SC_TEST), static_cast<uint8>(PACKET_ID::SC_TEST) } {}
+	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_ENTER, S2C_FOOD, S2C_MOVE
 };
 
 //client
-struct CS_LOGIN_PACKET : public PacketHeader {
-	// PacketHeader header
+struct C2S_LOGIN_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
-	CS_LOGIN_PACKET() : PacketHeader{ sizeof(CS_LOGIN_PACKET), static_cast<uint8>(PACKET_ID::CS_LOGIN) } {}
+	C2S_LOGIN_PACKET() : PacketHeader{ sizeof(C2S_LOGIN_PACKET), static_cast<uint8>(PACKET_ID::C2S_LOGIN) } {}
+};
+struct C2S_MOVE_PACKET : public PacketHeader {
+	int x, y;
+	C2S_MOVE_PACKET() : PacketHeader{ sizeof(C2S_MOVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_MOVE) } {}
+};
+struct C2S_RESTART_PACKET : public PacketHeader {
+	C2S_RESTART_PACKET() : PacketHeader{ sizeof(C2S_RESTART_PACKET), static_cast<uint8>(PACKET_ID::C2S_RESTART) } {}
+};
+struct C2S_LEAVE_PACKET : public PacketHeader {
+	C2S_LEAVE_PACKET() : PacketHeader{ sizeof(C2S_LEAVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_LEAVE) } {}
 };
 
+
 //server
-struct SC_ENTER_PACKET : public PacketHeader {
-	// PacketHeader header
+struct S2C_LOGIN_OK_PACKET : public PacketHeader {
+	int x, y;
+	S2C_LOGIN_OK_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_OK_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_OK) } {}
+};
+struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
+	S2C_LOGIN_FAIL_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_FAIL_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_FAIL) } {}
+};
+struct S2C_ENTER_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
 	int x, y;
-	SC_ENTER_PACKET() : PacketHeader{ sizeof(SC_ENTER_PACKET), static_cast<uint8>(PACKET_ID::SC_ENTER) } {}
+	S2C_ENTER_PACKET() : PacketHeader{ sizeof(S2C_ENTER_PACKET), static_cast<uint8>(PACKET_ID::S2C_ENTER) } {}
+};
+struct S2C_FOOD_PACKET : public PacketHeader {
+	COLORREF color;
+	int x, y;
+	S2C_FOOD_PACKET() : PacketHeader{ sizeof(S2C_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_FOOD) } {}
+};
+struct S2C_MOVE_PACKET : public PacketHeader {
+	double deltaTime;
+	unsigned long long id;
+	int x, y;
+	S2C_MOVE_PACKET() : PacketHeader{ sizeof(S2C_MOVE_PACKET), static_cast<uint8>(PACKET_ID::S2C_MOVE) } {}
 };
 
 #pragma pack(pop)
