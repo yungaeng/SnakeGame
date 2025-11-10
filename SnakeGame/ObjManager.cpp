@@ -14,7 +14,7 @@ void ObjManager::AddSnake(UserData ud, int x, int y)
     Snake s = { ud.name, new_snake };
     m_snakes.emplace_back(s);
 }
-void ObjManager::MoveSnake(int id, double deltaTime)
+void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
 {
     int mx = m_snakes[id].m_target_x;
     int my = m_snakes[id].m_target_y;

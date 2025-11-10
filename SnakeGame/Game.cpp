@@ -5,7 +5,7 @@ void Game::InitGame(HDC hdc)
 	m_isgameover = false;
 
 	// enter 패킷을 받으면 추가해 줌
-	//o.AddSnake(m_userdata, rand() % 700, rand() % 700);
+	o.AddSnake(m_userdata, rand() % 700, rand() % 700);
 
 	// 먹이 만들기
 	for (int i = 0; i < 10; i++)
@@ -173,6 +173,17 @@ void Game::ProcessPacket(char* data)
 	// 2. 패킷 ID에 따라 적절히 처리
 	switch (pid)
 	{
+	case PACKET_ID::S2C_LOGIN_OK:
+	{
+		S2C_ENTER_PACKET* p = reinterpret_cast<S2C_ENTER_PACKET*>(data);
+		o.AddSnake(m_userdata, p->x, p->y);
+		break;
+	}
+	case PACKET_ID::S2C_LOGIN_FAIL:
+	{
+		// TODO 로그인 실패 구현하기
+		break;
+	}
 	case PACKET_ID::S2C_ENTER:
 	{
 		S2C_ENTER_PACKET* p = reinterpret_cast<S2C_ENTER_PACKET*>(data);
@@ -180,6 +191,20 @@ void Game::ProcessPacket(char* data)
 		memcpy(ud.name, p->name, 20);
 		ud.color = p->color;
 		o.AddSnake(ud, p->x, p->y);
+		break;
+	}
+	case PACKET_ID::S2C_FOOD:
+	{
+		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
+		o.AddFood(p->x, p->y, p->color);
+		break;
+	}
+	case PACKET_ID::S2C_MOVE:
+	{
+		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
+		o.m_snakes[p->id].m_target_x = p->x;
+		o.m_snakes[p->id].m_target_y = p->y;
+		o.MoveSnake(p->id, p->deltaTime);
 		break;
 	}
 	default:
