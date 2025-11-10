@@ -1,7 +1,23 @@
 #pragma once
 
-#pragma pack(push, 1)
+enum class GAME_OBJECT_TYPE {
+	PLAYER = 1,
+	FOOD = 2,
 
+	END
+};
+
+using BYTE = unsigned char;
+using int8 = __int8;
+using int16 = __int16;
+using int32 = __int32;
+using int64 = __int64;
+using uint8 = unsigned __int8;
+using uint16 = unsigned __int16;
+using uint32 = unsigned __int32;
+using uint64 = unsigned __int64;
+		
+#pragma pack(push, 1)
 struct PacketHeader {
 	uint8 packetSize;
 	uint8 packetID;
@@ -11,7 +27,7 @@ enum class PACKET_ID : uint8 {
 	//client
 	C2S_LOGIN, C2S_MOVE, C2S_RESTART, C2S_LEAVE,
 	//server
-	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_ENTER, S2C_FOOD, S2C_MOVE
+	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_PLAYER, S2C_FOOD, S2C_MOVE
 };
 
 //client
@@ -40,11 +56,11 @@ struct S2C_LOGIN_OK_PACKET : public PacketHeader {
 struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
 	S2C_LOGIN_FAIL_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_FAIL_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_FAIL) } {}
 };
-struct S2C_ENTER_PACKET : public PacketHeader {
+struct S2C_PLAYER_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
 	int x, y;
-	S2C_ENTER_PACKET() : PacketHeader{ sizeof(S2C_ENTER_PACKET), static_cast<uint8>(PACKET_ID::S2C_ENTER) } {}
+	S2C_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_PLAYER) } {}
 };
 struct S2C_FOOD_PACKET : public PacketHeader {
 	COLORREF color;

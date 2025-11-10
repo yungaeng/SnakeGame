@@ -180,6 +180,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     }
 
     // 로그인 정보 서버로 보내기
+    
     g_game.SendLogin();
 
     WNDCLASS wc = { 0 };
@@ -212,7 +213,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         return -1;
     }
     
-    g_game.StartBGM();
+    //g_game.StartBGM();
     ShowWindow(hwnd, nCmdShow);
     MSG msg;
 

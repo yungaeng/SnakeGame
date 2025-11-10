@@ -14,9 +14,7 @@ public:
 public:
 	template<typename Packet> 
 	void Append(Packet&& packet) { Append((char*)&packet, sizeof(Packet)); }
-
 	void Append(const char* const packet, const uint32 packetSize);
-private:
 
 public:
 	uint32		GetDataSize() { return m_writeSize; }

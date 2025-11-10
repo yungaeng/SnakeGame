@@ -5,16 +5,16 @@ void Game::InitGame(HDC hdc)
 	m_isgameover = false;
 
 	// enter 패킷을 받으면 추가해 줌
-	o.AddSnake(m_userdata, rand() % 700, rand() % 700);
+	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
 
 	// 먹이 만들기
-	for (int i = 0; i < 10; i++)
-	{
-		int x = rand() % 600;
-		int y = rand() % 600;
-		COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(x, y, col);
-	}
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	int x = rand() % 600;
+	//	int y = rand() % 600;
+	//	COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
+	//	o.AddFood(x, y, col);
+	//}
 
 	// 타이머 시작
 	m_timer = std::chrono::steady_clock::now();
@@ -30,7 +30,7 @@ void Game::Update()
 	m_isgameover = o.UpDate();
 	m_killer_id = o.DeathBy;
 
-	SpawnFood();
+//	SpawnFood();
 }
 
 void Game::ReStart()
@@ -88,7 +88,7 @@ bool Game::InitNetwork()
 		int errCode = WSAGetLastError();
 		if (errCode != WSAEWOULDBLOCK) {
 			// 연결 시도 자체가 불가능한 심각한 오류
-			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
+			MessageBox(NULL, L"Conn	ect Error!", L"Error", MB_ICONERROR);
 			return false;
 		}
 		// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
@@ -175,7 +175,7 @@ void Game::ProcessPacket(char* data)
 	{
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
-		S2C_ENTER_PACKET* p = reinterpret_cast<S2C_ENTER_PACKET*>(data);
+		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
 		o.AddSnake(m_userdata, p->x, p->y);
 		break;
 	}
@@ -184,9 +184,9 @@ void Game::ProcessPacket(char* data)
 		// TODO 로그인 실패 구현하기
 		break;
 	}
-	case PACKET_ID::S2C_ENTER:
+	case PACKET_ID::S2C_PLAYER:
 	{
-		S2C_ENTER_PACKET* p = reinterpret_cast<S2C_ENTER_PACKET*>(data);
+		S2C_PLAYER_PACKET* p = reinterpret_cast<S2C_PLAYER_PACKET*>(data);
 		UserData ud = {};
 		memcpy(ud.name, p->name, 20);
 		ud.color = p->color;
@@ -222,7 +222,7 @@ void Game::SendLogin()
 		C2S_LOGIN_PACKET sendPkt = {};
 		memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
 		sendPkt.color = m_userdata.color;
-		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+		// memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
@@ -279,7 +279,7 @@ void Game::SpawnFood()
 
 	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
 		int x = rand() % 700;
-		int y = rand() % 700;
+		int y = rand() % 700;	
 
 		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
 		o.AddFood(x, y, c);
