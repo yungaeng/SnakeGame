@@ -32,6 +32,7 @@ class Game
 	UIManager k = {};
 public:
 	bool m_isgameover = false;
+	bool m_islogin = false;
 	int m_killer_id = -1;
 	UserData m_userdata = {};
 
@@ -42,6 +43,7 @@ public:
 		m_recv_buf[0] = '\0';
 
 		m_isgameover = false;
+		m_islogin = false;
 		m_killer_id = -1;
 		p = {};
 		o = {};
@@ -70,7 +72,10 @@ public:
 	void SendLeave();
 	void EndNetwork();
 
+	bool GetLogin() { return m_islogin; };
 private:
+	void SetLogin(bool st) { m_islogin = st; };
+
 	double GetElapsedTime();
 	void SpawnFood();
 	std::chrono::time_point<std::chrono::steady_clock> m_timer;

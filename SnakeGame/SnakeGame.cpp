@@ -100,6 +100,9 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
             // 3. GameSettings에 저장 및 다이얼로그 종료
             pSettings->color = RGB(r,g,b);
+            // 로그인 정보 서버로 보내기
+            g_game.SendLogin();
+
             EndDialog(hDlg, IDOK); // IDOK로 종료
             return TRUE;
         }
@@ -111,10 +114,6 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         break;
     }
     }
-
-
-    // 오케이 버튼을 누르고, 로그인 패킷을 보낸 뒤, 대기.
-    // 서버가 GameSetting을 보내주면 게임 데이터에 반영 후 게임 시작. 
     return FALSE;
 }
 
@@ -165,23 +164,24 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     // 서버와 연결
     if (!g_game.InitNetwork())
         return 0;
-      
-    // 다이얼로그 박스 표시 및 설정값 입력
-    INT_PTR dialogResult = DialogBoxParam(
-        hInstance,
-        MAKEINTRESOURCE(IDD_START_DIALOG),
-        NULL,
-        StartDialogProc,
-        (LPARAM)&g_game.m_userdata);
 
-    // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-    if (dialogResult != IDOK) {
-        return 0;
+    while (!g_game.GetLogin()) {
+        // 다이얼로그 박스 표시 및 설정값 입력
+        INT_PTR dialogResult = DialogBoxParam(
+            hInstance,
+            MAKEINTRESOURCE(IDD_START_DIALOG),
+            NULL,
+            StartDialogProc,
+            (LPARAM)&g_game.m_userdata);
+
+        // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+        if (dialogResult != IDOK) {
+            return 0;
+        }
+
+        if(!g_game.GetLogin())
+            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Name Error", MB_ICONERROR);
     }
-
-    // 로그인 정보 서버로 보내기
-    
-    g_game.SendLogin();
 
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
@@ -212,7 +212,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
         return -1;
     }
-    
+
     //g_game.StartBGM();
     ShowWindow(hwnd, nCmdShow);
     MSG msg;
@@ -232,7 +232,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 별도의 스레드에서 recv 중
             //g_game.Recv();
             g_game.Update();
-           
+
             if (g_game.m_isgameover) {
                 int killer_id = g_game.m_killer_id;
 

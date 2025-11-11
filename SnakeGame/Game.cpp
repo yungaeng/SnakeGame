@@ -177,11 +177,11 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
 		o.AddSnake(m_userdata, p->x, p->y);
+		SetLogin(true);
 		break;
 	}
 	case PACKET_ID::S2C_LOGIN_FAIL:
 	{
-		// TODO 로그인 실패 구현하기
 		break;
 	}
 	case PACKET_ID::S2C_PLAYER:
@@ -204,7 +204,7 @@ void Game::ProcessPacket(char* data)
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
 		o.m_snakes[p->id].m_target_x = p->x;
 		o.m_snakes[p->id].m_target_y = p->y;
-		o.MoveSnake(p->id, p->deltaTime);
+		//o.MoveSnake(p->id, p->deltaTime);
 		break;
 	}
 	default:
