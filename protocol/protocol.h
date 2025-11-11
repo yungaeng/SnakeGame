@@ -73,5 +73,13 @@ struct S2C_MOVE_PACKET : public PacketHeader {
 	int x, y;
 	S2C_MOVE_PACKET() : PacketHeader{ sizeof(S2C_MOVE_PACKET), static_cast<uint8>(PACKET_ID::S2C_MOVE) } {}
 };
+struct S2C_DEL_FOOD_PACKET : public PacketHeader {
+	unsigned long long id;
+	S2C_DEL_FOOD_PACKET() : PacketHeader{ sizeof(S2C_DEL_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_DEL_FOOD) } {}
+};
+struct S2C_DEL_SNAKE_PACKET : public PacketHeader {
+	unsigned long long id;
+	S2C_DEL_SNAKE_PACKET() : PacketHeader{ sizeof(S2C_DEL_SNAKE_PACKET), static_cast<uint8>(PACKET_ID::S2C_DEL_SNAKE) } {}
+};
 
 #pragma pack(pop)
