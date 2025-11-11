@@ -35,7 +35,7 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 		player->SetColor(recvPkt.color);
 		player->SetName(recvPkt.name);
 		player->SetPos(pos);
-		player->SetID(MANAGER(GameMap)->GetGlobalID());
+		player->SetID(session->GetID());
 		player->SetSession(session);
 
 		MANAGER(GameMap)->AddGameObject(std::move(player));

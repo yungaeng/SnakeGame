@@ -19,6 +19,7 @@ public:
 
 public:
 	SOCKET GetSocket() const noexcept { return m_socket; }
+	uint64 GetID() const noexcept { return m_id; }
 
 public:
 	void DoIO(const std::stop_token& st);
