@@ -21,6 +21,7 @@ public:										\
 #include <string>
 #include <mutex>
 #include <shared_mutex>
+#include <map>
 #include <unordered_map>
 #include <queue>
 #include <chrono>
@@ -29,6 +30,7 @@ public:										\
 #include <set>
 #include <unordered_set>
 #include <random>
+#include <functional>
 
 #pragma comment(lib, "ws2_32.lib")
 

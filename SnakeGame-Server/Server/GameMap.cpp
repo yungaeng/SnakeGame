@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameMap.h"
+
 #include "ServerManager.h"
 #include "SendBuffer.h"
 #include "GameObject.h"
@@ -8,19 +9,21 @@
 
 void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 {
+	const uint64 id = gameObject->GetID();
+
 	if(GAME_OBJECT_TYPE::PLAYER == gameObject->GetType()) {
 		auto player = std::static_pointer_cast<Player>(gameObject);
 		auto session = player->GetSession();
 
-		auto key = std::static_pointer_cast<Player>(gameObject)->GetName();
+		const auto key = std::static_pointer_cast<Player>(gameObject)->GetName();
 		{
 			std::lock_guard<std::mutex> lk{ m_setMutex };
 			if(false == m_playerNames.contains(key))
 				m_playerNames.insert(key);
 		}
 
-		std::lock_guard<std::mutex> lk{ m_vecMutex };
-		for(auto& obj : m_gameObjects) {
+		std::lock_guard<std::mutex> lk{ m_mapMutex };
+		for(auto& [id, obj]: m_gameObjects) {
 			if(obj->GetType() == GAME_OBJECT_TYPE::FOOD) {
 				S2C_FOOD_PACKET sendPkt;
 				sendPkt.color = obj->GetColor();
@@ -47,6 +50,8 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 					sendPkt.color = gameObject->GetColor();
 					sendPkt.x = gameObject->GetPos().x;
 					sendPkt.y = gameObject->GetPos().y;
+
+					// TODO: Object는 살아있는데 Session이 살아져서 발생하는 문제
 					std::static_pointer_cast<Player>(obj)->GetSession()->AppendPkt(sendPkt);
 				}
 			}
@@ -61,9 +66,16 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 	}
 
 	{
-		std::lock_guard<std::mutex> lk{ m_vecMutex };
-		m_gameObjects.emplace_back(std::move(gameObject));
+		std::lock_guard<std::mutex> lk{ m_mapMutex };
+		m_gameObjects.try_emplace(id, std::move(gameObject));
 	}
+}
+
+void GameMap::RemoveGameObject(const uint64 id)
+{
+	std::lock_guard<std::mutex> lk{ m_mapMutex };
+	if(m_gameObjects.contains(id))
+		m_gameObjects.erase(id);
 }
 
 void GameMap::Update(const std::stop_token& st)
@@ -99,7 +111,18 @@ bool GameMap::FindName(std::wstring_view name)
 
 void GameMap::ProcessEvent()
 {
-	// TODO: 게임 이벤트 처리(오브젝트 추가/삭제는 한 프레임 지연)
+	std::lock_guard<std::mutex> lk{ m_eveMutex};
+	while(false == m_eventFpQueue.empty()) {
+		auto eve = m_eventFpQueue.front();
+		m_eventFpQueue.pop();
+		eve();
+	}
+}
+
+void GameMap::AddEvent(std::function<void()> eve)
+{
+	std::lock_guard<std::mutex> lk{ m_eveMutex};
+	m_eventFpQueue.push(eve);
 }
 
 void GameMap::CheckCollision()
