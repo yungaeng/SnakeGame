@@ -3,6 +3,7 @@
 
 #include "ServerManager.h"
 #include "GameMap.h"
+#include "Player.h"
 
 Session::Session(const uint64 id, const SOCKET socket)
 	: m_id{ id }, m_socket{ socket }
@@ -101,12 +102,14 @@ uint32 Session::ProcessRecv(const char* const readPos, const uint32 dataSize)
 void Session::Disconnect(const std::string_view reason)
 {
 	MANAGER(ServerManager)->RemoveSesssion(m_id);
-	// TODO: 
-	// TODO: 플레이어가 게임 종료했다는 패킷 보내줘야 함.
-
-	const uint64 id{ m_id };
-	MANAGER(GameMap)->AddEvent([id]() { MANAGER(GameMap)->RemoveGameObject(id); });
-
+	auto player = m_player.lock();
+	if(player) {
+		MANAGER(GameMap)->AddEvent([player]()
+			{
+				player->SetSession(nullptr);
+				MANAGER(GameMap)->RemoveGameObject(std::static_pointer_cast<Player>(player));
+			});
+	}
 	std::cout << reason.data() << std::endl;
 }
 

@@ -107,14 +107,14 @@
     <Filter Include="GameObject">
       <UniqueIdentifier>{b2163046-071f-4805-ac62-b296a785e610}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PacketHandler">
-      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\Player">
       <UniqueIdentifier>{a9daf22a-37b1-4861-a5f9-dcceff3891d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Timer">
       <UniqueIdentifier>{66087019-b1a4-4fbb-857f-43fca07939ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PacketHandler">
+      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

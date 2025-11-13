@@ -4,14 +4,17 @@
 class Session;
 class Player : public GameObject {
 private:
-	std::weak_ptr<Session>	m_session;
+	std::shared_ptr<Session>	m_session;
+	bool						m_alive;
 
 public:
 	Player();
 	virtual ~Player();
 
 public:
+	void SetAlive(const bool alive) { m_alive = alive; }
+	bool IsAlive() const noexcept { return m_alive; }
 	void SetSession(std::shared_ptr<Session> session) { m_session = session; }
-	std::shared_ptr<Session> GetSession() { return m_session.lock(); }
+	std::shared_ptr<Session> GetSession() { return m_session; }
 };
 

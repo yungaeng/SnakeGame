@@ -5,6 +5,7 @@ class Session;
 bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>&, const char* const);
 
 bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>&, const C2S_LOGIN_PACKET&);
+bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>&, const C2S_RESTART_PACKET&);
 
 using PacketHandlerFunc = bool(*)(const std::shared_ptr<Session>&, const char* const);
 extern inline constinit std::array<PacketHandlerFunc, std::numeric_limits<uint16>::max() + 1> PacketHandlerFuncs{};

@@ -8,36 +8,37 @@ class Player;
 class GameMap {
 	SINGLETON(GameMap)
 private:
-	static constexpr float							UPDATE_INVERVAL{ 0.016f }; // 60fps
-	static constexpr float							FOOD_SPAWN_INTERVAL{ 1.f };
-
-	float											m_accDTForUpdate{ 0.f };
-	float											m_accDTForFoodSpawn{ 0.f };
-	Timer											m_timer;
 	std::atomic_ullong								G_globalID;
 	
-	std::mutex										m_mapMutex;
-	std::map<uint64, std::shared_ptr<GameObject>>	m_gameObjects;
+	Timer											m_timer;
+	static constexpr float							UPDATE_INVERVAL{ 0.016f }; // 60fps
+	float											m_accDTForUpdate{ 0.f };
+	
+	static constexpr float							FOOD_SPAWN_INTERVAL{ 1.f };
+	float											m_accDTForFoodSpawn{ 0.f };
 
-	std::mutex										m_setMutex;
+	std::map<uint64, std::shared_ptr<GameObject>>	m_foods;
+	std::map<uint64, std::shared_ptr<Player>>		m_players;
+
+	std::shared_mutex								m_nameSetMtx;
 	std::unordered_set<std::wstring>				m_playerNames;
 
-	std::mutex										m_sendBufferMutex;
+	std::mutex										m_sendBuffMtx;
 	SendBuffer										m_sendBuffer;
 
-	std::mutex										m_eveMutex;
+	std::recursive_mutex							m_eveMtx;
 	std::queue<std::function<void()>>				m_eventFpQueue;
 
 public:
 	void AddEvent(std::function<void()> eve);
 	void AddGameObject(std::shared_ptr<GameObject> gameObject);
-	void RemoveGameObject(const uint64 id);
+	void RemoveGameObject(std::shared_ptr<GameObject> gameObject);
 	void Update(const std::stop_token& st);
 
 	template<typename PacketType>
 	void AppendPkt(PacketType&& pkt)
 	{
-		std::lock_guard<std::mutex> lk{ m_sendBufferMutex };
+		std::lock_guard<std::mutex> lk{ m_sendBuffMtx };
 		m_sendBuffer.Append<PacketType>(std::forward<PacketType>(pkt));
 	}
 
