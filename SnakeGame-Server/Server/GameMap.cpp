@@ -15,30 +15,30 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		auto player = std::static_pointer_cast<Player>(gameObject);
 		auto session = player->GetSession();
 
-		const auto key = std::static_pointer_cast<Player>(gameObject)->GetName();
+		const auto key = player->GetName();
 		{
-			std::lock_guard<std::mutex> lk{ m_setMutex };
+			std::unique_lock<std::shared_mutex> lk{ m_nameSetMtx };
 			if(false == m_playerNames.contains(key))
 				m_playerNames.insert(key);
 		}
 
-		std::lock_guard<std::mutex> lk{ m_mapMutex };
-		for(auto& [id, obj]: m_gameObjects) {
-			if(obj->GetType() == GAME_OBJECT_TYPE::FOOD) {
-				S2C_FOOD_PACKET sendPkt;
-				sendPkt.color = obj->GetColor();
-				sendPkt.x = obj->GetPos().x;	
-				sendPkt.y = obj->GetPos().y;
-				session->AppendPkt(sendPkt);
-			}
-			else if(obj->GetType() == GAME_OBJECT_TYPE::PLAYER) {
+		for(auto& [id, food] : m_foods) {
+			S2C_FOOD_PACKET sendPkt;
+			sendPkt.color = food->GetColor();
+			sendPkt.x = food->GetPos().x;
+			sendPkt.y = food->GetPos().y;
+			session->AppendPkt(sendPkt);
+		}
+
+		{
+			for(auto& [id, p] : m_players) {
 				S2C_PLAYER_PACKET sendPkt{};
-				const auto nameLen = obj->GetName().size();
-				memcpy(sendPkt.name, obj->GetName().data(), nameLen * sizeof(wchar_t));
+				const auto nameLen = p->GetName().size();
+				memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
 				sendPkt.name[nameLen] = L'\0';
-				sendPkt.color = obj->GetColor();
-				sendPkt.x = obj->GetPos().x;
-				sendPkt.y = obj->GetPos().y;
+				sendPkt.color = p->GetColor();
+				sendPkt.x = p->GetPos().x;
+				sendPkt.y = p->GetPos().y;
 				session->AppendPkt(sendPkt);
 
 				// TODO: 기존에 있는 애들에게 새로운 플레이어 정보 전송(플레이어 정보)
@@ -52,30 +52,50 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 					sendPkt.y = gameObject->GetPos().y;
 
 					// TODO: Object는 살아있는데 Session이 살아져서 발생하는 문제
-					std::static_pointer_cast<Player>(obj)->GetSession()->AppendPkt(sendPkt);
+					(p)->GetSession()->AppendPkt(sendPkt);
 				}
+
 			}
 		}
+		m_players.try_emplace(id, std::move(std::static_pointer_cast<Player>(player)));
 	}
-	else {			
+	else if(GAME_OBJECT_TYPE::FOOD == gameObject->GetType()) {
 		S2C_FOOD_PACKET sendPkt;
 		sendPkt.color = gameObject->GetColor();
 		sendPkt.x = gameObject->GetPos().x;
 		sendPkt.y = gameObject->GetPos().y;
 		AppendPkt(sendPkt);
-	}
-
-	{
-		std::lock_guard<std::mutex> lk{ m_mapMutex };
-		m_gameObjects.try_emplace(id, std::move(gameObject));
+		m_foods.try_emplace(id, std::move(gameObject));
 	}
 }
 
-void GameMap::RemoveGameObject(const uint64 id)
+void GameMap::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
 {
-	std::lock_guard<std::mutex> lk{ m_mapMutex };
-	if(m_gameObjects.contains(id))
-		m_gameObjects.erase(id);
+	const uint64 id = gameObject->GetID();
+
+	if(gameObject->GetType() == GAME_OBJECT_TYPE::FOOD) {
+		if(m_foods.contains(id)) {
+			S2C_DEL_FOOD_PACKET sendPkt;
+			sendPkt.id = id;
+			AppendPkt(sendPkt);
+			m_foods.erase(id);
+		}
+	}
+	else if(gameObject->GetType() == GAME_OBJECT_TYPE::PLAYER) {
+		if(m_players.contains(id)) {
+			S2C_DEL_SNAKE_PACKET sendPkt;
+			sendPkt.id = id;
+			AppendPkt(sendPkt);
+			const auto& name = gameObject->GetName();
+			{
+				std::unique_lock<std::shared_mutex> lk{ m_nameSetMtx };
+				if(m_playerNames.contains(name)) {
+					m_playerNames.erase(name);
+				}
+			}
+			m_players.erase(id);
+		}
+	}
 }
 
 void GameMap::Update(const std::stop_token& st)
@@ -105,13 +125,13 @@ void GameMap::Update(const std::stop_token& st)
 
 bool GameMap::FindName(std::wstring_view name)
 {
-	std::lock_guard<std::mutex> lk{ m_setMutex };
+	std::shared_lock<std::shared_mutex> lk{ m_nameSetMtx };
 	return  m_playerNames.contains(name.data());
 }
 
 void GameMap::ProcessEvent()
 {
-	std::lock_guard<std::mutex> lk{ m_eveMutex};
+	std::lock_guard<std::recursive_mutex> lk{ m_eveMtx };
 	while(false == m_eventFpQueue.empty()) {
 		auto eve = m_eventFpQueue.front();
 		m_eventFpQueue.pop();
@@ -121,7 +141,7 @@ void GameMap::ProcessEvent()
 
 void GameMap::AddEvent(std::function<void()> eve)
 {
-	std::lock_guard<std::mutex> lk{ m_eveMutex};
+	std::lock_guard<std::recursive_mutex> lk{ m_eveMtx };
 	m_eventFpQueue.push(eve);
 }
 
@@ -129,35 +149,43 @@ void GameMap::CheckCollision()
 {
 	// TODO: 충돌체크
 
-	// 플레이어 - 플레이어 충돌
-	// SC_PLAYER_DIE
-	
-	// 플레이어 - 먹이
-	// SC_EAT_FOOD
-	// SC_REMOVE_FOOD
+	for(auto& [id, player] : m_players) {
+		if(player->IsAlive() == false) continue;
+
+		for(auto& [id, food] : m_foods) {
+
+			// 플레이어 - 플레이어 충돌
+			// SC_PLAYER_DIE
+
+			// 플레이어 - 먹이
+			// SC_EAT_FOOD
+			// SC_REMOVE_FOOD
+
+		}
+	}
 }
 
 void GameMap::SpawnFood()
 {
 	std::cout << "SpawnFood!" << std::endl;
 	auto food = std::make_shared<GameObject>(GAME_OBJECT_TYPE::FOOD);
-	
+
 	const uint64 id = MANAGER(GameMap)->GetGlobalID();
 	food->SetName(L"food_" + id);
 	food->SetID(id);
-	
+
 	Pos pos{ rand() % 600, rand() % 600 };
 	food->SetPos(pos);
-	
+
 	const COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
 	food->SetColor(c);
 
-	AddGameObject(std::move(food));
+	AddEvent([this, f = std::move(food) ]() { AddGameObject(std::move(f)); });
 }
 
 void GameMap::FlushSendBuffer()
 {
-	std::lock_guard<std::mutex> lk{ m_sendBufferMutex };
+	std::lock_guard<std::mutex> lk{ m_sendBuffMtx };
 	const uint32 dataSize = m_sendBuffer.GetDataSize();
 	MANAGER(ServerManager)->Broadcast(&m_sendBuffer);
 	m_sendBuffer.Clear();

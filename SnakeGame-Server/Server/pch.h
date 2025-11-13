@@ -34,7 +34,6 @@ public:										\
 
 #pragma comment(lib, "ws2_32.lib")
 
-
 constexpr unsigned short SERVER_PORT{ 9000 };
 
 

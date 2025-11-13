@@ -13,6 +13,8 @@ bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>& session, cons
 
 bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S_LOGIN_PACKET& recvPkt)
 {
+	// Session Thread가 수행중
+
 	const bool hasName = MANAGER(GameMap)->FindName(recvPkt.name);
 
 	// 만약, 로그인 이름이 이미 게임에 있으면 SC_LOGIN 발송
@@ -37,9 +39,25 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 		player->SetPos(pos);
 		player->SetID(session->GetID());
 		player->SetSession(session);
+		session->SetPlayer(player);
 
-		MANAGER(GameMap)->AddGameObject(std::move(player));
+		MANAGER(GameMap)->AddEvent([p = std::move(player)]()
+			{
+				MANAGER(GameMap)->AddGameObject(std::move(p));
+			});
 	}
 
+	return true;
+}
+
+bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C2S_RESTART_PACKET& recvPkt)
+{
+	// TODO: 재시작 패킷 브로드캐스트
+	// TODO: 플레이어 alive =true 해주고, 위치 재설정
+	auto player = session->GetPlayer();
+	if(player) {
+		static std::uniform_int_distribution randomPos{ 0, 700 };
+		Pos pos{ randomPos(dre), randomPos(dre) };
+	}
 	return true;
 }
