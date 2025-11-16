@@ -12,6 +12,7 @@ public:
 	int m_size = 10;
 	double m_speed = 20.0;
 public:
+	Object() {};
 	Object(int x, int y, COLORREF c);
 	bool CheckCollision(const Object& other) const;
 };

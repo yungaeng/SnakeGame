@@ -60,11 +60,13 @@ struct S2C_PLAYER_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
 	int x, y;
+	unsigned long long id;
 	S2C_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_PLAYER) } {}
 };
 struct S2C_FOOD_PACKET : public PacketHeader {
 	COLORREF color;
 	int x, y;
+	unsigned long long id;
 	S2C_FOOD_PACKET() : PacketHeader{ sizeof(S2C_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_FOOD) } {}
 };
 struct S2C_MOVE_PACKET : public PacketHeader {

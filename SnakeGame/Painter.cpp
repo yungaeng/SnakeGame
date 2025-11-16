@@ -26,24 +26,25 @@ void Painter::DrawBackGround(HDC hdc)
 void Painter::DrawObject(HDC hdc)
 {
     for (auto& obj : ObjManager::m_foods) {
-        if (obj.isalive) {
-            RECT ObjRect = { obj.m_x - obj.m_size, obj.m_y - obj.m_size, obj.m_x + obj.m_size, obj.m_y + obj.m_size };
-            HBRUSH ObjBrush = CreateSolidBrush(obj.m_color);
+        if (obj.second.isalive) {
+            Object o = obj.second;
+            RECT ObjRect = { o.m_x - o.m_size, o.m_y - o.m_size, o.m_x + o.m_size, o.m_y + o.m_size };
+            HBRUSH ObjBrush = CreateSolidBrush(o.m_color);
             FillRect(hdc, &ObjRect, ObjBrush);
             DeleteObject(ObjBrush);
         }
     }
 
     for (auto& s : ObjManager::m_snakes) {
-        for (auto& o : s.body) {
+        for (auto& o : s.second.body) {
             RECT ObjRect = { o.m_x - o.m_size, o.m_y - o.m_size, o.m_x + o.m_size, o.m_y + o.m_size };
             HBRUSH ObjBrush = CreateSolidBrush(o.m_color);
             FillRect(hdc, &ObjRect, ObjBrush);
             DeleteObject(ObjBrush);
         }
         // 뱀의 머리에 아이디 그리기 추가
-        auto head = s.body.begin(); 
-        DrawName(hdc, head->m_x, head->m_y, s.userdata.name, head->m_size);
+        auto head = s.second.body.begin(); 
+        DrawName(hdc, head->m_x, head->m_y, s.second.userdata.name, head->m_size);
     }
 }
 

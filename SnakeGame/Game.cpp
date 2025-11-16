@@ -176,7 +176,7 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		o.AddSnake(m_userdata, p->x, p->y);
+		o.AddSnake(0, m_userdata, p->x, p->y);
 		SetLogin(true);
 		break;
 	}
@@ -190,13 +190,13 @@ void Game::ProcessPacket(char* data)
 		UserData ud = {};
 		memcpy(ud.name, p->name, 20);
 		ud.color = p->color;
-		o.AddSnake(ud, p->x, p->y);
+		o.AddSnake(p->id, ud, p->x, p->y);
 		break;
 	}
 	case PACKET_ID::S2C_FOOD:
 	{
 		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
-		o.AddFood(p->x, p->y, p->color);
+		o.AddFood(p->id, p->x, p->y, p->color);
 		break;
 	}
 	case PACKET_ID::S2C_MOVE:
@@ -270,21 +270,5 @@ double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
-}
-
-void Game::SpawnFood()
-{
-	auto now = std::chrono::steady_clock::now();
-	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
-
-	if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
-		int x = rand() % 700;
-		int y = rand() % 700;	
-
-		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(x, y, c);
-
-		m_last_food_spawn_time = now;
-	}
 }
 
