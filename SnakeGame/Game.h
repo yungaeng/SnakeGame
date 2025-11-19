@@ -52,7 +52,15 @@ public:
 	~Game() {};
 	void InitGame(HDC hdc);
 	void Draw(HDC hdc) { p.Draw(hdc); };
-	void Input(WPARAM wParam, LPARAM lParam) { k.Input(o, wParam); k.MouseInput(o, lParam); };
+	void Input(WPARAM wParam, LPARAM lParam) 
+	{
+		k.Input(o, wParam);
+		
+		// k.MouseInput(o, lParam);
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		SendMove(x, y);
+	};
 
 	void Update();
 	
