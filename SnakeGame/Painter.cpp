@@ -25,6 +25,7 @@ void Painter::DrawBackGround(HDC hdc)
 
 void Painter::DrawObject(HDC hdc)
 {
+    ObjManager::obj_lock.lock();
     for (auto& obj : ObjManager::m_foods) {
         if (obj.isalive) {
             RECT ObjRect = { obj.m_x - obj.m_size, obj.m_y - obj.m_size, obj.m_x + obj.m_size, obj.m_y + obj.m_size };
@@ -33,6 +34,7 @@ void Painter::DrawObject(HDC hdc)
             DeleteObject(ObjBrush);
         }
     }
+    ObjManager::obj_lock.unlock();
 
     for (auto& s : ObjManager::m_snakes) {
         for (auto& o : s.body) {

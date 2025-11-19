@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include "Object.h"
+#include <mutex>
 
 constexpr auto MAP_SIZE = 700;
 constexpr auto MAX_NAME_SIZE = 10;
@@ -30,6 +31,7 @@ class ObjManager
 public:
 	static std::vector<Object> m_foods;
 	static std::vector<Snake> m_snakes;
+	static std::mutex obj_lock;
 
 	ObjManager() { gameover = false; DeathBy = -1; };
 
@@ -43,6 +45,8 @@ public:
 	bool UpDate();
 	bool gameover = false;
 	int DeathBy = -1;
+
+	
 private:
 	void HandleCollisions();
 	void FoodCollisions();

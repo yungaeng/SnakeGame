@@ -6,7 +6,6 @@ void Game::InitGame(HDC hdc)
 
 	// enter 패킷을 받으면 추가해 줌
 	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
-
 	// 먹이 만들기
 	//for (int i = 0; i < 10; i++)
 	//{
@@ -40,6 +39,7 @@ void Game::ReStart()
 	m_killer_id = -1;
 
 	o.DeleteSnake(0);
+	o.AddSnake(m_userdata, rand() % 700, rand() % 700);
 
 	SendRestart();
 }
@@ -99,7 +99,6 @@ bool Game::InitNetwork()
 
 	return true;
 }
-
 void Game::Recv()
 {
 	while (m_isconnect)
@@ -162,8 +161,6 @@ void Game::Recv()
 	// 루프 종료 시 네트워크 정리
 	EndNetwork();
 }
-
-// 추출된 패킷을 처리하고 응답을 보내는 별도의 함수
 void Game::ProcessPacket(char* data)
 {
 	// 1. 패킷 헤더에서 ID 추출
@@ -226,7 +223,6 @@ void Game::SendLogin()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-
 void Game::SendMove(int x, int y)
 {
 	if (m_isconnect)
@@ -237,7 +233,6 @@ void Game::SendMove(int x, int y)
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-
 void Game::SendRestart()
 {
 	if (m_isconnect)
@@ -247,7 +242,6 @@ void Game::SendRestart()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-
 void Game::SendLeave()
 {
 	if (m_isconnect)
@@ -257,7 +251,6 @@ void Game::SendLeave()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-
 void Game::EndNetwork()
 {
 	m_isconnect = false;
@@ -265,13 +258,11 @@ void Game::EndNetwork()
 	closesocket(m_socket);
 	WSACleanup();
 }
-
 double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
 }
-
 void Game::SpawnFood()
 {
 	auto now = std::chrono::steady_clock::now();

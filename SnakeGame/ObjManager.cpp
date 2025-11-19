@@ -2,10 +2,13 @@
 
 std::vector<Object> ObjManager::m_foods;
 std::vector<Snake> ObjManager::m_snakes;
+std::mutex ObjManager::obj_lock;
 
 void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF c)
 {
+    obj_lock.lock();
     m_foods.emplace_back(Object(x, y, c));
+    obj_lock.unlock();
 }
 void ObjManager::AddSnake(UserData ud, int x, int y)
 {
