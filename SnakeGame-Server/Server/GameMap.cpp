@@ -24,6 +24,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 
 		for(auto& [id, food] : m_foods) {
 			S2C_FOOD_PACKET sendPkt;
+			sendPkt.id = food->GetID();
 			sendPkt.color = food->GetColor();
 			sendPkt.x = food->GetPos().x;
 			sendPkt.y = food->GetPos().y;
@@ -36,6 +37,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				const auto nameLen = p->GetName().size();
 				memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
 				sendPkt.name[nameLen] = L'\0';
+				sendPkt.id = gameObject->GetID();
 				sendPkt.color = p->GetColor();
 				sendPkt.x = p->GetPos().x;
 				sendPkt.y = p->GetPos().y;
@@ -47,6 +49,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 					const auto nameLen = gameObject->GetName().size();
 					memcpy(sendPkt.name, gameObject->GetName().data(), nameLen * sizeof(wchar_t));
 					sendPkt.name[nameLen] = L'\0';
+					sendPkt.id = gameObject->GetID();
 					sendPkt.color = gameObject->GetColor();
 					sendPkt.x = gameObject->GetPos().x;
 					sendPkt.y = gameObject->GetPos().y;
