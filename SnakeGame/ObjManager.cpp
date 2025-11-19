@@ -1,18 +1,18 @@
 #include "ObjManager.h"
 
-std::unordered_map<unsigned long long, Object> ObjManager::m_foods;
-std::unordered_map<unsigned long long, Snake> ObjManager::m_snakes;
+std::vector<Object> ObjManager::m_foods;
+std::vector<Snake> ObjManager::m_snakes;
 
 void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF c)
 {
-    m_foods.emplace(id, Object(x, y, c));
+    m_foods.emplace_back(Object(x, y, c));
 }
-void ObjManager::AddSnake(unsigned long long id, UserData ud, int x, int y)
+void ObjManager::AddSnake(UserData ud, int x, int y)
 {
     std::vector<Object> new_snake;
     new_snake.emplace_back(Object(x, y, ud.color));
     Snake s = { ud.name, new_snake };
-    m_snakes.emplace(id, s);
+    m_snakes.emplace_back(s);
 }
 void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
 {
@@ -73,12 +73,12 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
         y = next_y;
     }
 }
-void ObjManager::DeleteSnake(unsigned long long id)
+void ObjManager::DeleteSnake(int id)
 {
-    m_snakes.erase(id);
+    m_snakes.erase(m_snakes.begin() + id);
 }
 
-void ObjManager::SnakeEatFood(unsigned long long id)
+void ObjManager::SnakeEatFood(int id)
 {
     auto& body = m_snakes[id].body;
     size_t size = body.size();
@@ -109,6 +109,7 @@ void ObjManager::SnakeEatFood(unsigned long long id)
 bool ObjManager::UpDate()
 {
     HandleCollisions();
+    GarbageCollector();
     return gameover;
 }
 void ObjManager::HandleCollisions()
@@ -153,4 +154,12 @@ int ObjManager::SnakeCollisions()
         }
     }
     return -1;
+}
+void ObjManager::GarbageCollector()
+{
+    m_foods.erase(std::remove_if(m_foods.begin(), m_foods.end(),
+            [](const Object& food) {
+                return food.isalive == false; // isalive가 false인 요소를 삭제
+            }),
+        m_foods.end());
 }

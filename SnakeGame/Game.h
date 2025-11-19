@@ -77,7 +77,7 @@ private:
 	void SetLogin(bool st) { m_islogin = st; };
 
 	double GetElapsedTime();
-
+	void SpawnFood();
 	std::chrono::time_point<std::chrono::steady_clock> m_timer;
 	std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
 };

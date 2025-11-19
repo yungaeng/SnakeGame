@@ -5,12 +5,6 @@
 const int WINDOW_WIDTH = 700;
 const int WINDOW_HEIGHT = 700;
 
-// 화면 중앙 좌표 계산
-int screen_width = GetSystemMetrics(SM_CXSCREEN);
-int screen_height = GetSystemMetrics(SM_CYSCREEN);
-int x_pos = (screen_width - WINDOW_WIDTH) / 2;
-int y_pos = (screen_height - WINDOW_HEIGHT) / 2;
-
 PAINTSTRUCT ps;
 HDC hdc;
 Game g_game;
@@ -28,7 +22,6 @@ int GetIntFromEdit(HWND hDlg, int nIDDlgItem) {
     }
     return value;
 }
-
 
 INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
 
@@ -62,11 +55,19 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         int nWidth = rcDlg.right - rcDlg.left;
         int nHeight = rcDlg.bottom - rcDlg.top;
 
+        // 3. 주 모니터의 화면 해상도를 얻습니다.
+        int nScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+        int nScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+
+        // 4. 다이얼로그가 화면 중앙에 위치할 좌표를 계산합니다.
+        int nX = (nScreenWidth - nWidth) / 2;
+        int nY = (nScreenHeight - nHeight) / 2;
+
         // 5. 다이얼로그 창의 위치를 설정합니다.
         SetWindowPos(hDlg,
             HWND_TOP,
-            x_pos,
-            x_pos,
+            nX,
+            nY,
             0, 0,
             SWP_NOSIZE | SWP_NOZORDER);
 
@@ -192,6 +193,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         return -1;
     }
 
+    // 화면 중앙 좌표 계산
+    int screen_width = GetSystemMetrics(SM_CXSCREEN);
+    int screen_height = GetSystemMetrics(SM_CYSCREEN);
+
+    int x_pos = (screen_width - WINDOW_WIDTH) / 2;
+    int y_pos = (screen_height - WINDOW_HEIGHT) / 2;
+
     // 윈도우 생성
     HWND hwnd = CreateWindow(L"SnakeGame", L"SnakeGame",
         WS_OVERLAPPEDWINDOW,
@@ -205,7 +213,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         return -1;
     }
 
-    g_game.StartBGM();
+    //g_game.StartBGM();
     ShowWindow(hwnd, nCmdShow);
     MSG msg;
 
