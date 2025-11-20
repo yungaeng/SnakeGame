@@ -253,9 +253,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                     continue;
                 }
                 else {
-                    // 사용자가 '아니오' (종료)을 눌렀을 때
-                    g_game.EndNetwork();       // 네트워크 종료
+                    // 사용자가 '아니오' (종료)을 눌렀을 때 
                     PostQuitMessage(0);        // 게임 종료
+                    break;
                 }
                 continue;
 
@@ -264,6 +264,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             InvalidateRect(hwnd, NULL, false);
         }
     }
+    //g_game.SendLeave();
+    g_game.EndNetwork();
     g_game.StopBGM();
     // WM_QUIT 메시지의 wParam 값을 반환
     return (int)msg.wParam;

@@ -1,9 +1,10 @@
 #include "Object.h"
 
-Object::Object(int x, int y, COLORREF c)
+Object::Object(unsigned long long id, int x, int y, COLORREF c)
 {
     m_x = x;
     m_y = y;
+    m_id = id;
     m_color = c;
 
     isalive = true;

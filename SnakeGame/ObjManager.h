@@ -18,11 +18,12 @@ struct Snake {
 	UserData userdata;
 	std::vector<Object> body;
 	int m_target_x, m_target_y;
-
-	Snake(const wchar_t* name, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name);
+	unsigned long long m_id;
+	Snake(const wchar_t* name, unsigned long long id, std::vector<Object> b) { wcscpy_s(userdata.name, MAX_NAME_SIZE, name);
 	body = b;
 	m_target_x = b.front().m_x;
 	m_target_y = b.front().m_y;
+	m_id = id;
 	};
 };
 
@@ -37,11 +38,11 @@ public:
 
 	void AddFood(unsigned long long id, int x, int y, COLORREF c);
 
-	void AddSnake(UserData ud, int x, int y);
+	void AddSnake(unsigned long long id, UserData ud, int x, int y);
 	void MoveSnake(unsigned long long, double deltaTime);
-	void SnakeEatFood(int id);
-	void DeleteSnake(int id);
-
+	void SnakeEatFood(unsigned long long id);
+	void DeleteSnake(unsigned long long id);
+	void DeleteFood(unsigned long long id);
 	bool UpDate();
 	bool gameover = false;
 	int DeathBy = -1;

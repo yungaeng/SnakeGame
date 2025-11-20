@@ -7,14 +7,14 @@ std::mutex ObjManager::obj_lock;
 void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF c)
 {
     obj_lock.lock();
-    m_foods.emplace_back(Object(x, y, c));
+    m_foods.emplace_back(Object(id, x, y, c));
     obj_lock.unlock();
 }
-void ObjManager::AddSnake(UserData ud, int x, int y)
+void ObjManager::AddSnake(unsigned long long id, UserData ud, int x, int y)
 {
     std::vector<Object> new_snake;
-    new_snake.emplace_back(Object(x, y, ud.color));
-    Snake s = { ud.name, new_snake };
+    new_snake.emplace_back(Object(-1, x, y, ud.color));
+    Snake s = { ud.name, id, new_snake };
     m_snakes.emplace_back(s);
 }
 void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
@@ -76,18 +76,27 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
         y = next_y;
     }
 }
-void ObjManager::DeleteSnake(int id)
+void ObjManager::DeleteSnake(unsigned long long id)
 {
-    m_snakes.erase(m_snakes.begin() + id);
+    m_snakes.erase(m_snakes.begin() + 1);
 }
 
-void ObjManager::SnakeEatFood(int id)
+void ObjManager::DeleteFood(unsigned long long id)
 {
-    auto& body = m_snakes[id].body;
+    m_foods.erase(m_foods.begin() + id);
+}
+
+void ObjManager::SnakeEatFood(unsigned long long id)
+{
+    Snake* sn = {};
+    for (Snake s : m_snakes)
+        if (s.m_id == id)
+            sn = &s;
+    auto& body = sn->body;
     size_t size = body.size();
 
     if (size < 2) {
-        body.emplace_back(Object(body.front().m_x, body.front().m_y, body.front().m_color));
+        body.emplace_back(Object(id, body.front().m_x, body.front().m_y, body.front().m_color));
         return;
     }
 
@@ -107,7 +116,7 @@ void ObjManager::SnakeEatFood(int id)
     double new_y = tail.m_y - (unit_dy * SEGMENT_SIZE); // 部府->菊部府 氦磐甫 画
 
     COLORREF c = body.front().m_color;
-    body.emplace_back(Object(new_x, new_y, c));
+    body.emplace_back(Object(id, new_x, new_y, c));
 }
 bool ObjManager::UpDate()
 {

@@ -39,7 +39,7 @@ void Game::ReStart()
 	m_killer_id = -1;
 
 	o.DeleteSnake(0);
-	o.AddSnake(m_userdata, rand() % 700, rand() % 700);
+	o.AddSnake(0, m_userdata, rand() % 700, rand() % 700);
 
 	SendRestart();
 }
@@ -173,7 +173,7 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		o.AddSnake(m_userdata, p->x, p->y);
+		o.AddSnake(0, m_userdata, p->x, p->y);
 		SetLogin(true);
 		break;
 	}
@@ -187,7 +187,7 @@ void Game::ProcessPacket(char* data)
 		UserData ud = {};
 		memcpy(ud.name, p->name, 20);
 		ud.color = p->color;
-		o.AddSnake(ud, p->x, p->y);
+		o.AddSnake(p->id, ud, p->x, p->y);
 		break;
 	}
 	case PACKET_ID::S2C_FOOD:
@@ -199,9 +199,25 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_MOVE:
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
-		o.m_snakes[p->id].m_target_x = p->x;
-		o.m_snakes[p->id].m_target_y = p->y;
-		//o.MoveSnake(p->id, p->deltaTime);
+		for (auto s : o.m_snakes) {
+			if (s.m_id == p->id) {
+				s.m_target_x = p->x;
+				s.m_target_y = p->y;
+				//o.MoveSnake(p->id, p->deltaTime);
+			}
+		}
+		break;
+	}
+	case PACKET_ID::S2C_DEL_SNAKE:
+	{
+		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
+		o.DeleteSnake(p->id);
+		break;
+	}
+	case PACKET_ID::S2C_DEL_FOOD:
+	{
+		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
+		o.DeleteFood(p->id);
 		break;
 	}
 	default:
@@ -225,7 +241,7 @@ void Game::SendLogin()
 }
 void Game::SendMove(int x, int y)
 {
-	if (m_isconnect)
+	if (m_isconnect && m_islogin)
 	{
 		C2S_MOVE_PACKET sendPkt = {};
 		sendPkt.x = x; sendPkt.y = y;
