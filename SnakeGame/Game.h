@@ -56,7 +56,7 @@ public:
 	{
 		k.Input(o, wParam);
 		
-		// k.MouseInput(o, lParam);
+		//k.MouseInput(o, lParam);
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 		SendMove(x, y);

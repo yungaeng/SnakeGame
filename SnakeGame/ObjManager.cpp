@@ -4,6 +4,8 @@ std::vector<Object> ObjManager::m_foods;
 std::vector<Snake> ObjManager::m_snakes;
 std::mutex ObjManager::obj_lock;
 
+std::atomic<int> g_id = 1;
+
 void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF c)
 {
     obj_lock.lock();
@@ -14,16 +16,27 @@ void ObjManager::AddSnake(unsigned long long id, UserData ud, int x, int y)
 {
     std::vector<Object> new_snake;
     new_snake.emplace_back(Object(-1, x, y, ud.color));
-    Snake s = { ud.name, id, new_snake };
+    Snake s = { ud.name, id, new_snake};
     m_snakes.emplace_back(s);
 }
 void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
 {
-    int mx = m_snakes[id].m_target_x;
+    Snake* s;
+    for (auto& sn : m_snakes)
+        if (sn.m_id == id)
+            s = &sn;
+
+    /*int mx = m_snakes[id].m_target_x;
     int my = m_snakes[id].m_target_y;
     int& x = m_snakes[id].body.front().m_x;
     int& y = m_snakes[id].body.front().m_y;
-    double vel = m_snakes[id].body.front().m_speed;
+    double vel = m_snakes[id].body.front().m_speed;*/
+
+    int mx = s->m_target_x;
+    int my = s->m_target_y;
+    int& x = s->body.front().m_x;
+    int& y = s->body.front().m_y;
+    double vel = s->body.front().m_speed;
 
     double dx = (double)mx - x;
     double dy = (double)my - y;
@@ -50,14 +63,14 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
     if (next_y > 10 && next_y < MAP_SIZE - 40 &&
         next_x > 5 && next_x < MAP_SIZE - 10) 
     {
-        if (m_snakes[id].body.size() > 1) {
-            for (size_t i = m_snakes[id].body.size() - 1; i > 0; i--) {
-                const double SEGMENT_SIZE = m_snakes[id].body.front().m_size;
+        if (s->body.size() > 1) {
+            for (size_t i = s->body.size() - 1; i > 0; i--) {
+                const double SEGMENT_SIZE = s->body.front().m_size;
 
-                double prev_x = m_snakes[id].body[i - 1].m_x;
-                double prev_y = m_snakes[id].body[i - 1].m_y;
-                double current_x = m_snakes[id].body[i].m_x;
-                double current_y = m_snakes[id].body[i].m_y;
+                double prev_x = s->body[i - 1].m_x;
+                double prev_y = s->body[i - 1].m_y;
+                double current_x = s->body[i].m_x;
+                double current_y = s->body[i].m_y;
 
                 double vec_x = current_x - prev_x;
                 double vec_y = current_y - prev_y;
@@ -67,8 +80,8 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
                     double unit_vec_x = vec_x / dist;
                     double unit_vec_y = vec_y / dist;
 
-                    m_snakes[id].body[i].m_x = (int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE);
-                    m_snakes[id].body[i].m_y = (int)std::round(prev_y + unit_vec_y * SEGMENT_SIZE);
+                    s->body[i].m_x = (int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE);
+                    s->body[i].m_y = (int)std::round(prev_y + unit_vec_y * SEGMENT_SIZE);
                 }
             }
         }
