@@ -53,6 +53,9 @@ void ServerManager::DoAccept(const std::stop_token& st)
 			u_long on = 1;
 			if(::ioctlsocket(clientSocket, FIONBIO, &on) == INVALID_SOCKET)
 				std::cout << "ioctlsocket Failed" << std::endl;
+			
+			DWORD optVal{ 1 };
+			setsockopt(clientSocket, IPPROTO_TCP, TCP_NODELAY, (const char*)&optVal, sizeof(optVal));
 
 			const uint64 id = MANAGER(GameMap)->GetGlobalID();
 			auto session = std::make_shared<Session>(id, clientSocket);

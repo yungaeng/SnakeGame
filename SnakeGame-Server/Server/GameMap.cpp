@@ -37,7 +37,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				const auto nameLen = p->GetName().size();
 				memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
 				sendPkt.name[nameLen] = L'\0';
-				sendPkt.id = gameObject->GetID();
+				sendPkt.id = p->GetID();
 				sendPkt.color = p->GetColor();
 				sendPkt.x = p->GetPos().x;
 				sendPkt.y = p->GetPos().y;
@@ -70,7 +70,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		AppendPkt(sendPkt);
 		m_foods.try_emplace(id, std::move(gameObject));
 	}
-}
+	}
 
 void GameMap::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
 {
@@ -126,7 +126,7 @@ void GameMap::Update(const std::stop_token& st)
 	std::cout << "Finish GameThread!" << std::endl;
 }
 
-bool GameMap::FindName(std::wstring_view name)
+bool GameMap::FindPlayerName(std::wstring_view name)
 {
 	std::shared_lock<std::shared_mutex> lk{ m_nameSetMtx };
 	return  m_playerNames.contains(name.data());
@@ -151,7 +151,6 @@ void GameMap::AddEvent(std::function<void()> eve)
 void GameMap::CheckCollision()
 {
 	// TODO: 충돌체크
-
 	for(auto& [id, player] : m_players) {
 		if(player->IsAlive() == false) continue;
 
@@ -163,11 +162,10 @@ void GameMap::CheckCollision()
 			// 플레이어 - 먹이
 			// SC_EAT_FOOD
 			// SC_REMOVE_FOOD
-
 		}
 	}
 }
-
+	
 void GameMap::SpawnFood()
 {
 	std::cout << "SpawnFood!" << std::endl;

@@ -23,8 +23,9 @@ void Game::InitGame(HDC hdc)
 void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
-	for (int id = 0; id < o.m_snakes.size(); id++)
-		o.MoveSnake(id, deltaTime);
+	for(auto& snake : o.m_snakes) {
+		o.MoveSnake(snake.m_id, deltaTime);
+	}
 
 	m_isgameover = o.UpDate();
 	m_killer_id = o.DeathBy;
@@ -173,7 +174,7 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		o.AddSnake(0, m_userdata, p->x, p->y);
+		o.AddSnake(p->id, m_userdata, p->x, p->y);
 		SetLogin(true);
 		break;
 	}
@@ -199,11 +200,11 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_MOVE:
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
-		for (auto s : o.m_snakes) {
+		for (auto& s : o.m_snakes) {
 			if (s.m_id == p->id) {
 				s.m_target_x = p->x;
 				s.m_target_y = p->y;
-				//o.MoveSnake(p->id, p->deltaTime);
+				o.MoveSnake(p->id, p->deltaTime);
 			}
 		}
 		break;

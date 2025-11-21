@@ -15,7 +15,7 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 {
 	// Session Thread가 수행중
 
-	const bool hasName = MANAGER(GameMap)->FindName(recvPkt.name);
+	const bool hasName = MANAGER(GameMap)->FindPlayerName(recvPkt.name);
 
 	// 만약, 로그인 이름이 이미 게임에 있으면 SC_LOGIN 발송
 	if(hasName) {
@@ -29,6 +29,7 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 		Pos pos{ randomPos(dre), randomPos(dre) };
 
 		S2C_LOGIN_OK_PACKET sendPkt;
+		sendPkt.id = session->GetID();
 		sendPkt.x = pos.x;
 		sendPkt.y = pos.y;
 		session->AppendPkt(sendPkt);
@@ -60,4 +61,26 @@ bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C
 		Pos pos{ randomPos(dre), randomPos(dre) };
 	}
 	return true;
+}
+
+bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>& session, const C2S_MOVE_PACKET& recvPkt)
+{
+	auto player = session->GetPlayer();
+
+	if(player) {
+		const Pos pos{ recvPkt.x, recvPkt.y };
+		player->SetPos(pos);
+		std::cout << "C2S_MOVE_PACKET: PlayerID=" << player->GetID() << " Move to (" << pos.x << ", " << pos.y << ")\n";
+
+		S2C_MOVE_PACKET sendPkt;
+		sendPkt.id = player->GetID();
+		sendPkt.x = pos.x;
+		sendPkt.y = pos.y;
+		MANAGER(GameMap)->AppendPkt(sendPkt);
+		return true;
+	}
+	else return false;
+
+	return true;
+		
 }

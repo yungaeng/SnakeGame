@@ -46,7 +46,7 @@ public:
 	uint64 GetGlobalID() noexcept { return ++G_globalID; }
 
 public:
-	bool FindName(std::wstring_view name);
+	bool FindPlayerName(std::wstring_view name);
 
 private:
 	void ProcessEvent();
