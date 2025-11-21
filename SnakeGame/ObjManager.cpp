@@ -21,7 +21,7 @@ void ObjManager::AddSnake(unsigned long long id, UserData ud, int x, int y)
 }
 void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
 {
-    Snake* s;
+    Snake* s{ nullptr };
     for (auto& sn : m_snakes)
         if (sn.m_id == id)
             s = &sn;

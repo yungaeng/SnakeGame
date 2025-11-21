@@ -3,15 +3,15 @@
 #define NOMINMAX
 
 //Network
-#include <winsock2.h>			// À©¼Ó2 ¸ÞÀÎ Çì´õ
-#include <ws2tcpip.h>			// À©¼Ó2 È®Àå Çì´õ
-#pragma comment(lib, "ws2_32")	//ws2_32.lib ¸µÅ©
+#include <winsock2.h>			// ï¿½ï¿½ï¿½ï¿½2 ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+#include <ws2tcpip.h>			// ï¿½ï¿½ï¿½ï¿½2 È®ï¿½ï¿½ ï¿½ï¿½ï¿½
+#pragma comment(lib, "ws2_32")	//ws2_32.lib ï¿½ï¿½Å©
 #include "..\SnakeGame-Server\Server\pch.h"
 #include <cstdlib> // For wcstombs
 
-#define SERVER_IP "127.0.0.1"	// ¼­¹öÀÇ ipÁÖ¼Ò
-#define SERVER_PORT 9000		// ¼­¹öÀÇ Æ÷Æ®¹øÈ£
-#define BUF_SIZE 512			// ¼Û¼ö½Å ¹öÆÛÀÇ Å©±â
+#define SERVER_IP "127.0.0.1"	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ipï¿½Ö¼ï¿½
+#define SERVER_PORT 9000		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½È£
+#define BUF_SIZE 512			// ï¿½Û¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½
 
 #include "Painter.h"
 #include "ObjManager.h"
@@ -25,7 +25,7 @@ class Game
 	SOCKET m_socket;
 	char m_send_buf[BUF_SIZE];
 	char m_recv_buf[BUF_SIZE];
-	int m_received_bytes = 0;       // ÇöÀç ¹öÆÛ¿¡ ½×¿©ÀÖ´Â µ¥ÀÌÅÍ Å©±â
+	int m_received_bytes = 0;       // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½×¿ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½
 
 	Painter p = {};
 	ObjManager o = {};

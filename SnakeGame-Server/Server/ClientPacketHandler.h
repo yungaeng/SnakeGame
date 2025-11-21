@@ -6,6 +6,7 @@ bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>&, const char* 
 
 bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>&, const C2S_LOGIN_PACKET&);
 bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>&, const C2S_RESTART_PACKET&);
+bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>&, const C2S_MOVE_PACKET&);
 
 using PacketHandlerFunc = bool(*)(const std::shared_ptr<Session>&, const char* const);
 extern inline constinit std::array<PacketHandlerFunc, std::numeric_limits<uint16>::max() + 1> PacketHandlerFuncs{};
@@ -32,6 +33,7 @@ public:
 			func = Process_HANDLE_INVALID_PACKET;
 
 			PacketHandlerFuncs[static_cast<uint8>(PACKET_ID::C2S_LOGIN)] = [](const std::shared_ptr<Session>& session, const char* const buffer) -> bool { return HandlePacket<C2S_LOGIN_PACKET>(Process_C2S_LOGIN_PACKET, session, buffer); };
+			PacketHandlerFuncs[static_cast<uint8>(PACKET_ID::C2S_MOVE)] = [](const std::shared_ptr<Session>& session, const char* const buffer) -> bool { return HandlePacket<C2S_MOVE_PACKET>(Process_C2S_MOVE_PACKET, session, buffer); };
 		}
 	}
 
