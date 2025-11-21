@@ -9,7 +9,7 @@
 #include "..\SnakeGame-Server\Server\pch.h"
 #include <cstdlib> // For wcstombs
 
-#define SERVER_IP "127.0.0.1"	// ������ ip�ּ�
+#define SERVER_IP "192.168.79.225"	// ������ ip�ּ�
 #define SERVER_PORT 9000		// ������ ��Ʈ��ȣ
 #define BUF_SIZE 512			// �ۼ��� ������ ũ��
 

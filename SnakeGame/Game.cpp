@@ -89,9 +89,12 @@ bool Game::InitNetwork()
 		int errCode = WSAGetLastError();
 		if (errCode != WSAEWOULDBLOCK) {
 			// 연결 시도 자체가 불가능한 심각한 오류
-			MessageBox(NULL, L"Conn	ect Error!", L"Error", MB_ICONERROR);
+			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
 			return false;
 		}
+		else { 
+			std::this_thread::sleep_for(2s); 
+		};
 		// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
 	}
 
