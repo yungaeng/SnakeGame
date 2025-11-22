@@ -1,11 +1,11 @@
 #pragma once
 #define NOMINMAX
 
-#include <vector>
-#include <cmath>
 #include <algorithm>
-#include "Object.h"
 #include <mutex>
+#include <cmath>
+#include <vector>
+#include "Object.h"
 
 constexpr auto MAP_SIZE = 700;
 constexpr auto MAX_NAME_SIZE = 10;
@@ -14,6 +14,7 @@ struct UserData {
 	wchar_t name[MAX_NAME_SIZE];
 	COLORREF color;
 };
+
 struct Snake {
 	UserData userdata;
 	std::vector<Object> body;

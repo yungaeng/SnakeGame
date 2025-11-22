@@ -65,14 +65,14 @@
     <ClCompile Include="Object.cpp">
       <Filter>소스 파일\Game\Manager\obj\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>소스 파일\Game</Filter>
-    </ClCompile>
     <ClCompile Include="ObjManager.cpp">
       <Filter>소스 파일\Game\Manager\obj</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>소스 파일\Game\Manager\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>소스 파일\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
