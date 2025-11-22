@@ -22,9 +22,6 @@
     <ClCompile Include="ServerManager.cpp">
       <Filter>ServerManager</Filter>
     </ClCompile>
-    <ClCompile Include="LockQueue.cpp">
-      <Filter>LockQueue</Filter>
-    </ClCompile>
     <ClCompile Include="ClientPacketHandler.cpp">
       <Filter>PacketHandler</Filter>
     </ClCompile>
@@ -59,9 +56,6 @@
     </ClInclude>
     <ClInclude Include="ServerManager.h">
       <Filter>ServerManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LockQueue.h">
-      <Filter>LockQueue</Filter>
     </ClInclude>
     <ClInclude Include="ClientPacketHandler.h">
       <Filter>PacketHandler</Filter>
@@ -100,9 +94,6 @@
     </Filter>
     <Filter Include="ServerManager">
       <UniqueIdentifier>{d4b1a730-7f63-4e9a-bf6a-c419b7654697}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="LockQueue">
-      <UniqueIdentifier>{c87dd9f7-5d0f-48ea-96ec-843b1c1d751e}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameObject">
       <UniqueIdentifier>{b2163046-071f-4805-ac62-b296a785e610}</UniqueIdentifier>

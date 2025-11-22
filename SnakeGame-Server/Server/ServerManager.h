@@ -1,6 +1,5 @@
 #pragma once
 
-#include "LockQueue.h"
 #include "SendBuffer.h"
 
 class Session;
@@ -25,7 +24,6 @@ private:
 public:
 	bool Init();
 	void Finish()noexcept;
-	// void FlushSendBufferQueue(const std::stop_token& st);
 	void Broadcast(SendBuffer* sendBuffer);
 
 public:

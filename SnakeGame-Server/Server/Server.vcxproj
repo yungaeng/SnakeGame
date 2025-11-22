@@ -131,7 +131,6 @@
   <ItemGroup>
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="LockQueue.cpp" />
     <ClCompile Include="ClientPacketHandler.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RecvBuffer.cpp" />
@@ -149,7 +148,6 @@
     <ClInclude Include="..\..\protocol\protocol.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="LockQueue.h" />
     <ClInclude Include="ClientPacketHandler.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RecvBuffer.h" />

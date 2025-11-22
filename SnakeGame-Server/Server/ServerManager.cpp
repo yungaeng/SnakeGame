@@ -93,25 +93,6 @@ void ServerManager::Finish() noexcept
 	std::cout << "Server Manager Finish" << std::endl;
 }
 
-//void ServerManager::FlushSendBufferQueue(const std::stop_token& st)
-//{
-//	while(false == st.stop_requested()) {
-//	/*	if(m_sendBufferQueue.Empty() != false) {
-//			auto sendBuffer = m_sendBufferQueue.Pop();
-//			{
-//				if(sendBuffer) {
-//					std::lock_guard<std::mutex> lk{ m_sessionMutex };
-//					for(auto& [id, session] : m_sessions) {
-//						session->AppendToSendBuffer(sendBuffer);
-//					}
-//				}
-//			}
-//		}*/
-//	}
-//
-//	std::cout << "Finish BroadcastThread" << std::endl;
-//}
-
 void ServerManager::Broadcast(SendBuffer* sendBuffer)
 {
 	std::lock_guard<std::mutex> lk{ m_sessionMutex };
