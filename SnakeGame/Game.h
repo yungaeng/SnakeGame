@@ -19,8 +19,7 @@
 #include <mmsystem.h>
 #include <chrono>
 
-class Game
-{
+class Game {
 	bool m_isconnect;
 	SOCKET m_socket;
 	char m_send_buf[BUF_SIZE];
@@ -36,7 +35,8 @@ public:
 	int m_killer_id = -1;
 	UserData m_userdata = {};
 
-	Game() {
+	Game()
+	{
 		m_isconnect = true;
 		m_socket = {};
 		m_send_buf[0] = '\0';
@@ -52,10 +52,10 @@ public:
 	~Game() {};
 	void InitGame(HDC hdc);
 	void Draw(HDC hdc) { p.Draw(hdc); };
-	void Input(WPARAM wParam, LPARAM lParam) 
+	void Input(WPARAM wParam, LPARAM lParam)
 	{
 		k.Input(o, wParam);
-		
+
 		//k.MouseInput(o, lParam);
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
@@ -63,7 +63,7 @@ public:
 	};
 
 	void Update();
-	
+
 	void ReStart();
 
 	void StartBGM();
@@ -89,4 +89,3 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> m_timer;
 	std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
 };
-

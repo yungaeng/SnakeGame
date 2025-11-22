@@ -62,7 +62,7 @@ bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C
 	}
 	return true;
 }
-
+	
 bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>& session, const C2S_MOVE_PACKET& recvPkt)
 {
 	auto player = session->GetPlayer();
@@ -70,7 +70,7 @@ bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>& session, const C2S_
 	if(player) {
 		const Pos pos{ recvPkt.x, recvPkt.y };
 		player->SetPos(pos);
-		std::cout << "C2S_MOVE_PACKET: PlayerID=" << player->GetID() << " Move to (" << pos.x << ", " << pos.y << ")\n";
+		// std::cout << "C2S_MOVE_PACKET: PlayerID=" << player->GetID() << " Move to (" << pos.x << ", " << pos.y << ")\n";
 
 		S2C_MOVE_PACKET sendPkt;
 		sendPkt.id = player->GetID();
