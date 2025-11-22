@@ -27,4 +27,7 @@ public:
 	const std::wstring& GetName() const noexcept { return m_name; }
 	void SetPos(const Pos pos) { m_pos = pos; }
 	Pos GetPos() const noexcept { return m_pos; }
+
+public:
+	bool IsCollision(const std::shared_ptr<GameObject>& other);
 };
