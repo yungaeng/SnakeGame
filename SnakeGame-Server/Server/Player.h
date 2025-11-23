@@ -6,6 +6,7 @@ class Player : public GameObject {
 private:
 	std::shared_ptr<Session>	m_session;
 	bool						m_alive;
+	std::vector<Pos>			m_body;
 
 public:
 	Player();
@@ -16,5 +17,10 @@ public:
 	bool IsAlive() const noexcept { return m_alive; }
 	void SetSession(std::shared_ptr<Session> session) { m_session = session; }
 	std::shared_ptr<Session> GetSession() { return m_session; }
+	const auto& GetBody() const noexcept { return m_body; }
+	void AddBody(const Pos pos) { m_body.emplace_back(pos);}
+
+	void Update();
 };
+
 

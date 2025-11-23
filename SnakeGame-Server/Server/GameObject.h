@@ -10,6 +10,7 @@ private:
 	bool					m_alive;
 	COLORREF				m_color;
 	Pos						m_pos;
+	static constexpr int	GAME_OBJECT_SIZE = 10;
 
 public:
 	explicit GameObject(GAME_OBJECT_TYPE type);
@@ -29,5 +30,5 @@ public:
 	Pos GetPos() const noexcept { return m_pos; }
 
 public:
-	bool IsCollision(const std::shared_ptr<GameObject>& other);
+	bool IsCollision(const Pos otherPos);
 };
