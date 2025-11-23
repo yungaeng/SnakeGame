@@ -43,7 +43,6 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				sendPkt.y = p->GetPos().y;
 				session->AppendPkt(sendPkt);
 
-				// TODO: 기존에 있는 애들에게 새로운 플레이어 정보 전송(플레이어 정보)
 				{
 					S2C_PLAYER_PACKET sendPkt{};
 					const auto nameLen = gameObject->GetName().size();
@@ -54,7 +53,6 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 					sendPkt.x = gameObject->GetPos().x;
 					sendPkt.y = gameObject->GetPos().y;
 
-					// TODO: Object는 살아있는데 Session이 살아져서 발생하는 문제
 					(p)->GetSession()->AppendPkt(sendPkt);
 				}
 
@@ -70,7 +68,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		AppendPkt(sendPkt);
 		m_foods.try_emplace(id, std::move(gameObject));
 	}
-	}
+}
 
 void GameMap::RemoveGameObject(std::shared_ptr<GameObject> gameObject)
 {
@@ -112,9 +110,12 @@ void GameMap::Update(const std::stop_token& st)
 		if(m_accDTForUpdate >= UPDATE_INVERVAL) {
 			ProcessEvent();
 
+			for(const auto& [id, player] : m_players)
+				player->Update();
+
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
-				SpawnFood();
+				//SpawnFood();
 				m_accDTForFoodSpawn = 0.f;
 			}
 
@@ -150,30 +151,27 @@ void GameMap::AddEvent(std::function<void()> eve)
 
 void GameMap::CheckCollision()
 {
-	for (auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
+	for(auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
 		bool isCollision{ false };
 
 		const auto& curPlayer = pIter1->second;
-		if (false == curPlayer->IsAlive()) continue;
+		if(false == curPlayer->IsAlive()) continue;
 
 		auto pIter2 = pIter1;
 		++pIter2;
 
-		// 플레이어 vs 플레이어
-		for (; pIter2 != m_players.end(); ++pIter2) {
+		for(; pIter2 != m_players.end(); ++pIter2) {
 			const auto& other = pIter2->second;
-			if (false == other->IsAlive()) continue;
+			if(false == other->IsAlive()) continue;
 
-			// 나와 상대방 머리 충돌했는지 검사
-			if (curPlayer->IsCollision(other->GetPos())) {
+			if(curPlayer->IsCollision(other->GetPos())) {
 				S2C_DEL_SNAKE_PACKET sendPkt;
 				AppendPkt(sendPkt);
 			}
 
-			// 나와 상대방 몸통 충돌했는지 검사
 			const auto& otherBody = other->GetBody();
-			for (const auto otherBodyPos : otherBody) {
-				if (curPlayer->IsCollision(otherBodyPos)) {
+			for(const auto otherBodyPos : otherBody) {
+				if(curPlayer->IsCollision(otherBodyPos)) {
 					S2C_DEL_SNAKE_PACKET sendPkt;
 					AppendPkt(sendPkt);
 					break;
@@ -181,33 +179,30 @@ void GameMap::CheckCollision()
 			}
 		}
 
-		// 플레이어 vs 음식
-		for (const auto& [foodID, food] : m_foods) {
-			if (curPlayer->IsCollision(food->GetPos())) {
+		for(const auto& [foodID, food] : m_foods) {
+			if(curPlayer->IsCollision(food->GetPos())) {
 				std::cout << "Eat Food!" << std::endl;
 
-				// 음식 사라져야함
 				S2C_DEL_FOOD_PACKET sendPkt;
 				sendPkt.id = foodID;
 				AppendPkt(sendPkt);
 
 				{
 					const auto& body = curPlayer->GetBody();
-
+					
 					Pos newBodyPos;
-					if (body.empty()) {
+					if(body.empty()) {
 						newBodyPos.x = curPlayer->GetPos().x - 10;
 						newBodyPos.y = curPlayer->GetPos().y - 10;
 					}
 					else {
 						const Pos lastBodyPos = body.back();
 						newBodyPos.x = lastBodyPos.x - 10;
-						newBodyPos.y = lastBodyPos.y - 10;
+						newBodyPos.y = lastBodyPos.y- 10;
 					}
-
+					
 					curPlayer->AddBody(newBodyPos);
-
-					// 먹은애
+					 
 					S2C_EAT_FOOD_PACKET sendPkt;
 					sendPkt.id = curPlayer->GetID();
 					AppendPkt(sendPkt);
@@ -216,8 +211,7 @@ void GameMap::CheckCollision()
 		}
 	}
 }
-}
-	
+
 void GameMap::SpawnFood()
 {
 	std::cout << "SpawnFood!" << std::endl;
@@ -233,7 +227,7 @@ void GameMap::SpawnFood()
 	const COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
 	food->SetColor(c);
 
-	AddEvent([this, f = std::move(food) ]() { AddGameObject(std::move(f)); });
+	AddEvent([this, f = std::move(food)]() { AddGameObject(std::move(f)); });
 }
 
 void GameMap::FlushSendBuffer()

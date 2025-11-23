@@ -30,7 +30,7 @@ void Game::Update()
 	m_isgameover = o.UpDate();
 	m_killer_id = o.DeathBy;
 
-//	SpawnFood();
+SpawnFood();
 }
 
 void Game::ReStart()

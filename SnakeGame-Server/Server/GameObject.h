@@ -11,7 +11,6 @@ private:
 	COLORREF				m_color;
 	Pos						m_pos;
 	static constexpr int	GAME_OBJECT_SIZE = 10;
-
 public:
 	explicit GameObject(GAME_OBJECT_TYPE type);
 	virtual ~GameObject();
