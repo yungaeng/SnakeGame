@@ -150,20 +150,72 @@ void GameMap::AddEvent(std::function<void()> eve)
 
 void GameMap::CheckCollision()
 {
-	// TODO: 충돌체크
-	for(auto& [id, player] : m_players) {
-		if(player->IsAlive() == false) continue;
+	for (auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
+		bool isCollision{ false };
 
-		for(auto& [id, food] : m_foods) {
+		const auto& curPlayer = pIter1->second;
+		if (false == curPlayer->IsAlive()) continue;
 
-			// 플레이어 - 플레이어 충돌
-			// SC_PLAYER_DIE
+		auto pIter2 = pIter1;
+		++pIter2;
 
-			// 플레이어 - 먹이
-			// SC_EAT_FOOD
-			// SC_REMOVE_FOOD
+		// 플레이어 vs 플레이어
+		for (; pIter2 != m_players.end(); ++pIter2) {
+			const auto& other = pIter2->second;
+			if (false == other->IsAlive()) continue;
+
+			// 나와 상대방 머리 충돌했는지 검사
+			if (curPlayer->IsCollision(other->GetPos())) {
+				S2C_DEL_SNAKE_PACKET sendPkt;
+				AppendPkt(sendPkt);
+			}
+
+			// 나와 상대방 몸통 충돌했는지 검사
+			const auto& otherBody = other->GetBody();
+			for (const auto otherBodyPos : otherBody) {
+				if (curPlayer->IsCollision(otherBodyPos)) {
+					S2C_DEL_SNAKE_PACKET sendPkt;
+					AppendPkt(sendPkt);
+					break;
+				}
+			}
+		}
+
+		// 플레이어 vs 음식
+		for (const auto& [foodID, food] : m_foods) {
+			if (curPlayer->IsCollision(food->GetPos())) {
+				std::cout << "Eat Food!" << std::endl;
+
+				// 음식 사라져야함
+				S2C_DEL_FOOD_PACKET sendPkt;
+				sendPkt.id = foodID;
+				AppendPkt(sendPkt);
+
+				{
+					const auto& body = curPlayer->GetBody();
+
+					Pos newBodyPos;
+					if (body.empty()) {
+						newBodyPos.x = curPlayer->GetPos().x - 10;
+						newBodyPos.y = curPlayer->GetPos().y - 10;
+					}
+					else {
+						const Pos lastBodyPos = body.back();
+						newBodyPos.x = lastBodyPos.x - 10;
+						newBodyPos.y = lastBodyPos.y - 10;
+					}
+
+					curPlayer->AddBody(newBodyPos);
+
+					// 먹은애
+					S2C_EAT_FOOD_PACKET sendPkt;
+					sendPkt.id = curPlayer->GetID();
+					AppendPkt(sendPkt);
+				}
+			}
 		}
 	}
+}
 }
 	
 void GameMap::SpawnFood()
