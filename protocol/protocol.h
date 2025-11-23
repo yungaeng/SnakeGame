@@ -90,9 +90,4 @@ struct S2C_EAT_FOOD_PACKET : public PacketHeader {
 	S2C_EAT_FOOD_PACKET() : PacketHeader{ sizeof(S2C_EAT_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_EAT_FOOD) } {}
 };
 
-struct S2C_DIE_PLAYER_PACKET : public PacketHeader {
-	unsigned long long id;
-	S2C_DIE_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_DIE_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_DIE_PLAYER) } {}
-};
-
 #pragma pack(pop)
