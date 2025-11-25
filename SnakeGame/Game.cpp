@@ -2,8 +2,9 @@
 
 void Game::Init(HDC hdc)
 {
-	// enter 패킷을 받으면 추가해 줌
+	// 이제 loginok 패킷을 받으면 추가해 줌 
 	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
+	
 	// 먹이 만들기
 	//for (int i = 0; i < 10; i++)
 	//{
@@ -15,9 +16,8 @@ void Game::Init(HDC hdc)
 
 	// 타이머 시작
 	m_timer = std::chrono::steady_clock::now();
-	m_last_food_spawn_time = std::chrono::steady_clock::now();
+	//m_last_food_spawn_time = std::chrono::steady_clock::now();
 }
-
 void Game::Draw(HDC hdc)
 {
 	DrawBackGround(hdc);
@@ -26,29 +26,23 @@ void Game::Draw(HDC hdc)
 	for (auto& f : o.m_foods)
 		f.second.Draw(hdc);
 	
-	//for (auto& s : o.m_snakes)
-		//s.second.Draw(hdc);
+	for (auto& s : o.m_snakes)
+		s.second.Draw(hdc);
 	o.obj_lock.unlock();
 }
-
 void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
-	//for(auto& snake : o.m_snakes) {
-	//	o.MoveSnake(snake.first, deltaTime);
-	//}
-
-	//m_isgameover = o.UpDate();
-	//m_killer_id = o.DeathBy;
-
-	//SpawnFood();
+	o.obj_lock.lock();
+	for(auto& snake : o.m_snakes) {
+		o.MoveSnake(snake.first, deltaTime);
+	}
+	o.obj_lock.unlock();
+	// 이제 게임오버 처리는 recv 에서
+	// SpawnFood();
 }
-
 void Game::ReStart()
 {
-	//o.gameover = false;
-	//m_isgameover = false;
-	//m_killer_id = -1;
 	SendRestart();
 }
 
@@ -56,7 +50,6 @@ void Game::StartBGM()
 {
 	PlaySound(L"bgm.wav", NULL, SND_ASYNC | SND_LOOP | SND_FILENAME);
 }
-
 void Game::StopBGM()
 {
 	PlaySound(NULL, NULL, 0);
@@ -189,6 +182,7 @@ void Game::ProcessPacket(char* data)
 		v.emplace_back(obj);
 		Snake s = { m_userdata.name, v };
 		o.AddSnake(p->id, s);
+		m_userdata.id = p->id;
 		SetLogin(true);
 		break;
 	}
@@ -216,12 +210,9 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_MOVE:
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
-		for (auto& s : o.m_snakes) {
-			if (s.first == p->id) {
-				s.second.SetTarget(p->x, p->y);
-				//o.MoveSnake(p->id, p->deltaTime);
-			}
-		}
+		o.obj_lock.lock();
+		o.m_snakes[p->id].SetTarget(p->x, p->y);
+		o.obj_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_DEL_SNAKE:
@@ -234,6 +225,14 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
 		o.DeleteFood(p->id);
+		break;
+	}
+	case PACKET_ID::S2C_EAT_FOOD:
+	{
+		S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
+		o.obj_lock.lock();
+		o.m_snakes[p->id].Eat();
+		o.obj_lock.unlock();
 		break;
 	}
 	default:
@@ -290,11 +289,37 @@ void Game::EndNetwork()
 	closesocket(m_socket);
 	WSACleanup();
 }
+
+void Game::DrawBackGround(HDC hdc)
+{
+	RECT backgroundRect = { 0, 0, 700, 700 };
+	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
+	FillRect(hdc, &backgroundRect, backgroundBrush);
+	DeleteObject(backgroundBrush);
+	
+	// ID 0 뱀이 존재하는 경우에만 점수 계산
+	int score = 0;
+	if (o.m_snakes.count(0)) {
+		score = (int)o.m_snakes[m_userdata.id].m_body.size() * 10;
+	}
+	
+	// --- 텍스트 출력 추가 부분 ---
+	char textBuffer[50];
+	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
+		(int)o. m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[m_userdata.id].m_body.size() * 10);
+	SetBkMode(hdc, OPAQUE);
+	COLORREF textColorBg = RGB(255, 255, 200);
+	SetBkColor(hdc, textColorBg);
+	TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
+}
+
+
 double Game::GetElapsedTime() {
 	auto now = std::chrono::steady_clock::now();
 	auto duration = now - m_timer;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
 }
+
 //void Game::SpawnFood()
 //{
 //	auto now = std::chrono::steady_clock::now();
@@ -310,26 +335,3 @@ double Game::GetElapsedTime() {
 //		m_last_food_spawn_time = now;
 //	}*/
 //}
-
-void Game::DrawBackGround(HDC hdc)
-{
-	RECT backgroundRect = { 0, 0, 700, 700 };
-	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
-	FillRect(hdc, &backgroundRect, backgroundBrush);
-	DeleteObject(backgroundBrush);
-	
-	// ID 0 뱀이 존재하는 경우에만 점수 계산
-	int score = 0;
-	if (o.m_snakes.count(0)) {
-		score = (int)o.m_snakes.at(0).m_body.size() * 10;
-	}
-	
-	// --- 텍스트 출력 추가 부분 ---
-	char textBuffer[50];
-	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
-		(int)o. m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[0].m_body.size() * 10);
-	SetBkMode(hdc, OPAQUE);
-	COLORREF textColorBg = RGB(255, 255, 200);
-	SetBkColor(hdc, textColorBg);
-	TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
-}

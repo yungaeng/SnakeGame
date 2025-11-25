@@ -22,12 +22,9 @@ public:
 
 	void DeleteFood(unsigned long long id);
 	void DeleteSnake(unsigned long long id);
-
-	//bool UpDate();
 private:
-	/*void HandleCollisions();
-	void FoodCollisions();
-	int SnakeCollisions();
-	void GarbageCollector();*/
+	// void FoodCollisions();
+	// int SnakeCollisions();
+	// void GarbageCollector();
 };
 

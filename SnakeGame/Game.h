@@ -21,31 +21,29 @@
 struct userdata {
 	wchar_t name[MAX_NAME_SIZE];
 	COLORREF color;
+	unsigned long long id;
 };
 
 class Game {
 	bool m_isconnect = false;
 	bool m_islogin = false;
 
-	SOCKET m_socket;
+	SOCKET m_socket = {};
 	char m_send_buf[BUF_SIZE];
 	char m_recv_buf[BUF_SIZE];
 	int m_received_bytes = 0;
 
 	ObjManager o = {};
-public:
 	userdata m_userdata = {};
-
+public:
 	Game()
 	{
 		m_isconnect = true;
-		m_socket = {};
+		m_islogin = false;
+		m_socket = INVALID_SOCKET;
 		m_send_buf[0] = '\0';
 		m_recv_buf[0] = '\0';
-
-		//m_isgameover = false;
-		m_islogin = false;
-		//m_killer_id = -1;
+		m_userdata = {};
 	};
 	~Game() {};
 	void Init(HDC hdc);
@@ -60,18 +58,24 @@ public:
 		int x = LOWORD(lParam);
 		int y = HIWORD(lParam);
 
-		o.m_snakes[0].m_target_x = x;
-		o.m_snakes[0].m_target_y = y;
+		// o.m_snakes[0].m_target_x = x;
+		// o.m_snakes[0].m_target_y = y;
 		SendMove(x, y);
 	};
+
+	double m_time;
 	void Update();
 	void ReStart();
 
 	void StartBGM();
 	void StopBGM();
 
+	void SetUserdata(userdata ud) { m_userdata = ud; };
+
+	userdata* GetUserdata() { return &m_userdata; };	
 	wchar_t* GetNameById(int id) { return o.m_snakes[id].GetName(); };
 	int GetScoreById(int id) { return (int)o.m_snakes[id].m_body.size() * 10; };
+	
 
 	//  Network --------------------------------------------------------------------------
 
@@ -92,7 +96,8 @@ private:
 	void SetLogin(bool st) { m_islogin = st; };
 	void DrawBackGround(HDC hdc);
 	double GetElapsedTime();
-	//void SpawnFood();
-	std::chrono::time_point<std::chrono::steady_clock> m_timer;
-	std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
+
+	// void SpawnFood();
+	//std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
+	std::chrono::time_point<std::chrono::steady_clock> m_timer;	
 };

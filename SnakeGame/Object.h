@@ -11,7 +11,6 @@ class Object
 	COLORREF m_color;
 	bool m_isalive = true;
 public:
-	Object() { m_isalive = true; };
 	Object(int x, int y, COLORREF c);
 
 	void Draw(HDC hdc);

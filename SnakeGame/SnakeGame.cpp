@@ -34,7 +34,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
         L"------------------------------------------";
 
-    static userdata* pSettings = &g_game.m_userdata;
+    static userdata* pSettings = g_game.GetUserdata();
     switch (message) {
     case WM_INITDIALOG: {
         // DialogBoxParam으로 전달된 lParam을 GameSettings 구조체 포인터에 저장
@@ -143,6 +143,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         EndPaint(hwnd, &ps);
         return 0;
     }
+    case WM_KEYDOWN:
     case WM_MOUSEMOVE:
         g_game.Input(wParam, lParam);
         InvalidateRect(hwnd, NULL, false);
@@ -172,7 +173,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             MAKEINTRESOURCE(IDD_START_DIALOG),
             NULL,
             StartDialogProc,
-            (LPARAM)&g_game.m_userdata
+            (LPARAM)g_game.GetUserdata()
             );
 
         // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
@@ -181,7 +182,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         }
 
         if (!g_game.GetConnect()) {
-            MessageBox(NULL, L"서버에 연결되지 않았습니다.", L"Error", MB_ICONERROR);
+            MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
             g_game.InitNetwork();
         }
         else if(!g_game.GetLogin())
@@ -235,12 +236,10 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         else {
             // 메시지가 없을 때 (Idle Time)
             // 별도의 스레드에서 recv 중
-            //g_game.Recv();
             g_game.Update();
 
             //if (g_game.m_isgameover) {
             //    int killer_id = g_game.m_killer_id;
-
             //    wchar_t message_buffer[256];
             //    wchar_t* name = g_game.GetNameById(killer_id);
             //    swprintf_s(message_buffer,
@@ -251,7 +250,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             //        message_buffer,
             //        L"Game Over",
             //        MB_YESNO | MB_ICONQUESTION);
-
             //    if (result == IDYES) {
             //        // '예'를 선택한 경우: 
             //        g_game.ReStart();
@@ -263,8 +261,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             //        break;
             //    }
             //    continue;
-
             //}
+            
             // 업데이트 후 화면 무효화.
             InvalidateRect(hwnd, NULL, false);
         }
