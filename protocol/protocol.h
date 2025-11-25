@@ -1,5 +1,4 @@
 #pragma once
-
 enum class GAME_OBJECT_TYPE {
 	PLAYER = 1,
 	FOOD = 2,

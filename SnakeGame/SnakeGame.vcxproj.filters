@@ -16,63 +16,51 @@
     <Filter Include="소스 파일\Game">
       <UniqueIdentifier>{b168ddf3-6531-4166-8fd4-87d1dc974f83}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Game\Manager">
-      <UniqueIdentifier>{6307afc2-5743-44a2-9ece-74e1194484d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Game\Manager\obj">
-      <UniqueIdentifier>{cb2275a9-d9fb-4a95-ab3d-dccc9092e697}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Game\Painter">
-      <UniqueIdentifier>{036a488a-5180-4d4c-b7a8-f6043ff3c0e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Game\Manager\obj\Object">
-      <UniqueIdentifier>{a7b30cf4-2d23-4c61-84e3-249a73f0e935}</UniqueIdentifier>
-    </Filter>
     <Filter Include="리소스 파일\StartMenu">
       <UniqueIdentifier>{4c20dd77-c3a7-4560-ae2a-a10115f52ea8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Game\Manager\ui">
-      <UniqueIdentifier>{7469a2db-5706-4905-bd3d-092069388bcd}</UniqueIdentifier>
+    <Filter Include="소스 파일\Game\obj">
+      <UniqueIdentifier>{cb2275a9-d9fb-4a95-ab3d-dccc9092e697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\obj\Object">
+      <UniqueIdentifier>{a7b30cf4-2d23-4c61-84e3-249a73f0e935}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game\obj\Snake">
+      <UniqueIdentifier>{30f42629-7d67-4c79-81fd-4fdde462f743}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Painter.h">
-      <Filter>소스 파일\Game\Painter</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>소스 파일\Game\Manager\obj\Object</Filter>
+      <Filter>소스 파일\Game\obj\Object</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
     </ClInclude>
     <ClInclude Include="ObjManager.h">
-      <Filter>소스 파일\Game\Manager\obj</Filter>
-    </ClInclude>
-    <ClInclude Include="UIManager.h">
-      <Filter>소스 파일\Game\Manager\ui</Filter>
+      <Filter>소스 파일\Game\obj</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>리소스 파일\StartMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="Snake.h">
+      <Filter>소스 파일\Game\obj\Snake</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SnakeGame.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Painter.cpp">
-      <Filter>소스 파일\Game\Painter</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>소스 파일\Game\Manager\obj\Object</Filter>
+      <Filter>소스 파일\Game\obj\Object</Filter>
     </ClCompile>
     <ClCompile Include="ObjManager.cpp">
-      <Filter>소스 파일\Game\Manager\obj</Filter>
-    </ClCompile>
-    <ClCompile Include="UIManager.cpp">
-      <Filter>소스 파일\Game\Manager\ui</Filter>
+      <Filter>소스 파일\Game\obj</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Snake.cpp">
+      <Filter>소스 파일\Game\obj\Snake</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

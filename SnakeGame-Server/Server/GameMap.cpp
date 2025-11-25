@@ -62,6 +62,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 	}
 	else if(GAME_OBJECT_TYPE::FOOD == gameObject->GetType()) {
 		S2C_FOOD_PACKET sendPkt;
+		sendPkt.id = gameObject->GetID();
 		sendPkt.color = gameObject->GetColor();
 		sendPkt.x = gameObject->GetPos().x;
 		sendPkt.y = gameObject->GetPos().y;
@@ -115,7 +116,7 @@ void GameMap::Update(const std::stop_token& st)
 
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
-				//SpawnFood();
+				SpawnFood();
 				m_accDTForFoodSpawn = 0.f;
 			}
 

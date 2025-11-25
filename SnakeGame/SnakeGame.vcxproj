@@ -20,19 +20,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
-    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="Snake.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjManager.h" />
-    <ClInclude Include="Painter.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjManager.cpp" />
     <ClCompile Include="SnakeGame.cpp" />
-    <ClCompile Include="Painter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

@@ -1,9 +1,7 @@
 #include "Game.h"
 
-void Game::InitGame(HDC hdc)
+void Game::Init(HDC hdc)
 {
-	m_isgameover = false;
-
 	// enter 패킷을 받으면 추가해 줌
 	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
 	// 먹이 만들기
@@ -20,28 +18,37 @@ void Game::InitGame(HDC hdc)
 	m_last_food_spawn_time = std::chrono::steady_clock::now();
 }
 
+void Game::Draw(HDC hdc)
+{
+	DrawBackGround(hdc);
+
+	o.obj_lock.lock();
+	for (auto& f : o.m_foods)
+		f.second.Draw(hdc);
+	
+	//for (auto& s : o.m_snakes)
+		//s.second.Draw(hdc);
+	o.obj_lock.unlock();
+}
+
 void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
-	for(auto& snake : o.m_snakes) {
-		o.MoveSnake(snake.m_id, deltaTime);
-	}
+	//for(auto& snake : o.m_snakes) {
+	//	o.MoveSnake(snake.first, deltaTime);
+	//}
 
-	m_isgameover = o.UpDate();
-	m_killer_id = o.DeathBy;
+	//m_isgameover = o.UpDate();
+	//m_killer_id = o.DeathBy;
 
-SpawnFood();
+	//SpawnFood();
 }
 
 void Game::ReStart()
 {
-	o.gameover = false;
-	m_isgameover = false;
-	m_killer_id = -1;
-
-	o.DeleteSnake(0);
-	o.AddSnake(0, m_userdata, rand() % 700, rand() % 700);
-
+	//o.gameover = false;
+	//m_isgameover = false;
+	//m_killer_id = -1;
 	SendRestart();
 }
 
@@ -177,7 +184,11 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		o.AddSnake(p->id, m_userdata, p->x, p->y);
+		Object obj(p->x, p->y, m_userdata.color);
+		std::vector<Object> v;
+		v.emplace_back(obj);
+		Snake s = { m_userdata.name, v };
+		o.AddSnake(p->id, s);
 		SetLogin(true);
 		break;
 	}
@@ -188,26 +199,27 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_PLAYER:
 	{
 		S2C_PLAYER_PACKET* p = reinterpret_cast<S2C_PLAYER_PACKET*>(data);
-		UserData ud = {};
-		memcpy(ud.name, p->name, 20);
-		ud.color = p->color;
-		o.AddSnake(p->id, ud, p->x, p->y);
+		Object obj(p->x, p->y, p->color);
+		std::vector<Object> v;
+		v.emplace_back(obj);
+		Snake s = { p->name, v };
+		o.AddSnake(p->id, s);
 		break;
 	}
 	case PACKET_ID::S2C_FOOD:
 	{
 		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
-		o.AddFood(p->id, p->x, p->y, p->color);
+		Object f(p->x, p->y, p->color);
+		o.AddFood(p->id, f);
 		break;
 	}
 	case PACKET_ID::S2C_MOVE:
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
 		for (auto& s : o.m_snakes) {
-			if (s.m_id == p->id) {
-				s.m_target_x = p->x;
-				s.m_target_y = p->y;
-				o.MoveSnake(p->id, p->deltaTime);
+			if (s.first == p->id) {
+				s.second.SetTarget(p->x, p->y);
+				//o.MoveSnake(p->id, p->deltaTime);
 			}
 		}
 		break;
@@ -283,19 +295,41 @@ double Game::GetElapsedTime() {
 	auto duration = now - m_timer;
 	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
 }
-void Game::SpawnFood()
+//void Game::SpawnFood()
+//{
+//	auto now = std::chrono::steady_clock::now();
+//	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
+//
+//	/*if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
+//		int x = rand() % 700;
+//		int y = rand() % 700;	
+//
+//		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
+//		o.AddFood(x, y, c);
+//
+//		m_last_food_spawn_time = now;
+//	}*/
+//}
+
+void Game::DrawBackGround(HDC hdc)
 {
-	auto now = std::chrono::steady_clock::now();
-	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
-
-	/*if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
-		int x = rand() % 700;
-		int y = rand() % 700;	
-
-		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
-		o.AddFood(x, y, c);
-
-		m_last_food_spawn_time = now;
-	}*/
+	RECT backgroundRect = { 0, 0, 700, 700 };
+	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
+	FillRect(hdc, &backgroundRect, backgroundBrush);
+	DeleteObject(backgroundBrush);
+	
+	// ID 0 뱀이 존재하는 경우에만 점수 계산
+	int score = 0;
+	if (o.m_snakes.count(0)) {
+		score = (int)o.m_snakes.at(0).m_body.size() * 10;
+	}
+	
+	// --- 텍스트 출력 추가 부분 ---
+	char textBuffer[50];
+	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
+		(int)o. m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[0].m_body.size() * 10);
+	SetBkMode(hdc, OPAQUE);
+	COLORREF textColorBg = RGB(255, 255, 200);
+	SetBkColor(hdc, textColorBg);
+	TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
 }
-

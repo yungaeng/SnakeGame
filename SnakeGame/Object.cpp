@@ -1,15 +1,24 @@
 #include "Object.h"
 
-Object::Object(unsigned long long id, int x, int y, COLORREF c)
+Object::Object(int x, int y, COLORREF c)
 {
     m_x = x;
     m_y = y;
-    m_id = id;
     m_color = c;
 
-    isalive = true;
+    m_isalive = true;
     m_size = 10;
     m_speed = 20;
+}
+
+void Object::Draw(HDC hdc)
+{
+    if (m_isalive) {
+        RECT ObjRect = { m_x - m_size, m_y - m_size, m_x + m_size, m_y + m_size };
+        HBRUSH ObjBrush = CreateSolidBrush(m_color);
+        FillRect(hdc, &ObjRect, ObjBrush);
+        DeleteObject(ObjBrush);
+    }
 }
 
 bool Object::CheckCollision(const Object& other) const
@@ -31,4 +40,3 @@ bool Object::CheckCollision(const Object& other) const
         return false;
     return true;
 }
-

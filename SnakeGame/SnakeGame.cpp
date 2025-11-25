@@ -34,11 +34,11 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
         L"------------------------------------------";
 
-    static UserData* pSettings = &g_game.m_userdata;
+    static userdata* pSettings = &g_game.m_userdata;
     switch (message) {
     case WM_INITDIALOG: {
         // DialogBoxParam으로 전달된 lParam을 GameSettings 구조체 포인터에 저장
-        pSettings = (UserData*)lParam;
+        pSettings = (userdata*)lParam;
 
         // RGB 입력란에 기본값 설정 (예: 255, 255, 255)
         SetDlgItemText(hDlg, IDC_R_EDIT, L"255");
@@ -122,7 +122,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     {
     case WM_CREATE: 
     {
-        g_game.InitGame(hdc);
+        g_game.Init(hdc);
 
         HDC hdc = GetDC(hwnd);
         g_hMemDC = CreateCompatibleDC(hdc);
@@ -172,15 +172,20 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             MAKEINTRESOURCE(IDD_START_DIALOG),
             NULL,
             StartDialogProc,
-            (LPARAM)&g_game.m_userdata);
+            (LPARAM)&g_game.m_userdata
+            );
 
         // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
         if (dialogResult != IDOK) {
             return 0;
         }
 
-        if(!g_game.GetLogin())
-            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Name Error", MB_ICONERROR);
+        if (!g_game.GetConnect()) {
+            MessageBox(NULL, L"서버에 연결되지 않았습니다.", L"Error", MB_ICONERROR);
+            g_game.InitNetwork();
+        }
+        else if(!g_game.GetLogin())
+            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
     }
 
     WNDCLASS wc = { 0 };
@@ -233,38 +238,38 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             //g_game.Recv();
             g_game.Update();
 
-            if (g_game.m_isgameover) {
-                int killer_id = g_game.m_killer_id;
+            //if (g_game.m_isgameover) {
+            //    int killer_id = g_game.m_killer_id;
 
-                wchar_t message_buffer[256];
-                wchar_t* name = g_game.GetNameById(killer_id);
-                swprintf_s(message_buffer,
-                    256,
-                    L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d",
-                    name, g_game.GetScoreById(0));
-                int result = MessageBox(hwnd,
-                    message_buffer,
-                    L"Game Over",
-                    MB_YESNO | MB_ICONQUESTION);
+            //    wchar_t message_buffer[256];
+            //    wchar_t* name = g_game.GetNameById(killer_id);
+            //    swprintf_s(message_buffer,
+            //        256,
+            //        L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d",
+            //        name, g_game.GetScoreById(0));
+            //    int result = MessageBox(hwnd,
+            //        message_buffer,
+            //        L"Game Over",
+            //        MB_YESNO | MB_ICONQUESTION);
 
-                if (result == IDYES) {
-                    // '예'를 선택한 경우: 
-                    g_game.ReStart();
-                    continue;
-                }
-                else {
-                    // 사용자가 '아니오' (종료)을 눌렀을 때 
-                    PostQuitMessage(0);        // 게임 종료
-                    break;
-                }
-                continue;
+            //    if (result == IDYES) {
+            //        // '예'를 선택한 경우: 
+            //        g_game.ReStart();
+            //        continue;
+            //    }
+            //    else {
+            //        // 사용자가 '아니오' (종료)을 눌렀을 때 
+            //        PostQuitMessage(0);        // 게임 종료
+            //        break;
+            //    }
+            //    continue;
 
-            }
+            //}
             // 업데이트 후 화면 무효화.
             InvalidateRect(hwnd, NULL, false);
         }
     }
-    //g_game.SendLeave();
+
     g_game.EndNetwork();
     g_game.StopBGM();
     // WM_QUIT 메시지의 wParam 값을 반환
