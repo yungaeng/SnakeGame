@@ -13,7 +13,6 @@ class ObjManager
 public:
 	static std::unordered_map<unsigned long long, Object> m_foods;
 	static std::unordered_map<unsigned long long, Snake> m_snakes;
-	std::mutex obj_lock;
 
 	void AddFood(unsigned long long id, Object o);
 	void AddSnake(unsigned long long id, Snake s);

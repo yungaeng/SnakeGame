@@ -35,6 +35,7 @@ class Game {
 
 	ObjManager o = {};
 	userdata m_userdata = {};
+	std::mutex game_lock;
 public:
 	Game()
 	{

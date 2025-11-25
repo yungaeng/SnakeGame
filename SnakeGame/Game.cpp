@@ -20,24 +20,32 @@ void Game::Init(HDC hdc)
 }
 void Game::Draw(HDC hdc)
 {
-	DrawBackGround(hdc);
+	game_lock.lock();
 
-	o.obj_lock.lock();
+	DrawBackGround(hdc);
 	for (auto& f : o.m_foods)
 		f.second.Draw(hdc);
 	
 	for (auto& s : o.m_snakes)
 		s.second.Draw(hdc);
-	o.obj_lock.unlock();
+
+	game_lock.unlock();
 }
 void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
-	o.obj_lock.lock();
-	for(auto& snake : o.m_snakes) {
-		o.MoveSnake(snake.first, deltaTime);
+
+	std::lock_guard<std::mutex> lock(game_lock);
+	std::vector<unsigned long long> snake_ids;
+	for (const auto& pair : o.m_snakes) {
+		snake_ids.push_back(pair.first);
 	}
-	o.obj_lock.unlock();
+
+	for (unsigned long long id : snake_ids) {
+		// MoveSnake 내부에서 ID 존재 여부 검사를 추가하는 것이 최선입니다.
+		o.MoveSnake(id, deltaTime);
+	}
+
 	// 이제 게임오버 처리는 recv 에서
 	// SpawnFood();
 }
@@ -181,7 +189,9 @@ void Game::ProcessPacket(char* data)
 		std::vector<Object> v;
 		v.emplace_back(obj);
 		Snake s = { m_userdata.name, v };
+		game_lock.lock();
 		o.AddSnake(p->id, s);
+		game_lock.unlock();
 		m_userdata.id = p->id;
 		SetLogin(true);
 		break;
@@ -197,42 +207,50 @@ void Game::ProcessPacket(char* data)
 		std::vector<Object> v;
 		v.emplace_back(obj);
 		Snake s = { p->name, v };
+		game_lock.lock();
 		o.AddSnake(p->id, s);
+		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_FOOD:
 	{
 		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
 		Object f(p->x, p->y, p->color);
+		game_lock.lock();
 		o.AddFood(p->id, f);
+		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_MOVE:
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
-		o.obj_lock.lock();
+		game_lock.lock();
 		o.m_snakes[p->id].SetTarget(p->x, p->y);
-		o.obj_lock.unlock();
+		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_DEL_SNAKE:
 	{
 		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
-		o.DeleteSnake(p->id);
+		game_lock.lock();
+		o.DeleteSnake(p->id); 
+		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_DEL_FOOD:
 	{
 		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
+		game_lock.lock();
 		o.DeleteFood(p->id);
+		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_EAT_FOOD:
 	{
 		S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
-		o.obj_lock.lock();
+		game_lock.lock();
 		o.m_snakes[p->id].Eat();
-		o.obj_lock.unlock();
+		game_lock.unlock();
 		break;
 	}
 	default:

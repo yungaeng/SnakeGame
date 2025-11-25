@@ -187,6 +187,9 @@ void GameMap::CheckCollision()
 				S2C_DEL_FOOD_PACKET sendPkt;
 				sendPkt.id = foodID;
 				AppendPkt(sendPkt);
+				
+				// 12/14 중복충돌 막기위해 푸드삭제
+				m_foods.erase(foodID);
 
 				{
 					const auto& body = curPlayer->GetBody();
@@ -207,6 +210,9 @@ void GameMap::CheckCollision()
 					S2C_EAT_FOOD_PACKET sendPkt;
 					sendPkt.id = curPlayer->GetID();
 					AppendPkt(sendPkt);
+
+					// 12/14 중복충돌 막기위해 바로 루프 탈출
+					break;
 				}
 			}
 		}

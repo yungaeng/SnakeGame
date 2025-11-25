@@ -14,7 +14,7 @@ private:
 	static constexpr float							UPDATE_INVERVAL{ 0.016f }; // 60fps
 	float											m_accDTForUpdate{ 0.f };
 	
-	static constexpr float							FOOD_SPAWN_INTERVAL{ 3.f };
+	static constexpr float							FOOD_SPAWN_INTERVAL{ 1.f };
 	float											m_accDTForFoodSpawn{ 0.f };
 
 	std::map<uint64, std::shared_ptr<GameObject>>	m_foods;

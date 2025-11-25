@@ -30,9 +30,8 @@ void Snake::Draw(HDC hdc)
 void Snake::Eat()
 {
     if (m_body.size() < 2) {
-        const double SEGMENT_SIZE = m_body.front().GetSize();
         m_body.emplace_back(Object(
-            m_body.front().GetX() - SEGMENT_SIZE, // 머리 왼쪽이나 (x-size),
+            m_body.front().GetX(),
             m_body.front().GetY(),
             m_body.front().GetColor()
         ));
