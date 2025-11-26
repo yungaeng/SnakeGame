@@ -20,34 +20,26 @@ void Game::Init(HDC hdc)
 }
 void Game::Draw(HDC hdc)
 {
-	game_lock.lock();
-
+	
 	DrawBackGround(hdc);
+
+	game_lock.lock();
 	for (auto& f : o.m_foods)
 		f.second.Draw(hdc);
 	
 	for (auto& s : o.m_snakes)
 		s.second.Draw(hdc);
-
 	game_lock.unlock();
 }
 void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
 
-	std::lock_guard<std::mutex> lock(game_lock);
-	std::vector<unsigned long long> snake_ids;
-	for (const auto& pair : o.m_snakes) {
-		snake_ids.push_back(pair.first);
+	game_lock.lock();
+	for (auto& s : o.m_snakes) {
+		o.MoveSnake(s.first, deltaTime);
 	}
-
-	for (unsigned long long id : snake_ids) {
-		// MoveSnake 내부에서 ID 존재 여부 검사를 추가하는 것이 최선입니다.
-		o.MoveSnake(id, deltaTime);
-	}
-
-	// 이제 게임오버 처리는 recv 에서
-	// SpawnFood();
+	game_lock.unlock();
 }
 void Game::ReStart()
 {
@@ -152,6 +144,15 @@ void Game::Recv()
 			PacketHeader* header = reinterpret_cast<PacketHeader*>(m_recv_buf);
 			uint8_t totalSize = header->packetSize;
 
+			// [추가된 안전 검사]
+			if (totalSize == 0 || totalSize > BUF_SIZE || totalSize < sizeof(PacketHeader))
+			{
+				// 심각한 오류로 간주하고 연결 종료
+				MessageBox(NULL, L"Corrupt Packet Size!", L"Error", MB_ICONERROR);
+				EndNetwork();
+				break; // Recv 루프 종료
+			}
+
 			// 완전한 패킷이 도착했는지 확인
 			if (m_received_bytes < totalSize)
 			{
@@ -249,7 +250,17 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].Eat();
+
+		// 안전하게 뱀 객체를 찾습니다.
+		auto it = o.m_snakes.find(p->id);
+		if (it != o.m_snakes.end()) {
+			it->second.Eat(); // 객체가 존재할 때만 Eat() 호출
+		}
+		else {
+			// Snake가 존재하지 않음 (오래된 패킷 또는 오류)
+			// Log를 남기거나 무시
+		}
+
 		game_lock.unlock();
 		break;
 	}
@@ -310,25 +321,22 @@ void Game::EndNetwork()
 
 void Game::DrawBackGround(HDC hdc)
 {
+	game_lock.lock();
+
 	RECT backgroundRect = { 0, 0, 700, 700 };
 	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
 	FillRect(hdc, &backgroundRect, backgroundBrush);
 	DeleteObject(backgroundBrush);
 	
-	// ID 0 뱀이 존재하는 경우에만 점수 계산
-	int score = 0;
-	if (o.m_snakes.count(0)) {
-		score = (int)o.m_snakes[m_userdata.id].m_body.size() * 10;
-	}
-	
 	// --- 텍스트 출력 추가 부분 ---
 	char textBuffer[50];
 	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
-		(int)o. m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[m_userdata.id].m_body.size() * 10);
+		(int)o.m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[m_userdata.id].m_body.size() * 10);
 	SetBkMode(hdc, OPAQUE);
 	COLORREF textColorBg = RGB(255, 255, 200);
 	SetBkColor(hdc, textColorBg);
 	TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
+	game_lock.unlock();
 }
 
 

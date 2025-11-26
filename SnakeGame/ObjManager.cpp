@@ -6,7 +6,7 @@ std::unordered_map<unsigned long long, Snake> ObjManager::m_snakes;
 
 void ObjManager::AddFood(unsigned long long id, Object o)
 {
-    m_foods.insert_or_assign(id, std::move(o));
+    m_foods.try_emplace(id, o);
 }
 void ObjManager::AddSnake(unsigned long long id, Snake s)
 {
@@ -22,9 +22,9 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
 
     int mx = m_snakes[id].GetTargetX();
     int my = m_snakes[id].GetTargetY();
-    int x = m_snakes[id].m_body[0].GetX();
-    int y = m_snakes[id].m_body[0].GetY();
-    double vel = m_snakes[id].m_body[0].GetSpeed();
+    int x = m_snakes[id].m_body.begin()->GetX();
+    int y = m_snakes[id].m_body.begin()->GetY();
+    double vel = m_snakes[id].m_body.begin()->GetSpeed();
 
     double dx = (double)mx - x;
     double dy = (double)my - y;
@@ -50,14 +50,14 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
     if (next_y > 10 && next_y < MAP_SIZE - 40 &&
         next_x > 5 && next_x < MAP_SIZE - 10)
     {
-        if (m_snakes[id].m_body[0].GetSize() > 1) {
-            for (size_t i = m_snakes[id].m_body[0].GetSize() - 1; i > 0; i--) {
-                const double SEGMENT_SIZE = m_snakes[id].m_body[0].GetSize();
+        if (m_snakes[id].m_body.begin()->GetSize() > 1) {
+            for (size_t i = m_snakes[id].m_body.size() - 1; i > 0; i--) {
+                const double SEGMENT_SIZE = m_snakes[id].m_body.begin()->GetSize();
 
-                double prev_x = m_snakes[id].m_body[i - 1].GetX();
-                double prev_y = m_snakes[id].m_body[i - 1].GetY();
-                double current_x = m_snakes[id].m_body[i].GetX();
-                double current_y = m_snakes[id].m_body[i].GetY();
+                double prev_x = m_snakes[id].m_body.at(i - 1).GetX();
+                double prev_y = m_snakes[id].m_body.at(i - 1).GetY();
+                double current_x = m_snakes[id].m_body.at(i).GetX();
+                double current_y = m_snakes[id].m_body.at(i).GetY();
 
                 double vec_x = current_x - prev_x;
                 double vec_y = current_y - prev_y;
@@ -67,12 +67,12 @@ void ObjManager::MoveSnake(unsigned long long id, double deltaTime)
                     double unit_vec_x = vec_x / dist;
                     double unit_vec_y = vec_y / dist;
 
-                    m_snakes[id].m_body[i].SetPos((int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE),
+                    m_snakes[id].m_body.at(i).SetPos((int)std::round(prev_x + unit_vec_x * SEGMENT_SIZE),
                         (int)std::round(prev_y + unit_vec_y * SEGMENT_SIZE));
                 }
             }
         }
-        m_snakes[id].m_body[0].SetPos(next_x, next_y); // <--- 이 줄이 추가되어야 합니다.
+        m_snakes[id].m_body.at(0).SetPos(next_x, next_y);
     }
 }
 

@@ -56,12 +56,12 @@ public:
 		case 'Q': PostQuitMessage(0);
 		}
 
-		int x = LOWORD(lParam);
-		int y = HIWORD(lParam);
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
 
-		// o.m_snakes[0].m_target_x = x;
-		// o.m_snakes[0].m_target_y = y;
-		SendMove(x, y);
+			// o.m_snakes[0].m_target_x = x;
+			// o.m_snakes[0].m_target_y = y;
+			SendMove(x, y);
 	};
 
 	double m_time;

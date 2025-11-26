@@ -16,10 +16,10 @@ public:
 
 	void Draw(HDC hdc);
 
-	int GetX() { return m_x; };
-	int GetY() { return m_y; };
-	int GetSpeed() { return m_speed; };
-	int GetSize() { return m_size; };
+	int GetX() const { return m_x; };
+	int GetY() const { return m_y; };
+	int GetSpeed() const { return m_speed; };
+	int GetSize() const { return m_size; };
 	COLORREF GetColor() { return m_color; };
 
 	void SetPos(int x, int y) { m_x = x, m_y = y; };

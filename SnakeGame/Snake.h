@@ -13,8 +13,8 @@ public:
 	{
 		wcscpy_s(m_name, MAX_NAME_SIZE, name);
 		m_body = b;
-		m_target_x = b[0].GetX();
-		m_target_y = b[0].GetY();
+		m_target_x = b.begin()->GetX();
+		m_target_y = b.begin()->GetY();
 	};
 
 	void Draw(HDC hdc);
