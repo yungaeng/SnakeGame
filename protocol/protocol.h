@@ -26,7 +26,7 @@ enum class PACKET_ID : uint8 {
 	//client
 	C2S_LOGIN, C2S_MOVE, C2S_RESTART, C2S_LEAVE,
 	//server
-	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_PLAYER, S2C_FOOD, S2C_MOVE, S2C_DEL_SNAKE, S2C_DEL_FOOD, S2C_EAT_FOOD
+	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_PLAYER, S2C_FOOD, S2C_MOVE, S2C_DEL_SNAKE, S2C_DEL_FOOD, S2C_EAT_FOOD, S2C_SNAKE_BODY,
 };
 
 //client
@@ -87,6 +87,13 @@ struct S2C_DEL_SNAKE_PACKET : public PacketHeader {
 struct S2C_EAT_FOOD_PACKET : public PacketHeader {
 	unsigned long long id;
 	S2C_EAT_FOOD_PACKET() : PacketHeader{ sizeof(S2C_EAT_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_EAT_FOOD) } {}
+};
+
+struct S2C_SNAKE_BODY : public PacketHeader {
+	unsigned long long id;
+	uint32 bodyIndex;
+	int x, y;
+	S2C_SNAKE_BODY() : PacketHeader{ sizeof(S2C_SNAKE_BODY), static_cast<uint8>(PACKET_ID::S2C_SNAKE_BODY) } {}
 };
 
 #pragma pack(pop)
