@@ -230,6 +230,14 @@ void Game::ProcessPacket(char* data)
 		game_lock.unlock();
 		break;
 	}
+	case PACKET_ID::S2C_SNAKE_BODY:
+	{
+		S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
+		game_lock.lock();
+		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		game_lock.unlock();
+		break;
+	}
 	case PACKET_ID::S2C_DEL_SNAKE:
 	{
 		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
