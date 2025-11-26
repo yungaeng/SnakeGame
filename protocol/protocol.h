@@ -89,11 +89,11 @@ struct S2C_EAT_FOOD_PACKET : public PacketHeader {
 	S2C_EAT_FOOD_PACKET() : PacketHeader{ sizeof(S2C_EAT_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_EAT_FOOD) } {}
 };
 
-struct S2C_SNAKE_BODY : public PacketHeader {
+struct S2C_SNAKE_BODY_PACKET : public PacketHeader {
 	unsigned long long id;
 	uint32 bodyIndex;
 	int x, y;
-	S2C_SNAKE_BODY() : PacketHeader{ sizeof(S2C_SNAKE_BODY), static_cast<uint8>(PACKET_ID::S2C_SNAKE_BODY) } {}
+	S2C_SNAKE_BODY_PACKET() : PacketHeader{ sizeof(S2C_SNAKE_BODY_PACKET), static_cast<uint8>(PACKET_ID::S2C_SNAKE_BODY) } {}
 };
 
 #pragma pack(pop)
