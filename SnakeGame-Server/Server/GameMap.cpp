@@ -43,6 +43,17 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				sendPkt.y = p->GetPos().y;
 				session->AppendPkt(sendPkt);
 
+				const auto& body = p->GetBody();
+
+				for(size_t i = 0; i < body.size(); ++i) {
+					S2C_SNAKE_BODY_PACKET sendPkt;
+					sendPkt.id = p->GetID();
+					sendPkt.bodyindex = i;
+					sendPkt.x = body[i].x;
+					sendPkt.y = body[i].y;
+					session->AppendPkt(sendPkt);
+				}
+
 				{
 					S2C_PLAYER_PACKET sendPkt{};
 					const auto nameLen = gameObject->GetName().size();
@@ -153,8 +164,6 @@ void GameMap::AddEvent(std::function<void()> eve)
 void GameMap::CheckCollision()
 {
 	for(auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
-		bool isCollision{ false };
-
 		const auto& curPlayer = pIter1->second;
 		if(false == curPlayer->IsAlive()) continue;
 
@@ -167,6 +176,7 @@ void GameMap::CheckCollision()
 
 			if(curPlayer->IsCollision(other->GetPos())) {
 				S2C_DEL_SNAKE_PACKET sendPkt;
+				sendPkt.id = curPlayer->GetID();
 				AppendPkt(sendPkt);
 			}
 
@@ -174,6 +184,7 @@ void GameMap::CheckCollision()
 			for(const auto otherBodyPos : otherBody) {
 				if(curPlayer->IsCollision(otherBodyPos)) {
 					S2C_DEL_SNAKE_PACKET sendPkt;
+					sendPkt.id = curPlayer->GetID();
 					AppendPkt(sendPkt);
 					break;
 				}
@@ -181,43 +192,42 @@ void GameMap::CheckCollision()
 		}
 
 		for(const auto& [foodID, food] : m_foods) {
-			if(curPlayer->IsCollision(food->GetPos())) {
-				std::cout << "Eat Food!" << std::endl;
-
-				S2C_DEL_FOOD_PACKET sendPkt;
-				sendPkt.id = foodID;
-				AppendPkt(sendPkt);
+			if (false == food->IsAlive()) continue;
+				if(curPlayer->IsCollision(food->GetPos())) {
+					std::cout << "Eat food! " << std::endl;
+					food->SetAlive(false);
 				
-				// 12/14 중복충돌 막기위해 푸드삭제
-				m_foods.erase(foodID);
 
-				{
-					const auto& body = curPlayer->GetBody();
-					
-					Pos newBodyPos;
-					if(body.empty()) {
-						newBodyPos.x = curPlayer->GetPos().x - 10;
-						newBodyPos.y = curPlayer->GetPos().y - 10;
-					}
-					else {
-						const Pos lastBodyPos = body.back();
-						newBodyPos.x = lastBodyPos.x - 10;
-						newBodyPos.y = lastBodyPos.y- 10;
-					}
-					
-					curPlayer->AddBody(newBodyPos);
-					 
-					S2C_EAT_FOOD_PACKET sendPkt;
-					sendPkt.id = curPlayer->GetID();
+					S2C_DEL_FOOD_PACKET sendPkt;
+					sendPkt.id = foodID;
 					AppendPkt(sendPkt);
 
-					// 12/14 중복충돌 막기위해 바로 루프 탈출
-					break;
+					AddEvent([this, f = food]() { RemoveGameObject(f); });
+
+					{
+						const auto& body = curPlayer->GetBody();
+
+						Pos newBodyPos;
+						if (body.empty()) {
+							newBodyPos.x = curPlayer->GetPos().x - 10;
+							newBodyPos.y = curPlayer->GetPos().y - 10;
+						}
+						else {
+							const Pos lastBodyPos = body.back();
+							newBodyPos.x = lastBodyPos.x - 10;
+							newBodyPos.y = lastBodyPos.y - 10;
+						}
+
+						curPlayer->AddBody(newBodyPos);
+
+						S2C_EAT_FOOD_PACKET sendPkt;
+						sendPkt.id = curPlayer->GetID();
+						AppendPkt(sendPkt);
+					}
 				}
 			}
 		}
 	}
-}
 
 void GameMap::SpawnFood()
 {
@@ -228,10 +238,11 @@ void GameMap::SpawnFood()
 	food->SetName(L"food_" + id);
 	food->SetID(id);
 
-	Pos pos{ rand() % 600, rand() % 600 };
+	Pos pos{ rand() % GameMap::MAP_SIZE, GameMap::MAP_SIZE };
 	food->SetPos(pos);
+	static constexpr int MAX_COLOR{ 256 };
 
-	const COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
+	const COLORREF c = RGB(rand() % MAX_COLOR, rand() % MAX_COLOR, rand() % MAX_COLOR);
 	food->SetColor(c);
 
 	AddEvent([this, f = std::move(food)]() { AddGameObject(std::move(f)); });
