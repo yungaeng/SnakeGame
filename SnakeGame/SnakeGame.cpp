@@ -237,7 +237,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             // 메시지가 없을 때 (Idle Time)
             // 별도의 스레드에서 recv 중
            
-            //g_game.Update();
+            g_game.Update();
             
             //if (g_game.m_isgameover) {
             //    int killer_id = g_game.m_killer_id;
