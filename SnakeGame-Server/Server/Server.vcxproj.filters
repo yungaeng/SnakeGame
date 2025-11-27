@@ -67,7 +67,7 @@
       <Filter>Timer</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>main</Filter>
+      <Filter>GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

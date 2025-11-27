@@ -19,12 +19,24 @@ void Snake::Draw(HDC hdc)
         int x = m_body.begin()->GetX();
         int y = m_body.begin()->GetY();
 
-        for (auto& o : m_body)
-        {
-            o.Draw(hdc);
+        for(int i = 0; i < m_body.size(); ++i) {
+            if(i==0) {
+                m_body[i].SetPos(m_target_x, m_target_y);
+            }
+            m_body[i].Draw(hdc);
         }
+
         DrawName(hdc, x, y, m_name);
     }
+}
+
+void Snake::AddBody(int x, int y)
+{
+    COLORREF mycolor = m_body.begin()->GetColor();
+    m_body.emplace_back(Object(
+        x,
+        y,
+        mycolor));
 }
 
 // Snake::Eat() (std::vector<Object> m_body 사용 가정)
@@ -72,4 +84,3 @@ void Snake::Eat()
     // 새 꼬리를 벡터의 맨 뒤에 추가합니다.
     m_body.emplace_back(Object(new_x, new_y, mycolor));
 }
-

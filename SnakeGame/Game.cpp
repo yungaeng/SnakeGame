@@ -35,11 +35,11 @@ void Game::Update()
 {
 	double deltaTime = GetElapsedTime();
 
-	game_lock.lock();
+	/*game_lock.lock();
 	for (auto& s : o.m_snakes) {
 		o.MoveSnake(s.first, deltaTime);
 	}
-	game_lock.unlock();
+	game_lock.unlock();*/
 }
 void Game::ReStart()
 {
@@ -232,7 +232,7 @@ void Game::ProcessPacket(char* data)
 	}
 	case PACKET_ID::S2C_SNAKE_BODY:
 	{
-		S2C_SNAKE_BODY* p = reinterpret_cast<S2C_SNAKE_BODY*>(data);
+		S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
 		game_lock.lock();
 		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
 		game_lock.unlock();
@@ -254,24 +254,31 @@ void Game::ProcessPacket(char* data)
 		game_lock.unlock();
 		break;
 	}
-	case PACKET_ID::S2C_EAT_FOOD:
+	case PACKET_ID::S2C_ADD_SNAKE_BODY:
 	{
-		S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
+		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
 		game_lock.lock();
-
-		// 안전하게 뱀 객체를 찾습니다.
-		auto it = o.m_snakes.find(p->id);
-		if (it != o.m_snakes.end()) {
-			it->second.Eat(); // 객체가 존재할 때만 Eat() 호출
-		}
-		else {
-			// Snake가 존재하지 않음 (오래된 패킷 또는 오류)
-			// Log를 남기거나 무시
-		}
-
+		o.m_snakes[p->id].AddBody(p->x,p->y);
 		game_lock.unlock();
+
 		break;
 	}
+	//case PACKET_ID::S2C_EAT_FOOD:
+	//{
+	//	S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
+	//	game_lock.lock();
+	//	// 안전하게 뱀 객체를 찾습니다.
+	//	auto it = o.m_snakes.find(p->id);
+	//	if (it != o.m_snakes.end()) {
+	//		it->second.Eat(); // 객체가 존재할 때만 Eat() 호출
+	//	}
+	//	else {
+	//		// Snake가 존재하지 않음 (오래된 패킷 또는 오류)
+	//		// Log를 남기거나 무시
+	//	}
+	//	game_lock.unlock();
+	//	break;
+	//}
 	default:
 	{
 		// 알 수 없는 패킷을 받았으므로 연결을 끊거나 무시할 수 있습니다.

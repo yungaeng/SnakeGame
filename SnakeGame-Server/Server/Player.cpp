@@ -12,16 +12,32 @@ Player::~Player()
 	std::cout << "~Player" << std::endl;
 }
 
+void Player::AddBody(const Pos pos)
+{
+    { m_body.emplace_back(pos); }
+
+    // 몸통 생성 패킷 전달
+    S2C_ADD_SNAKE_BDOY_PACKET sendPkt;
+    sendPkt.id = GetID();
+    if(m_body.size() == 0)
+        sendPkt.bodyIndex = 0;
+    else
+        sendPkt.bodyIndex = m_body.size() - 1;
+    sendPkt.x = pos.x;
+    sendPkt.y = pos.y;
+    MANAGER(GameMap)->AppendPkt(sendPkt);
+}
+
 void Player::Update()
 {
     Pos headPos = GetPos();
     Pos target = headPos;
 
-    static constexpr float followSpeed = 0.1f;
+    static constexpr float followSpeed =0.1f;
 
-    for(auto& bodyPos : m_body) {
-        float dx = static_cast<float>(target.x - bodyPos.x);
-        float dy = static_cast<float>(target.y - bodyPos.y);
+    for(int i = 0; i < m_body.size(); ++i) {
+        float dx = static_cast<float>(target.x - m_body[i].x);
+        float dy = static_cast<float>(target.y - m_body[i].y);
 
         const float lenSq = dx * dx + dy * dy;
 
@@ -31,9 +47,17 @@ void Player::Update()
             float nx = dx / len;
             float ny = dy / len;
 
-            bodyPos.x += static_cast<int>(nx * followSpeed);
-            bodyPos.y += static_cast<int>(ny * followSpeed);
+            m_body[i].x += static_cast<int>(nx * followSpeed);
+            m_body[i].y += static_cast<int>(ny * followSpeed);
         }
-        target = bodyPos;
+        target = m_body[i];
+
+        //// TODO: 꼬리 정보 보내주기
+        S2C_SNAKE_BODY_PACKET sendPkt;
+        sendPkt.id = GetID();
+        sendPkt.bodyIndex = i+1;
+        sendPkt.x = target.x;
+        sendPkt.x = target.y;
+        MANAGER(GameMap)->AppendPkt(sendPkt);
     }
 }
