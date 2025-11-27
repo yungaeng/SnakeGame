@@ -2,6 +2,7 @@
 #include "GameObject.h"
 
 class Session;
+
 class Player : public GameObject {
 private:
 	std::shared_ptr<Session>						m_session;

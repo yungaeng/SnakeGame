@@ -8,7 +8,7 @@ class Player;
 class GameMap {
 	SINGLETON(GameMap)
 public:
-	static constexpr uint32		MAP_SIZE{ 600 };
+	static constexpr uint32 MAP_SIZE{ 600 };
 private:
 	std::atomic_ullong								G_globalID;
 	
@@ -43,7 +43,7 @@ public:
 		std::lock_guard<std::mutex> lk{ m_sendBuffMtx };
 		m_sendBuffer.Append<PacketType>(std::forward<PacketType>(pkt));
 	}
-
+ 
 public:
 	uint64 GetGlobalID() noexcept { return ++G_globalID; }
 

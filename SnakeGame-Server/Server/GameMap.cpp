@@ -15,6 +15,11 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		auto player = std::static_pointer_cast<Player>(gameObject);
 		auto session = player->GetSession();
 
+		const Pos playerPos = player->GetPos();
+		
+		const Pos firstBodyPos{ playerPos.x - 10.f, playerPos.y - 10.f };
+		player->AddBody(firstBodyPos);
+
 		const auto key = player->GetName();
 		{
 			std::unique_lock<std::shared_mutex> lk{ m_nameSetMtx };
@@ -45,10 +50,10 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 
 				const auto& body = p->GetBody();
 
-				for(size_t i = 0; i < body.size(); ++i) {
-					S2C_SNAKE_BODY_PACKET sendPkt;
+				for(int i = 0; i < body.size(); ++i) {
+					S2C_ADD_SNAKE_BDOY_PACKET sendPkt;
 					sendPkt.id = p->GetID();
-					sendPkt.bodyindex = i;
+					sendPkt.bodyIndex = i+1;
 					sendPkt.x = body[i].x;
 					sendPkt.y = body[i].y;
 					session->AppendPkt(sendPkt);
@@ -192,42 +197,52 @@ void GameMap::CheckCollision()
 		}
 
 		for(const auto& [foodID, food] : m_foods) {
-			if (false == food->IsAlive()) continue;
-				if(curPlayer->IsCollision(food->GetPos())) {
-					std::cout << "Eat food! " << std::endl;
-					food->SetAlive(false);
-				
+			if(false == food->IsAlive()) continue;
 
-					S2C_DEL_FOOD_PACKET sendPkt;
-					sendPkt.id = foodID;
-					AppendPkt(sendPkt);
+			if(curPlayer->IsCollision(food->GetPos())) {
+				std::cout << "Eat Food!" << std::endl;
+				food->SetAlive(false);
 
-					AddEvent([this, f = food]() { RemoveGameObject(f); });
+				S2C_DEL_FOOD_PACKET sendPkt;
+				sendPkt.id = foodID;
+				AppendPkt(sendPkt);
 
-					{
-						const auto& body = curPlayer->GetBody();
+				AddEvent([this, f = food]() { RemoveGameObject(f); });
 
-						Pos newBodyPos;
-						if (body.empty()) {
-							newBodyPos.x = curPlayer->GetPos().x - 10;
-							newBodyPos.y = curPlayer->GetPos().y - 10;
+				{
+					const auto& body = curPlayer->GetBody();
+
+					// TODO: ¼öÁ¤
+					Pos newBodyPos;
+					if(body.empty()) {
+						newBodyPos.x = curPlayer->GetPos().x;
+						newBodyPos.y = curPlayer->GetPos().y;
+					}
+					else {
+						const Pos lastBodyPos = body.back();
+						if(body.size() == 0) {
+							newBodyPos.x = lastBodyPos.x;
+							newBodyPos.y = lastBodyPos.y;
 						}
 						else {
-							const Pos lastBodyPos = body.back();
-							newBodyPos.x = lastBodyPos.x - 10;
-							newBodyPos.y = lastBodyPos.y - 10;
+							const Pos lastPrevBodyPos = body[body.size() - 2];
+
+							int dx = lastBodyPos.x - lastPrevBodyPos.x;
+							int dy = lastBodyPos.y - lastPrevBodyPos.y;
+							int dist = std::sqrt(dx * dx + dy * dy);
+							int unit_dx = (dist != 0.0) ? dx / dist : 0;
+							int unit_dy = (dist != 0.0) ? dy / dist : 0;
+
+							newBodyPos.x = lastBodyPos.x + (unit_dx * body.size());
+							newBodyPos.y = lastBodyPos.y + (unit_dy * body.size());
 						}
-
 						curPlayer->AddBody(newBodyPos);
-
-						S2C_EAT_FOOD_PACKET sendPkt;
-						sendPkt.id = curPlayer->GetID();
-						AppendPkt(sendPkt);
 					}
 				}
 			}
 		}
 	}
+}
 
 void GameMap::SpawnFood()
 {
@@ -238,7 +253,7 @@ void GameMap::SpawnFood()
 	food->SetName(L"food_" + id);
 	food->SetID(id);
 
-	Pos pos{ rand() % GameMap::MAP_SIZE, GameMap::MAP_SIZE };
+	Pos pos{ rand() % GameMap::MAP_SIZE, rand() % GameMap::MAP_SIZE };
 	food->SetPos(pos);
 	static constexpr int MAX_COLOR{ 256 };
 

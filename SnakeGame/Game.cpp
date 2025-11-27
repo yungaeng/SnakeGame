@@ -254,6 +254,15 @@ void Game::ProcessPacket(char* data)
 		game_lock.unlock();
 		break;
 	}
+	case PACKET_ID::S2C_ADD_SNAKE_BODY:
+	{
+		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
+		game_lock.lock();
+		o.m_snakes[p->id].AddBody(p->x,p->y);
+		game_lock.unlock();
+
+		break;
+	}
 	//case PACKET_ID::S2C_EAT_FOOD:
 	//{
 	//	S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);

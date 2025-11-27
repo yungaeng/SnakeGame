@@ -16,13 +16,16 @@ void Player::AddBody(const Pos pos)
 {
     { m_body.emplace_back(pos); }
 
-    S2C_SNAKE_BODY_PACKET sendPkt;
-	sendPkt.id = GetID();
-	sendPkt.bodyindex = m_body.size() - 1;
-	sendPkt.x = pos.x;
+    // 몸통 생성 패킷 전달
+    S2C_ADD_SNAKE_BDOY_PACKET sendPkt;
+    sendPkt.id = GetID();
+    if(m_body.size() == 0)
+        sendPkt.bodyIndex = 0;
+    else
+        sendPkt.bodyIndex = m_body.size() - 1;
+    sendPkt.x = pos.x;
     sendPkt.y = pos.y;
-	MANAGER(GameMap)->AppendPkt(sendPkt);
-
+    MANAGER(GameMap)->AppendPkt(sendPkt);
 }
 
 void Player::Update()
@@ -30,9 +33,9 @@ void Player::Update()
     Pos headPos = GetPos();
     Pos target = headPos;
 
-    static constexpr float followSpeed = 0.016f;
+    static constexpr float followSpeed =0.1f;
 
-    for (auto& bodyPos : m_body.size(); ++i) {
+    for(int i = 0; i < m_body.size(); ++i) {
         float dx = static_cast<float>(target.x - m_body[i].x);
         float dy = static_cast<float>(target.y - m_body[i].y);
 
@@ -49,12 +52,12 @@ void Player::Update()
         }
         target = m_body[i];
 
-		//TODO : Send Packet
-		S2C_SNAKE_BODY_PACKET sendPkt;
-		sendPkt.id = GetID();
-		sendPkt.bodyindex = i;
+        //// TODO: 꼬리 정보 보내주기
+        S2C_SNAKE_BODY_PACKET sendPkt;
+        sendPkt.id = GetID();
+        sendPkt.bodyIndex = i+1;
         sendPkt.x = target.x;
-		sendPkt.y = target.y;
-		MANAGER(GameMap)->AppendPkt(sendPkt);
+        sendPkt.x = target.y;
+        MANAGER(GameMap)->AppendPkt(sendPkt);
     }
 }
