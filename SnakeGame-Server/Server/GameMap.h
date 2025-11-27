@@ -7,6 +7,8 @@ class Player;
 
 class GameMap {
 	SINGLETON(GameMap)
+public:
+	static constexpr uint32		MAP_SIZE{ 600 };
 private:
 	std::atomic_ullong								G_globalID;
 	
