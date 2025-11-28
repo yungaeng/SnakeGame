@@ -207,6 +207,7 @@ void Game::ProcessPacket(char* data)
 		Object obj(p->x, p->y, p->color);
 		std::vector<Object> v;
 		v.emplace_back(obj);
+		v.emplace_back(obj);
 		Snake s = { p->name, v };
 		game_lock.lock();
 		o.AddSnake(p->id, s);
@@ -234,7 +235,10 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		auto it = o.m_snakes.find(p->id);
+		if (it != o.m_snakes.end()) {
+			it->second.SetBody(p->bodyIndex, p->x, p->y);
+		}
 		game_lock.unlock();
 		break;
 	}
@@ -258,7 +262,12 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].AddBody(p->x,p->y);
+		// 안전하게 뱀 객체를 찾습니다.
+		auto it = o.m_snakes.find(p->id);
+		if (it != o.m_snakes.end()) {
+			it->second.AddBody(p->x, p->y);
+		}
+		//o.m_snakes[p->id].AddBody(p->x,p->y);
 		game_lock.unlock();
 
 		break;

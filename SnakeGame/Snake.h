@@ -22,7 +22,7 @@ public:
 	void Eat();
 
 	void SetTarget(int x, int y) { m_target_x = x, m_target_y = y; };
-	void SetBody(UINT32 index, int x, int y) { m_body.at(index).SetPos(x, y); }
+	void SetBody(UINT32 index, int x, int y) { m_body[index].SetPos(x, y); };
 
 	int GetTargetX() { return m_target_x; };
 	int GetTargetY() { return m_target_y; };

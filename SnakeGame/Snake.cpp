@@ -33,10 +33,7 @@ void Snake::Draw(HDC hdc)
 void Snake::AddBody(int x, int y)
 {
     COLORREF mycolor = m_body.begin()->GetColor();
-    m_body.emplace_back(Object(
-        x,
-        y,
-        mycolor));
+    m_body.emplace_back(Object(x, y, mycolor));
 }
 
 // Snake::Eat() (std::vector<Object> m_body 사용 가정)
