@@ -5,6 +5,15 @@
 #include "GameMap.h"
 #include "Player.h"
 
+Pos GetRandomPos()
+{
+	static std::uniform_real_distribution<float> randomPosX{ 0, GameMap::MAP_WIDTH };
+	static std::uniform_real_distribution<float> randomPosY{ 0, GameMap::MAP_HEIGHT };
+	Pos pos{ randomPosX(dre), randomPosY(dre) };
+
+	return pos;
+}
+
 bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>& session, const char* const buffer)
 {
 	std::cout << "Handle_INVALID_PACKET" << std::endl;
@@ -25,9 +34,7 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 	// 로그인이 정상적으로 되었다면 게임맵에 플레이어 추가
 	else {
 
-		static std::uniform_real_distribution randomPos{ 0.f, 700.f };
-		Pos pos{ randomPos(dre), randomPos(dre) };
-
+		const Pos pos{ GetRandomPos() };
 		S2C_LOGIN_OK_PACKET sendPkt;
 		sendPkt.id = session->GetID();
 		sendPkt.x = pos.x;
@@ -53,21 +60,26 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 
 bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C2S_RESTART_PACKET& recvPkt)
 {
-	// TODO: 재시작 패킷 브로드캐스트
-	// TODO: 플레이어 alive =true 해주고, 위치 재설정
+	// TODO: 재시작 구현
 	auto player = session->GetPlayer();
+	
+	if(player->IsAlive()) return false;
+
 	if(player) {
-		static std::uniform_real_distribution randomPos{ 0.f, 700.f };
-		Pos pos{ randomPos(dre), randomPos(dre) };
+		const Pos pos{ GetRandomPos() };
+		player->SetPos(pos);
+		player->SetAlive(true);
 	}
 	return true;
 }
-	
+
 bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>& session, const C2S_MOVE_PACKET& recvPkt)
 {
 	auto player = session->GetPlayer();
 
 	if(player) {
+		if(player->IsAlive() == false) return false;
+
 		const Pos pos{ recvPkt.x, recvPkt.y };
 		player->SetPos(pos);
 

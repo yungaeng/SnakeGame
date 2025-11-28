@@ -237,6 +237,12 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
 		game_lock.lock();
+
+		// TODO: 재시작 구현
+		//if(m_userdata.id == p->id) {
+		//	SendRestart();
+		//}
+
 		o.DeleteSnake(p->id); 
 		game_lock.unlock();
 		break;

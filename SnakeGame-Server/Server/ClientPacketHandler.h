@@ -33,6 +33,7 @@ public:
 			func = Process_HANDLE_INVALID_PACKET;
 
 			PacketHandlerFuncs[static_cast<uint8>(PACKET_ID::C2S_LOGIN)] = [](const std::shared_ptr<Session>& session, const char* const buffer) -> bool { return HandlePacket<C2S_LOGIN_PACKET>(Process_C2S_LOGIN_PACKET, session, buffer); };
+			PacketHandlerFuncs[static_cast<uint8>(PACKET_ID::C2S_RESTART)] = [](const std::shared_ptr<Session>& session, const char* const buffer) -> bool { return HandlePacket<C2S_RESTART_PACKET>(Process_C2S_RESTART_PACKET, session, buffer); };
 			PacketHandlerFuncs[static_cast<uint8>(PACKET_ID::C2S_MOVE)] = [](const std::shared_ptr<Session>& session, const char* const buffer) -> bool { return HandlePacket<C2S_MOVE_PACKET>(Process_C2S_MOVE_PACKET, session, buffer); };
 		}
 	}
