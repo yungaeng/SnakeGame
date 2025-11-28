@@ -36,7 +36,7 @@ struct C2S_LOGIN_PACKET : public PacketHeader {
 	C2S_LOGIN_PACKET() : PacketHeader{ sizeof(C2S_LOGIN_PACKET), static_cast<uint8>(PACKET_ID::C2S_LOGIN) } {}
 };
 struct C2S_MOVE_PACKET : public PacketHeader {
-	int x, y;
+	float x, y;
 	C2S_MOVE_PACKET() : PacketHeader{ sizeof(C2S_MOVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_MOVE) } {}
 };
 struct C2S_RESTART_PACKET : public PacketHeader {
@@ -49,7 +49,7 @@ struct C2S_LEAVE_PACKET : public PacketHeader {
 //server
 struct S2C_LOGIN_OK_PACKET : public PacketHeader {
 	unsigned long long id;
-	int x, y;
+	float x, y;
 	S2C_LOGIN_OK_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_OK_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_OK) } {}
 };
 struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
@@ -58,20 +58,20 @@ struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
 struct S2C_PLAYER_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
-	int x, y;
+	float x, y;
 	unsigned long long id;
 	S2C_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_PLAYER) } {}
 };
 struct S2C_FOOD_PACKET : public PacketHeader {
 	COLORREF color;
-	int x, y;
+	float x, y;
 	unsigned long long id;
 	S2C_FOOD_PACKET() : PacketHeader{ sizeof(S2C_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_FOOD) } {}
 };
 struct S2C_MOVE_PACKET : public PacketHeader {
 	double deltaTime;
 	unsigned long long id;
-	int x, y;
+	float x, y;
 	S2C_MOVE_PACKET() : PacketHeader{ sizeof(S2C_MOVE_PACKET), static_cast<uint8>(PACKET_ID::S2C_MOVE) } {}
 };
 struct S2C_DEL_FOOD_PACKET : public PacketHeader {
@@ -86,14 +86,14 @@ struct S2C_DEL_SNAKE_PACKET : public PacketHeader {
 struct S2C_SNAKE_BODY_PACKET : public PacketHeader {
 	unsigned long long id;
 	uint32 bodyIndex;
-	int x, y;
+	float x, y;
 	S2C_SNAKE_BODY_PACKET() : PacketHeader{ sizeof(S2C_SNAKE_BODY_PACKET), static_cast<uint8>(PACKET_ID::S2C_SNAKE_BODY) } {}
 };
 
 struct S2C_ADD_SNAKE_BDOY_PACKET : public PacketHeader {
 	unsigned long long id;
 	uint32 bodyIndex;
-	int x, y;
+	float x, y;
 	S2C_ADD_SNAKE_BDOY_PACKET() : PacketHeader{ sizeof(S2C_SNAKE_BODY_PACKET), static_cast<uint8>(PACKET_ID::S2C_ADD_SNAKE_BODY) } {}
 };
 #pragma pack(pop)

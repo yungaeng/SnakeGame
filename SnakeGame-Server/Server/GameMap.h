@@ -13,7 +13,7 @@ private:
 	std::atomic_ullong								G_globalID;
 	
 	Timer											m_timer;
-	static constexpr float							UPDATE_INVERVAL{ 0.016f }; // 60fps
+	static constexpr float							UPDATE_INVERVAL{ 1.f / 60.f }; // 60fps
 	float											m_accDTForUpdate{ 0.f };
 	
 	static constexpr float							FOOD_SPAWN_INTERVAL{ 1.f };

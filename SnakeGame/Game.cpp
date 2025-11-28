@@ -219,7 +219,8 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].m_head.SetPos(p->x, p->y);
+		if(o.m_snakes.contains(p->id))
+			o.m_snakes[p->id].m_head.SetPos(p->x, p->y);
 		game_lock.unlock();
 		break;
 	}
@@ -227,7 +228,8 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		if(o.m_snakes.contains(p->id))
+			o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
 		game_lock.unlock();
 		break;
 	}
@@ -251,8 +253,10 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].AddBody(p->bodyIndex);
-		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		if(o.m_snakes.contains(p->id)) {
+			o.m_snakes[p->id].AddBody(p->bodyIndex);
+			o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		}
 		//o.m_snakes[p->id].AddBody(p->x,p->y);
 		game_lock.unlock();
 

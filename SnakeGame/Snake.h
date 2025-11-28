@@ -10,7 +10,6 @@ public:
 	Snake(const wchar_t* name, int x, int y, COLORREF color)
 	{
 		Object h(x, y, color);
-		Object b(x, y, color);
 		wcscpy_s(m_name, MAX_NAME_SIZE, name);
 		m_head = h;
 	};

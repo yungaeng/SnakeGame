@@ -25,7 +25,7 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 	// 로그인이 정상적으로 되었다면 게임맵에 플레이어 추가
 	else {
 
-		static std::uniform_int_distribution randomPos{ 0, 700 };
+		static std::uniform_real_distribution randomPos{ 0.f, 700.f };
 		Pos pos{ randomPos(dre), randomPos(dre) };
 
 		S2C_LOGIN_OK_PACKET sendPkt;
@@ -57,7 +57,7 @@ bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C
 	// TODO: 플레이어 alive =true 해주고, 위치 재설정
 	auto player = session->GetPlayer();
 	if(player) {
-		static std::uniform_int_distribution randomPos{ 0, 700 };
+		static std::uniform_real_distribution randomPos{ 0.f, 700.f };
 		Pos pos{ randomPos(dre), randomPos(dre) };
 	}
 	return true;
@@ -70,7 +70,6 @@ bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>& session, const C2S_
 	if(player) {
 		const Pos pos{ recvPkt.x, recvPkt.y };
 		player->SetPos(pos);
-		// std::cout << "C2S_MOVE_PACKET: PlayerID=" << player->GetID() << " Move to (" << pos.x << ", " << pos.y << ")\n";
 
 		S2C_MOVE_PACKET sendPkt;
 		sendPkt.id = player->GetID();

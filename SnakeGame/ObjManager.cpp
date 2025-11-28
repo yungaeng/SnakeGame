@@ -12,7 +12,8 @@ void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF color)
 void ObjManager::AddSnake(unsigned long long id, wchar_t* name, int x, int y, COLORREF color)
 {
     Snake s(name, x, y, color);
-    m_snakes.try_emplace(id, s);
+    if(m_snakes.contains(id)==false)
+        m_snakes.insert(std::make_pair(id, s));
 }
 
 void ObjManager::DeleteSnake(unsigned long long id)
