@@ -17,7 +17,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 
 		const Pos playerPos = player->GetPos();
 		
-		const Pos firstBodyPos{ playerPos.x - 20.f, playerPos.y - 20.f };
+		const Pos firstBodyPos{ playerPos.x - GameObject::GAME_OBJECT_SIZE, playerPos.y - GameObject::GAME_OBJECT_SIZE };
 		player->AddBody(firstBodyPos);
 
 		const auto key = player->GetName();
@@ -121,7 +121,7 @@ void GameMap::Update(const std::stop_token& st)
 {
 	while(false == st.stop_requested()) {
 		m_timer.Update();
-		const auto dt = m_timer.GetDT();
+		const float dt = m_timer.GetDT();
 		m_accDTForUpdate += dt;
 		m_accDTForFoodSpawn += dt;
 
@@ -129,11 +129,11 @@ void GameMap::Update(const std::stop_token& st)
 			ProcessEvent();
 
 			for(const auto& [id, player] : m_players)
-				player->Update();
+				player->Update(m_accDTForUpdate);
 
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
-				// SpawnFood();
+				SpawnFood();
 				m_accDTForFoodSpawn = 0.f;
 			}
 
@@ -176,26 +176,26 @@ void GameMap::CheckCollision()
 		auto pIter2 = pIter1;
 		++pIter2;
 
-		for(; pIter2 != m_players.end(); ++pIter2) {
-			const auto& other = pIter2->second;
-			if(false == other->IsAlive()) continue;
+		//for(; pIter2 != m_players.end(); ++pIter2) {
+		//	const auto& other = pIter2->second;
+		//	if(false == other->IsAlive()) continue;
 
-			if(curPlayer->IsCollision(other->GetPos())) {
-				S2C_DEL_SNAKE_PACKET sendPkt;
-				sendPkt.id = curPlayer->GetID();
-				AppendPkt(sendPkt);
-			}
+		//	if(curPlayer->IsCollision(other->GetPos())) {
+		//		S2C_DEL_SNAKE_PACKET sendPkt;
+		//		sendPkt.id = curPlayer->GetID();
+		//		AppendPkt(sendPkt);
+		//	}
 
-			const auto& otherBody = other->GetBody();
-			for(const auto otherBodyPos : otherBody) {
-				if(curPlayer->IsCollision(otherBodyPos)) {
-					S2C_DEL_SNAKE_PACKET sendPkt;
-					sendPkt.id = curPlayer->GetID();
-					AppendPkt(sendPkt);
-					break;
-				}
-			}
-		}
+		//	const auto& otherBody = other->GetBody();
+		//	for(const auto otherBodyPos : otherBody) {
+		//		if(curPlayer->IsCollision(otherBodyPos)) {
+		//			S2C_DEL_SNAKE_PACKET sendPkt;
+		//			sendPkt.id = curPlayer->GetID();
+		//			AppendPkt(sendPkt);
+		//			break;
+		//		}
+		//	}
+		//}
 
 		for(const auto& [foodID, food] : m_foods) {
 			if(false == food->IsAlive()) continue;
@@ -213,7 +213,7 @@ void GameMap::CheckCollision()
 				{
 					const auto& body = curPlayer->GetBody();
 					if(body.size() == 0) break;
-					Pos newBodyPos{ body.back().x -20.f, body.back().y- 20.f };
+					Pos newBodyPos{ body.back().x - GameObject::GAME_OBJECT_SIZE, body.back().y- GameObject::GAME_OBJECT_SIZE };
 					curPlayer->AddBody(newBodyPos);
 				}
 			}
@@ -230,7 +230,7 @@ void GameMap::SpawnFood()
 	food->SetName(L"food_" + id);
 	food->SetID(id);
 
-	Pos pos{ rand() % GameMap::MAP_SIZE, rand() % GameMap::MAP_SIZE };
+	Pos pos{ static_cast<float>(rand() % GameMap::MAP_SIZE), static_cast<float>(rand() % GameMap::MAP_SIZE) };
 	food->SetPos(pos);
 	static constexpr int MAX_COLOR{ 256 };
 

@@ -10,7 +10,9 @@ private:
 	bool					m_alive;
 	COLORREF				m_color;
 	Pos						m_pos;
-	static constexpr int	GAME_OBJECT_SIZE = 10;
+public:
+	static constexpr float	GAME_OBJECT_SIZE = 20;
+
 public:
 	explicit GameObject(GAME_OBJECT_TYPE type);
 	virtual ~GameObject();

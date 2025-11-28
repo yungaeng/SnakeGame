@@ -21,7 +21,7 @@ public:
 	const auto& GetBody() const noexcept { return m_body; }
 	void AddBody(const Pos pos);
 
-	void Update();
+	void Update(const float dt);
 };
 
 

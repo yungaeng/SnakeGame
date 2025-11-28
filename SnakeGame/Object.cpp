@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(int x, int y, COLORREF c)
+Object::Object(float x, float y, COLORREF c)
 {
     m_x = x;
     m_y = y;

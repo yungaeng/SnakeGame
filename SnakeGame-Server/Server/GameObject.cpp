@@ -13,15 +13,15 @@ GameObject::~GameObject()
 
 bool GameObject::IsCollision(const Pos otherPos)
 {
-	const int32 myLeft{ m_pos.x - GAME_OBJECT_SIZE / 2 };
-	const int32 myRight{ m_pos.x + GAME_OBJECT_SIZE / 2 };
-	const int32 myTop{ m_pos.y - GAME_OBJECT_SIZE / 2 };
-	const int32 myBottom{ m_pos.y + GAME_OBJECT_SIZE / 2 };
+	const float myLeft{ m_pos.x - GAME_OBJECT_SIZE / 2.f };
+	const float myRight{ m_pos.x + GAME_OBJECT_SIZE / 2.f };
+	const float myTop{ m_pos.y - GAME_OBJECT_SIZE / 2.f };
+	const float myBottom{ m_pos.y + GAME_OBJECT_SIZE / 2.f };
 
-	const int32 otherLeft{ otherPos.x - GAME_OBJECT_SIZE / 2 };
-	const int32 otherRight{ otherPos.x + GAME_OBJECT_SIZE / 2 };
-	const int32 otherTop{ otherPos.y - GAME_OBJECT_SIZE / 2 };
-	const int32 otherBottom{ otherPos.y + GAME_OBJECT_SIZE / 2 };
+	const float otherLeft{ otherPos.x - GAME_OBJECT_SIZE / 2.f };
+	const float otherRight{ otherPos.x + GAME_OBJECT_SIZE / 2.f };
+	const float otherTop{ otherPos.y - GAME_OBJECT_SIZE / 2.f };
+	const float otherBottom{ otherPos.y + GAME_OBJECT_SIZE / 2.f };
 
 	if(myBottom <= otherTop || myTop >= otherBottom || myRight <= otherLeft || myLeft >= otherRight)
 		return false;
