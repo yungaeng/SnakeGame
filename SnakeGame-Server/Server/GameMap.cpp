@@ -128,8 +128,10 @@ void GameMap::Update(const std::stop_token& st)
 		if(m_accDTForUpdate >= UPDATE_INVERVAL) {
 			ProcessEvent();
 
-			for(const auto& [id, player] : m_players)
+			for(const auto& [playerID, player] : m_players) {
+				if(false == player->IsAlive()) continue;
 				player->Update(m_accDTForUpdate);
+			}
 
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
@@ -230,7 +232,7 @@ void GameMap::SpawnFood()
 	food->SetName(L"food_" + id);
 	food->SetID(id);
 
-	Pos pos{ static_cast<float>(rand() % GameMap::MAP_SIZE), static_cast<float>(rand() % GameMap::MAP_SIZE) };
+	Pos pos{ static_cast<float>(rand() % GameMap::MAP_WIDTH), static_cast<float>(rand() % GameMap::MAP_HEIGHT) };
 	food->SetPos(pos);
 	static constexpr int MAX_COLOR{ 256 };
 

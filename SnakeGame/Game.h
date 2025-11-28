@@ -56,8 +56,8 @@ public:
 		case 'Q': PostQuitMessage(0);
 		}
 
-		int x = LOWORD(lParam);
-		int y = HIWORD(lParam);
+		float x = LOWORD(lParam);
+		float y = HIWORD(lParam);
 		SendMove(x, y);
 	};
 
@@ -82,7 +82,7 @@ public:
 	void ProcessPacket(char* data);
 
 	void SendLogin();
-	void SendMove(int x, int y);
+	void SendMove(float x, float y);
 	void SendRestart();
 	void SendLeave();
 	

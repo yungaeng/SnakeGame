@@ -2,8 +2,8 @@
 #include "Game.h"
 #include "resource.h"
 #pragma comment(lib, "winmm.lib")
-const int WINDOW_WIDTH = 700;
-const int WINDOW_HEIGHT = 700;
+const int WINDOW_WIDTH = 1024;
+const int WINDOW_HEIGHT = 768;
 
 PAINTSTRUCT ps;
 HDC hdc;

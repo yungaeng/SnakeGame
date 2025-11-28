@@ -7,7 +7,7 @@ class Snake {
 	wchar_t m_name[MAX_NAME_SIZE] = {};
 public:
 	Snake() {};
-	Snake(const wchar_t* name, int x, int y, COLORREF color)
+	Snake(const wchar_t* name, float x, float y, COLORREF color)
 	{
 		Object h(x, y, color);
 		wcscpy_s(m_name, MAX_NAME_SIZE, name);
@@ -19,7 +19,7 @@ public:
 		Object o(m_head.GetX(), m_head.GetY(), m_head.GetColor());
 		m_body.try_emplace(index, o);
 	};
-	void SetBody(UINT32 index, int x, int y) { m_body[index].SetPos(x, y); };
+	void SetBody(UINT32 index, float x, float y) { m_body[index].SetPos(x, y); };
 	wchar_t* GetName() { return m_name; };
 
 	void Draw(HDC hdc);

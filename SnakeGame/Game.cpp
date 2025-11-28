@@ -297,7 +297,7 @@ void Game::SendLogin()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-void Game::SendMove(int x, int y)
+void Game::SendMove(float x, float y)
 {
 	if (m_isconnect && m_islogin)
 	{
@@ -337,7 +337,7 @@ void Game::DrawBackGround(HDC hdc)
 {
 	game_lock.lock();
 
-	RECT backgroundRect = { 0, 0, 700, 700 };
+	RECT backgroundRect = { 0, 0, 1024, 768};
 	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
 	FillRect(hdc, &backgroundRect, backgroundBrush);
 	DeleteObject(backgroundBrush);
