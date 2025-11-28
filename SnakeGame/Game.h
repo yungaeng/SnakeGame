@@ -56,12 +56,9 @@ public:
 		case 'Q': PostQuitMessage(0);
 		}
 
-			int x = LOWORD(lParam);
-			int y = HIWORD(lParam);
-
-			// o.m_snakes[0].m_target_x = x;
-			// o.m_snakes[0].m_target_y = y;
-			SendMove(x, y);
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		SendMove(x, y);
 	};
 
 	double m_time;
@@ -96,9 +93,8 @@ public:
 private:
 	void SetLogin(bool st) { m_islogin = st; };
 	void DrawBackGround(HDC hdc);
-	double GetElapsedTime();
-
+	//double GetElapsedTime();
 	// void SpawnFood();
 	//std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
-	std::chrono::time_point<std::chrono::steady_clock> m_timer;	
+	//std::chrono::time_point<std::chrono::steady_clock> m_timer;	
 };

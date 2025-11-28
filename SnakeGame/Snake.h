@@ -1,34 +1,33 @@
 #pragma once
-#include <vector>
+#include <unordered_map>
 #include "Object.h"
 constexpr auto MAX_NAME_SIZE = 10;
 
 class Snake {
-public:
 	wchar_t m_name[MAX_NAME_SIZE] = {};
-	int m_target_x, m_target_y;
-	
+public:
 	Snake() {};
-	Snake(const wchar_t* name, std::vector<Object> b)
+	Snake(const wchar_t* name, int x, int y, COLORREF color)
 	{
+		Object h(x, y, color);
+		Object b(x, y, color);
 		wcscpy_s(m_name, MAX_NAME_SIZE, name);
-		m_body = b;
-		m_target_x = b.begin()->GetX();
-		m_target_y = b.begin()->GetY();
+		m_head = h;
 	};
 
-	void Draw(HDC hdc);
-	void AddBody(int x, int y);
-	void Eat();
-
-	void SetTarget(int x, int y) { m_target_x = x, m_target_y = y; };
-	void SetBody(UINT32 index, int x, int y) { m_body.at(index).SetPos(x, y); }
-
-	int GetTargetX() { return m_target_x; };
-	int GetTargetY() { return m_target_y; };
-
+	void AddBody(UINT32 index) 
+	{
+		Object o(m_head.GetX(), m_head.GetY(), m_head.GetColor());
+		m_body.try_emplace(index, o);
+	};
+	void SetBody(UINT32 index, int x, int y) { m_body[index].SetPos(x, y); };
 	wchar_t* GetName() { return m_name; };
 
-	std::vector<Object> m_body;
+	void Draw(HDC hdc);
+
+	std::unordered_map<UINT32, Object> m_body;
+	Object m_head;
+
+	// void Eat();
 };
 

@@ -17,7 +17,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 
 		const Pos playerPos = player->GetPos();
 		
-		const Pos firstBodyPos{ playerPos.x - 10.f, playerPos.y - 10.f };
+		const Pos firstBodyPos{ playerPos.x - 20.f, playerPos.y - 20.f };
 		player->AddBody(firstBodyPos);
 
 		const auto key = player->GetName();
@@ -53,7 +53,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				for(int i = 0; i < body.size(); ++i) {
 					S2C_ADD_SNAKE_BDOY_PACKET sendPkt;
 					sendPkt.id = p->GetID();
-					sendPkt.bodyIndex = i+1;
+					sendPkt.bodyIndex = i;
 					sendPkt.x = body[i].x;
 					sendPkt.y = body[i].y;
 					session->AppendPkt(sendPkt);
@@ -206,38 +206,14 @@ void GameMap::CheckCollision()
 				S2C_DEL_FOOD_PACKET sendPkt;
 				sendPkt.id = foodID;
 				AppendPkt(sendPkt);
-
+				
 				AddEvent([this, f = food]() { RemoveGameObject(f); });
 
 				{
 					const auto& body = curPlayer->GetBody();
-
-					// TODO: ¼öÁ¤
-					Pos newBodyPos;
-					if(body.empty()) {
-						newBodyPos.x = curPlayer->GetPos().x;
-						newBodyPos.y = curPlayer->GetPos().y;
-					}
-					else {
-						const Pos lastBodyPos = body.back();
-						if(body.size() == 0) {
-							newBodyPos.x = lastBodyPos.x;
-							newBodyPos.y = lastBodyPos.y;
-						}
-						else {
-							const Pos lastPrevBodyPos = body[body.size() - 2];
-
-							int dx = lastBodyPos.x - lastPrevBodyPos.x;
-							int dy = lastBodyPos.y - lastPrevBodyPos.y;
-							int dist = std::sqrt(dx * dx + dy * dy);
-							int unit_dx = (dist != 0.0) ? dx / dist : 0;
-							int unit_dy = (dist != 0.0) ? dy / dist : 0;
-
-							newBodyPos.x = lastBodyPos.x + (unit_dx * body.size());
-							newBodyPos.y = lastBodyPos.y + (unit_dy * body.size());
-						}
-						curPlayer->AddBody(newBodyPos);
-					}
+					if(body.size() == 0) break;
+					Pos newBodyPos{ body.back().x -20.f, body.back().y- 20.f };
+					curPlayer->AddBody(newBodyPos);
 				}
 			}
 		}

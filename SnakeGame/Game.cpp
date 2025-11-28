@@ -2,9 +2,10 @@
 
 void Game::Init(HDC hdc)
 {
+	// 이제는 init 가 할 게 없음
+	
 	// 이제 loginok 패킷을 받으면 추가해 줌 
 	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
-	
 	// 먹이 만들기
 	//for (int i = 0; i < 10; i++)
 	//{
@@ -13,14 +14,12 @@ void Game::Init(HDC hdc)
 	//	COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
 	//	o.AddFood(x, y, col);
 	//}
-
 	// 타이머 시작
-	m_timer = std::chrono::steady_clock::now();
+	//m_timer = std::chrono::steady_clock::now();
 	//m_last_food_spawn_time = std::chrono::steady_clock::now();
 }
 void Game::Draw(HDC hdc)
 {
-	
 	DrawBackGround(hdc);
 
 	game_lock.lock();
@@ -33,8 +32,9 @@ void Game::Draw(HDC hdc)
 }
 void Game::Update()
 {
-	double deltaTime = GetElapsedTime();
+	// 업데이트도 이제는 없데이트...
 
+	//double deltaTime = GetElapsedTime();
 	/*game_lock.lock();
 	for (auto& s : o.m_snakes) {
 		o.MoveSnake(s.first, deltaTime);
@@ -186,13 +186,11 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_LOGIN_OK:
 	{
 		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		Object obj(p->x, p->y, m_userdata.color);
-		std::vector<Object> v;
-		v.emplace_back(obj);
-		Snake s = { m_userdata.name, v };
 		game_lock.lock();
-		o.AddSnake(p->id, s);
+		o.AddSnake(p->id, m_userdata.name, p->x, p->y, m_userdata.color);
 		game_lock.unlock();
+
+		// 본인 아이디 저장
 		m_userdata.id = p->id;
 		SetLogin(true);
 		break;
@@ -204,21 +202,16 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_PLAYER:
 	{
 		S2C_PLAYER_PACKET* p = reinterpret_cast<S2C_PLAYER_PACKET*>(data);
-		Object obj(p->x, p->y, p->color);
-		std::vector<Object> v;
-		v.emplace_back(obj);
-		Snake s = { p->name, v };
 		game_lock.lock();
-		o.AddSnake(p->id, s);
+		o.AddSnake(p->id, p->name, p->x, p->y, p->color);
 		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_FOOD:
 	{
 		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
-		Object f(p->x, p->y, p->color);
 		game_lock.lock();
-		o.AddFood(p->id, f);
+		o.AddFood(p->id, p->x, p->y, p->color);
 		game_lock.unlock();
 		break;
 	}
@@ -226,7 +219,7 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].SetTarget(p->x, p->y);
+		o.m_snakes[p->id].m_head.SetPos(p->x, p->y);
 		game_lock.unlock();
 		break;
 	}
@@ -258,7 +251,9 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
 		game_lock.lock();
-		o.m_snakes[p->id].AddBody(p->x,p->y);
+		o.m_snakes[p->id].AddBody(p->bodyIndex);
+		o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		//o.m_snakes[p->id].AddBody(p->x,p->y);
 		game_lock.unlock();
 
 		break;
@@ -355,12 +350,11 @@ void Game::DrawBackGround(HDC hdc)
 }
 
 
-double Game::GetElapsedTime() {
-	auto now = std::chrono::steady_clock::now();
-	auto duration = now - m_timer;
-	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
-}
-
+//double Game::GetElapsedTime() {
+//	auto now = std::chrono::steady_clock::now();
+//	auto duration = now - m_timer;
+//	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
+//}
 //void Game::SpawnFood()
 //{
 //	auto now = std::chrono::steady_clock::now();
