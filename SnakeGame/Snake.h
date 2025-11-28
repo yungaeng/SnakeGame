@@ -13,13 +13,12 @@ public:
 		Object b(x, y, color);
 		wcscpy_s(m_name, MAX_NAME_SIZE, name);
 		m_head = h;
-		m_body.try_emplace(0, b);
 	};
 
-	void AddBody(UINT32 id) 
+	void AddBody(UINT32 index) 
 	{
 		Object o(m_head.GetX(), m_head.GetY(), m_head.GetColor());
-		m_body.try_emplace(id, o);
+		m_body.try_emplace(index, o);
 	};
 	void SetBody(UINT32 index, int x, int y) { m_body[index].SetPos(x, y); };
 	wchar_t* GetName() { return m_name; };
