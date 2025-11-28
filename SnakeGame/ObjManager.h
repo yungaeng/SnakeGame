@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <mutex>
 #include <cmath>
-#include "unordered_map"
 #include "Object.h"
 #include "Snake.h"
 
@@ -14,13 +13,13 @@ public:
 	static std::unordered_map<unsigned long long, Object> m_foods;
 	static std::unordered_map<unsigned long long, Snake> m_snakes;
 
-	void AddFood(unsigned long long id, Object o);
-	void AddSnake(unsigned long long id, Snake s);
-
-	void MoveSnake(unsigned long long id, double deltaTime);
+	void AddFood(unsigned long long id, int x, int y, COLORREF color);
+	void AddSnake(unsigned long long id, wchar_t* name, int x, int y, COLORREF color);
 
 	void DeleteFood(unsigned long long id);
 	void DeleteSnake(unsigned long long id);
+
+	// void MoveSnake(unsigned long long id, double deltaTime);
 private:
 	// void FoodCollisions();
 	// int SnakeCollisions();

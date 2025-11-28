@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SnakeGame", "SnakeGame\SnakeGame.vcxproj", "{8EC1C965-6666-4676-AC14-D7A0A4E87A45}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "SnakeGame-Server\Server\Server.vcxproj", "{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,14 +21,6 @@ Global
 		{8EC1C965-6666-4676-AC14-D7A0A4E87A45}.Release|x64.Build.0 = Release|x64
 		{8EC1C965-6666-4676-AC14-D7A0A4E87A45}.Release|x86.ActiveCfg = Release|Win32
 		{8EC1C965-6666-4676-AC14-D7A0A4E87A45}.Release|x86.Build.0 = Release|Win32
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Debug|x64.ActiveCfg = Debug|x64
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Debug|x64.Build.0 = Debug|x64
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Debug|x86.ActiveCfg = Debug|Win32
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Debug|x86.Build.0 = Debug|Win32
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Release|x64.ActiveCfg = Release|x64
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Release|x64.Build.0 = Release|x64
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Release|x86.ActiveCfg = Release|Win32
-		{FBA96A14-E63E-4A2B-82F2-AB81072FAAA8}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
