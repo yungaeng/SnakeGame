@@ -27,7 +27,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				m_playerNames.insert(key);
 		}
 
-		for(auto& [id, food] : m_foods) {
+		for(const auto& [id, food] : m_foods) {
 			S2C_FOOD_PACKET sendPkt;
 			sendPkt.id = food->GetID();
 			sendPkt.color = food->GetColor();
@@ -37,17 +37,18 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		}
 
 		{
-			for(auto& [id, p] : m_players) {
-				S2C_PLAYER_PACKET sendPkt{};
-				const auto nameLen = p->GetName().size();
-				memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
-				sendPkt.name[nameLen] = L'\0';
-				sendPkt.id = p->GetID();
-				sendPkt.color = p->GetColor();
-				sendPkt.x = p->GetPos().x;
-				sendPkt.y = p->GetPos().y;
-				session->AppendPkt(sendPkt);
-
+			for(const auto& [id, p] : m_players) {
+				{
+					S2C_PLAYER_PACKET sendPkt{};
+					const auto nameLen = p->GetName().size();
+					memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
+					sendPkt.name[nameLen] = L'\0';
+					sendPkt.id = id;
+					sendPkt.color = p->GetColor();
+					sendPkt.x = p->GetPos().x;
+					sendPkt.y = p->GetPos().y;
+					session->AppendPkt(sendPkt);
+				}
 				const auto& body = p->GetBody();
 
 				for(int i = 0; i < body.size(); ++i) {
@@ -132,7 +133,7 @@ void GameMap::Update(const std::stop_token& st)
 
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
-				SpawnFood();
+				// SpawnFood();
 				m_accDTForFoodSpawn = 0.f;
 			}
 

@@ -32,7 +32,7 @@
       <Filter>Timer</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>main</Filter>
+      <Filter>GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
