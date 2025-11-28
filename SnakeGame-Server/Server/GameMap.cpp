@@ -128,8 +128,10 @@ void GameMap::Update(const std::stop_token& st)
 		if(m_accDTForUpdate >= UPDATE_INVERVAL) {
 			ProcessEvent();
 
-			for(const auto& [id, player] : m_players)
+			for(const auto& [playerID, player] : m_players) {
+				if(false == player->IsAlive()) continue;
 				player->Update(m_accDTForUpdate);
+			}
 
 			CheckCollision();
 			if(m_accDTForFoodSpawn >= FOOD_SPAWN_INTERVAL) {
@@ -169,6 +171,9 @@ void GameMap::AddEvent(std::function<void()> eve)
 
 void GameMap::CheckCollision()
 {
+	// TODO: 충돌 다시 보기
+	bool isDead = false;
+
 	for(auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
 		const auto& curPlayer = pIter1->second;
 		if(false == curPlayer->IsAlive()) continue;
@@ -176,26 +181,41 @@ void GameMap::CheckCollision()
 		auto pIter2 = pIter1;
 		++pIter2;
 
-		//for(; pIter2 != m_players.end(); ++pIter2) {
-		//	const auto& other = pIter2->second;
-		//	if(false == other->IsAlive()) continue;
+		for(; pIter2 != m_players.end(); ++pIter2) {
+			const auto& other = pIter2->second;
+			if(false == other->IsAlive()) continue;
 
-		//	if(curPlayer->IsCollision(other->GetPos())) {
-		//		S2C_DEL_SNAKE_PACKET sendPkt;
-		//		sendPkt.id = curPlayer->GetID();
-		//		AppendPkt(sendPkt);
-		//	}
+			if(curPlayer->IsCollision(other->GetPos())) {
+				S2C_DEL_SNAKE_PACKET sendPkt;
+				sendPkt.id = curPlayer->GetID();
+				AppendPkt(sendPkt);
+				curPlayer->SetAlive(false);
+				AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
+				
+				isDead = true;
+				break; // 다른 플레이어와의 체크는 더 안 함
+			}
 
-		//	const auto& otherBody = other->GetBody();
-		//	for(const auto otherBodyPos : otherBody) {
-		//		if(curPlayer->IsCollision(otherBodyPos)) {
-		//			S2C_DEL_SNAKE_PACKET sendPkt;
-		//			sendPkt.id = curPlayer->GetID();
-		//			AppendPkt(sendPkt);
-		//			break;
-		//		}
-		//	}
-		//}
+			const auto& otherBody = other->GetBody();
+			for(const auto otherBodyPos : otherBody) {
+				if(curPlayer->IsCollision(otherBodyPos)) {
+					S2C_DEL_SNAKE_PACKET sendPkt;
+					sendPkt.id = curPlayer->GetID();
+					AppendPkt(sendPkt);
+					curPlayer->SetAlive(false);
+
+					AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
+					isDead = true;
+					break;
+				}
+			}
+
+			if(isDead) break;
+		}
+
+		if(isDead) {
+			continue;
+		}
 
 		for(const auto& [foodID, food] : m_foods) {
 			if(false == food->IsAlive()) continue;
@@ -230,7 +250,7 @@ void GameMap::SpawnFood()
 	food->SetName(L"food_" + id);
 	food->SetID(id);
 
-	Pos pos{ static_cast<float>(rand() % GameMap::MAP_SIZE), static_cast<float>(rand() % GameMap::MAP_SIZE) };
+	Pos pos{ static_cast<float>(rand() % GameMap::MAP_WIDTH), static_cast<float>(rand() % GameMap::MAP_HEIGHT) };
 	food->SetPos(pos);
 	static constexpr int MAX_COLOR{ 256 };
 

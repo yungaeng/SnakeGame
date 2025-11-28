@@ -3,7 +3,7 @@
 
 #include "GameMap.h"
 Player::Player()
-	:GameObject(GAME_OBJECT_TYPE::PLAYER)
+    :GameObject{ GAME_OBJECT_TYPE::PLAYER }, m_moveSpeed{4000.f}
 {
 }
 
@@ -16,7 +16,7 @@ void Player::AddBody(const Pos pos)
 {
 	S2C_ADD_SNAKE_BDOY_PACKET sendPkt;
 	sendPkt.id = GetID();
-	sendPkt.bodyIndex = m_body.size();
+	sendPkt.bodyIndex = static_cast<uint32>(m_body.size());
 	sendPkt.x = pos.x;
 	sendPkt.y = pos.y;
 	MANAGER(GameMap)->AppendPkt(sendPkt);
@@ -29,7 +29,7 @@ void Player::Update(const float dt)
     Pos targetPos = GetPos();
 
     const float segmentDist = 20.f;
-    const float followSpeed = 4000.f * dt;
+    const float followSpeed = m_moveSpeed * dt;
 
     const float maxStep = followSpeed;
 
@@ -53,8 +53,8 @@ void Player::Update(const float dt)
         S2C_SNAKE_BODY_PACKET sendPkt{};
         sendPkt.id = GetID();
         sendPkt.bodyIndex = i;
-        sendPkt.x = static_cast<int>(std::round(seg.x));
-        sendPkt.y = static_cast<int>(std::round(seg.y));
+        sendPkt.x =seg.x;
+        sendPkt.y =seg.y;
         MANAGER(GameMap)->AppendPkt(sendPkt);
 
         targetPos = seg;

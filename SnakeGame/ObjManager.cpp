@@ -4,12 +4,12 @@ constexpr auto MAP_SIZE = 700;
 std::unordered_map<unsigned long long, Object> ObjManager::m_foods;
 std::unordered_map<unsigned long long, Snake> ObjManager::m_snakes;
 
-void ObjManager::AddFood(unsigned long long id, int x, int y, COLORREF color)
+void ObjManager::AddFood(unsigned long long id, float  x, float  y, COLORREF color)
 {
     Object o(x, y, color);
     m_foods.try_emplace(id, o);
 }
-void ObjManager::AddSnake(unsigned long long id, wchar_t* name, int x, int y, COLORREF color)
+void ObjManager::AddSnake(unsigned long long id, wchar_t* name, float  x, float  y, COLORREF color)
 {
     Snake s(name, x, y, color);
     if(m_snakes.contains(id)==false)

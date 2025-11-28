@@ -31,6 +31,7 @@ public:										\
 #include <unordered_set>
 #include <random>
 #include <functional>
+#include <cassert>
 
 #pragma comment(lib, "ws2_32.lib")
 

@@ -30,31 +30,64 @@ enum class PACKET_ID : uint8 {
 };
 
 //client
+
+/// <summary>
+/// LOGIN
+/// </summary>
 struct C2S_LOGIN_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
 	C2S_LOGIN_PACKET() : PacketHeader{ sizeof(C2S_LOGIN_PACKET), static_cast<uint8>(PACKET_ID::C2S_LOGIN) } {}
 };
+
+
+/// <summary>
+///  MOVE
+/// </summary>
 struct C2S_MOVE_PACKET : public PacketHeader {
 	float x, y;
 	C2S_MOVE_PACKET() : PacketHeader{ sizeof(C2S_MOVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_MOVE) } {}
 };
+
+
+/// <summary>
+/// RESTART
+/// </summary>
 struct C2S_RESTART_PACKET : public PacketHeader {
 	C2S_RESTART_PACKET() : PacketHeader{ sizeof(C2S_RESTART_PACKET), static_cast<uint8>(PACKET_ID::C2S_RESTART) } {}
 };
+
+
+/// <summary>
+///  LEAVE
+/// </summary>
 struct C2S_LEAVE_PACKET : public PacketHeader {
 	C2S_LEAVE_PACKET() : PacketHeader{ sizeof(C2S_LEAVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_LEAVE) } {}
 };
 
 //server
+
+/// <summary>
+/// LOGIN_OK
+/// </summary>
 struct S2C_LOGIN_OK_PACKET : public PacketHeader {
 	unsigned long long id;
 	float x, y;
 	S2C_LOGIN_OK_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_OK_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_OK) } {}
 };
+
+
+/// <summary>
+/// LOGIN_FAIL
+/// </summary>
 struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
 	S2C_LOGIN_FAIL_PACKET() : PacketHeader{ sizeof(S2C_LOGIN_FAIL_PACKET), static_cast<uint8>(PACKET_ID::S2C_LOGIN_FAIL) } {}
 };
+
+
+/// <summary>
+/// PLAYER
+/// </summary>
 struct S2C_PLAYER_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
@@ -62,27 +95,52 @@ struct S2C_PLAYER_PACKET : public PacketHeader {
 	unsigned long long id;
 	S2C_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_PLAYER) } {}
 };
+
+
+/// <summary>
+/// FOOD
+/// </summary>
 struct S2C_FOOD_PACKET : public PacketHeader {
 	COLORREF color;
 	float x, y;
 	unsigned long long id;
 	S2C_FOOD_PACKET() : PacketHeader{ sizeof(S2C_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_FOOD) } {}
 };
+
+
+/// <summary>
+/// MOVE
+/// </summary>
 struct S2C_MOVE_PACKET : public PacketHeader {
 	double deltaTime;
 	unsigned long long id;
 	float x, y;
 	S2C_MOVE_PACKET() : PacketHeader{ sizeof(S2C_MOVE_PACKET), static_cast<uint8>(PACKET_ID::S2C_MOVE) } {}
 };
+
+
+/// <summary>
+/// DEL_FOOD
+/// </summary>
 struct S2C_DEL_FOOD_PACKET : public PacketHeader {
 	unsigned long long id;
 	S2C_DEL_FOOD_PACKET() : PacketHeader{ sizeof(S2C_DEL_FOOD_PACKET), static_cast<uint8>(PACKET_ID::S2C_DEL_FOOD) } {}
 };
+
+
+/// <summary>
+/// DEL_SNAKE
+/// </summary>
 struct S2C_DEL_SNAKE_PACKET : public PacketHeader {
 	unsigned long long id;
 	S2C_DEL_SNAKE_PACKET() : PacketHeader{ sizeof(S2C_DEL_SNAKE_PACKET), static_cast<uint8>(PACKET_ID::S2C_DEL_SNAKE) } {}
 };
 
+
+
+/// <summary>
+/// SNAKE_BODY
+/// </summary>
 struct S2C_SNAKE_BODY_PACKET : public PacketHeader {
 	unsigned long long id;
 	uint32 bodyIndex;
@@ -90,6 +148,10 @@ struct S2C_SNAKE_BODY_PACKET : public PacketHeader {
 	S2C_SNAKE_BODY_PACKET() : PacketHeader{ sizeof(S2C_SNAKE_BODY_PACKET), static_cast<uint8>(PACKET_ID::S2C_SNAKE_BODY) } {}
 };
 
+
+/// <summary>
+/// ADD_SNAKE_BODY
+/// </summary>
 struct S2C_ADD_SNAKE_BDOY_PACKET : public PacketHeader {
 	unsigned long long id;
 	uint32 bodyIndex;
