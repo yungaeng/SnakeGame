@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 GameObject::GameObject(GAME_OBJECT_TYPE type)
-	:m_type{type}, m_alive(true)
+	:m_type{ type }, m_alive{ true }
 {
 }
 
