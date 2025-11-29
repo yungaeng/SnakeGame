@@ -18,6 +18,8 @@ void ObjManager::AddSnake(unsigned long long id, wchar_t* name, float  x, float 
 
 void ObjManager::DeleteSnake(unsigned long long id)
 {
+    m_snakes[id].m_head.SetAlive(false);
+    m_snakes[id].m_body[0].SetAlive(false);
     m_snakes.erase(id);
 }
 void ObjManager::DeleteFood(unsigned long long id)

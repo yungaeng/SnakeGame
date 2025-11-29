@@ -184,6 +184,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         if (!g_game.GetConnect()) {
             MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
             g_game.InitNetwork();
+            std::this_thread::sleep_for(1ms);
         }
         else if(!g_game.GetLogin())
             MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
@@ -243,7 +244,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
                 wchar_t message_buffer[256];
                 swprintf_s(message_buffer,
                     256,
-                    L"당신은 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d", g_game.GetScoreById(0));
+                    L"당신은 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d", g_game.GetUserdata()->score);
                 int result = MessageBox(hwnd,
                     message_buffer,
                     L"Game Over",

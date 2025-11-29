@@ -12,8 +12,6 @@ public:
 	static constexpr uint32 MAP_HEIGHT{ 768 };
 
 private:
-	std::atomic_ullong								G_globalID;
-	
 	Timer											m_timer;
 	static constexpr float							UPDATE_INVERVAL{ 1.f / 60.f }; // 60fps
 	float											m_accDTForUpdate{ 0.f };
@@ -45,9 +43,6 @@ public:
 		std::lock_guard<std::mutex> lk{ m_sendBuffMtx };
 		m_sendBuffer.Append<PacketType>(std::forward<PacketType>(pkt));
 	}
- 
-public:
-	uint64 GetGlobalID() noexcept { return ++G_globalID; }
 
 public:
 	bool FindPlayerName(std::wstring_view name);

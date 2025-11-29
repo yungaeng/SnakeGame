@@ -23,7 +23,7 @@
       <Filter>09. ServerManager</Filter>
     </ClCompile>
     <ClCompile Include="ClientPacketHandler.cpp">
-      <Filter>08. PacketHandler</Filter>
+      <Filter>08. ClientPacketHandler</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>01. GameObject\Player</Filter>
@@ -58,7 +58,7 @@
       <Filter>09. ServerManager</Filter>
     </ClInclude>
     <ClInclude Include="ClientPacketHandler.h">
-      <Filter>08. PacketHandler</Filter>
+      <Filter>08. ClientPacketHandler</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>01. GameObject\Player</Filter>
@@ -86,9 +86,6 @@
     <Filter Include="02. GameMap">
       <UniqueIdentifier>{e5a0cca7-c5b2-4fb7-82e8-981eabd824f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="08. PacketHandler">
-      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
-    </Filter>
     <Filter Include="07. protocol">
       <UniqueIdentifier>{eff2511f-32a5-4540-ad8f-b295ebe9d28e}</UniqueIdentifier>
     </Filter>
@@ -106,6 +103,9 @@
     </Filter>
     <Filter Include="09. ServerManager">
       <UniqueIdentifier>{d4b1a730-7f63-4e9a-bf6a-c419b7654697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. ClientPacketHandler">
+      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

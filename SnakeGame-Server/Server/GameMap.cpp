@@ -184,6 +184,8 @@ void GameMap::CheckCollision()
 				sendPkt.id = curPlayer->GetID();
 				AppendPkt(sendPkt);
 				curPlayer->SetAlive(false);
+
+				// TODO: 재시작 할거면 없애야 함.
 				AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
 
 				isDead = true;
@@ -198,6 +200,7 @@ void GameMap::CheckCollision()
 					AppendPkt(sendPkt);
 					curPlayer->SetAlive(false);
 
+					// TODO: 재시작 할 거면 없애야 함
 					AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
 					isDead = true;
 					break;
@@ -236,11 +239,12 @@ void GameMap::SpawnFood()
 	std::cout << "SpawnFood!" << std::endl;
 	auto food = std::make_shared<GameObject>(GAME_OBJECT_TYPE::FOOD);
 
-	const uint64 id = MANAGER(GameMap)->GetGlobalID();
-	food->SetName(L"food_" + id);
-	food->SetID(id);
-
-	Pos pos{ static_cast<float>(rand() % GameMap::MAP_WIDTH), static_cast<float>(rand() % GameMap::MAP_HEIGHT) };
+	food->SetName(L"food_" + food->GetID());
+	
+	static std::uniform_real_distribution<float> randomPosX{ 40.f, GameMap::MAP_WIDTH - 40.f };
+	static std::uniform_real_distribution<float> randomPosY{ 40.f, GameMap::MAP_HEIGHT - 40.f };
+	
+	Pos pos{ randomPosX(dre), randomPosY(dre) };
 	food->SetPos(pos);
 	static constexpr int MAX_COLOR{ 256 };
 

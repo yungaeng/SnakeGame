@@ -22,6 +22,7 @@ struct userdata {
 	wchar_t name[MAX_NAME_SIZE];
 	COLORREF color;
 	unsigned long long id;
+	unsigned int score;
 };
 
 class Game {

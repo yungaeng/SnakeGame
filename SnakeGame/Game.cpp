@@ -43,6 +43,7 @@ void Game::Update()
 }
 void Game::ReStart()
 {
+	m_userdata.score = 0;
 	m_isgameover = false;
 	SendRestart();
 }
@@ -238,22 +239,17 @@ void Game::ProcessPacket(char* data)
 	{
 		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
 		game_lock.lock();
-
+		o.DeleteSnake(p->id); 
 		// 내 아이디이면 게임오버
 		if(m_userdata.id == p->id) {
 			m_isgameover = true;
 		}
-
-		o.DeleteSnake(p->id); 
 		game_lock.unlock();
 		break;
 	}
 	case PACKET_ID::S2C_DEL_FOOD:
 	{
 		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
-
-		
-
 		game_lock.lock();
 		o.DeleteFood(p->id);
 		game_lock.unlock();
@@ -266,6 +262,10 @@ void Game::ProcessPacket(char* data)
 		if(o.m_snakes.contains(p->id)) {
 			o.m_snakes[p->id].AddBody(p->bodyIndex);
 			o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		}
+		if(p->id == m_userdata.id) {
+			if(o.m_snakes[p->id].GetBody().size()>=2)
+				m_userdata.score += 10;
 		}
 		//o.m_snakes[p->id].AddBody(p->x,p->y);
 		game_lock.unlock();
@@ -303,7 +303,6 @@ void Game::SendLogin()
 		C2S_LOGIN_PACKET sendPkt = {};
 		memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
 		sendPkt.color = m_userdata.color;
-		// memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
@@ -354,8 +353,7 @@ void Game::DrawBackGround(HDC hdc)
 	
 	// --- 텍스트 출력 추가 부분 ---
 	char textBuffer[50];
-	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
-		(int)o.m_foods.size(), (int)o.m_snakes.size(), ((int)o.m_snakes[m_userdata.id].m_body.size() + 1) * 10);
+	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d", (int)o.m_foods.size(), (int)o.m_snakes.size(), m_userdata.score);
 	SetBkMode(hdc, OPAQUE);
 	COLORREF textColorBg = RGB(255, 255, 200);
 	SetBkColor(hdc, textColorBg);

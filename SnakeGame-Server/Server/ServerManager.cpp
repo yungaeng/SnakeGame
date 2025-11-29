@@ -56,9 +56,9 @@ void ServerManager::DoAccept(const std::stop_token& st)
 			
 			DWORD optVal{ 1 };
 			setsockopt(clientSocket, IPPROTO_TCP, TCP_NODELAY, (const char*)&optVal, sizeof(optVal));
-
-			const uint64 id = MANAGER(GameMap)->GetGlobalID();
-			auto session = std::make_shared<Session>(id, clientSocket);
+			
+			auto session = std::make_shared<Session>(clientSocket);
+			const uint64 id = session->GetID();
 			{
 				std::lock_guard<std::mutex> lk{ m_sessionMutex };
 				m_sessions.try_emplace(id, session);
