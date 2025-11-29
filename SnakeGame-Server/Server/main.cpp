@@ -15,6 +15,7 @@ int main()
 		
 		// 메인쓰레드
 		std::string word;
+
 		while(true) {
 			std::cin >> word;
 			if("EXIT" == word) {
