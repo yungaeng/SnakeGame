@@ -22,6 +22,7 @@ public:
 	int GetSize() const { return m_size; };
 	COLORREF GetColor() { return m_color; };
 
+	void SetAlive(bool alive) { m_isalive = alive; }
 	void SetPos(float x, float y) { m_x = x, m_y = y; };
 	void SetColor(COLORREF color) { m_color = color; };
 	void SetDie() { m_isalive = false; };

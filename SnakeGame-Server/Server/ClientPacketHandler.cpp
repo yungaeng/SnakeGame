@@ -7,8 +7,8 @@
 
 Pos GetRandomPos()
 {
-	static std::uniform_real_distribution<float> randomPosX{ 0, GameMap::MAP_WIDTH };
-	static std::uniform_real_distribution<float> randomPosY{ 0, GameMap::MAP_HEIGHT };
+	static std::uniform_real_distribution<float> randomPosX{ 40.f, GameMap::MAP_WIDTH-40.f};
+	static std::uniform_real_distribution<float> randomPosY{ 40.f, GameMap::MAP_HEIGHT-40.f };
 	Pos pos{ randomPosX(dre), randomPosY(dre) };
 
 	return pos;
@@ -34,18 +34,19 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 	// 로그인이 정상적으로 되었다면 게임맵에 플레이어 추가
 	else {
 
+		session->SetSessionInfo(SessionInfo{ recvPkt.name, recvPkt.color });
+		auto player = std::make_shared<Player>();
+
 		const Pos pos{ GetRandomPos() };
 		S2C_LOGIN_OK_PACKET sendPkt;
-		sendPkt.id = session->GetID();
+		sendPkt.id = player->GetID();
 		sendPkt.x = pos.x;
 		sendPkt.y = pos.y;
 		session->AppendPkt(sendPkt);
 
-		auto player = std::make_shared<Player>();
-		player->SetColor(recvPkt.color);
 		player->SetName(recvPkt.name);
+		player->SetColor(recvPkt.color);
 		player->SetPos(pos);
-		player->SetID(session->GetID());
 		player->SetSession(session);
 		session->SetPlayer(player);
 
@@ -60,16 +61,24 @@ bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>& session, const C2S
 
 bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>& session, const C2S_RESTART_PACKET& recvPkt)
 {
-	// TODO: 재시작 구현
-	auto player = session->GetPlayer();
-	
-	if(player->IsAlive()) return false;
+	const Pos pos{ GetRandomPos() };
+	auto player = std::make_shared<Player>();
+	S2C_LOGIN_OK_PACKET sendPkt;
+	sendPkt.id = player->GetID();
+	sendPkt.x = pos.x;
+	sendPkt.y = pos.y;
+	session->AppendPkt(sendPkt);
 
-	if(player) {
-		const Pos pos{ GetRandomPos() };
-		player->SetPos(pos);
-		player->SetAlive(true);
-	}
+	player->SetName(session->GetSessionInfo().name);
+	player->SetColor(session->GetSessionInfo().color);
+	player->SetPos(pos);
+	player->SetSession(session);
+	session->SetPlayer(player);
+
+	MANAGER(GameMap)->AddEvent([p = std::move(player)]()
+		{
+			MANAGER(GameMap)->AddGameObject(std::move(p));
+		});
 	return true;
 }
 

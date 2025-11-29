@@ -4,6 +4,9 @@
 GameObject::GameObject(GAME_OBJECT_TYPE type)
 	:m_type{ type }, m_alive{ true }
 {
+	static std::atomic_llong idGen{ 0 };
+	m_id = idGen;
+	idGen++;
 }
 
 GameObject::~GameObject()

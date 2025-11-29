@@ -5,9 +5,12 @@
 #include "GameMap.h"
 #include "Player.h"
 
-Session::Session(const uint64 id, const SOCKET socket)
-	: m_id{ id }, m_socket{ socket }
+Session::Session(const SOCKET socket)
+	: m_socket{ socket }
 {
+	static std::atomic_llong idGen{ 0 };
+	m_id = idGen;
+	idGen++;
 	std::cout << std::format("Session! ID={}", m_id) << std::endl;
 }
 

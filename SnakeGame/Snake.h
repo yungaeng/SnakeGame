@@ -27,6 +27,7 @@ public:
 	std::unordered_map<UINT32, Object> m_body;
 	Object m_head;
 
+	const auto& GetBody() const { return m_body; }
 	// void Eat();
 };
 
