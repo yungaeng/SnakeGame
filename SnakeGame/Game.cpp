@@ -355,7 +355,7 @@ void Game::DrawBackGround(HDC hdc)
 	// --- 텍스트 출력 추가 부분 ---
 	char textBuffer[50];
 	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d",
-		(int)o.m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[m_userdata.id].m_body.size() * 10);
+		(int)o.m_foods.size(), (int)o.m_snakes.size(), (int)o.m_snakes[m_userdata.id].m_body.size() + 1 * 10);
 	SetBkMode(hdc, OPAQUE);
 	COLORREF textColorBg = RGB(255, 255, 200);
 	SetBkColor(hdc, textColorBg);
