@@ -171,32 +171,26 @@ void GameMap::AddEvent(std::function<void()> eve)
 
 void GameMap::CheckCollision()
 {
-	// TODO: 충돌 다시 보기
 	bool isDead = false;
 
-	for(auto pIter1 = m_players.begin(); pIter1 != m_players.end(); ++pIter1) {
-		const auto& curPlayer = pIter1->second;
+	for(const auto& [curID, curPlayer] : m_players) {
 		if(false == curPlayer->IsAlive()) continue;
 
-		auto pIter2 = pIter1;
-		++pIter2;
-
-		for(; pIter2 != m_players.end(); ++pIter2) {
-			const auto& other = pIter2->second;
-			if(false == other->IsAlive()) continue;
-
-			if(curPlayer->IsCollision(other->GetPos())) {
+		for(const auto& [otherID, otherPlayer] : m_players) {
+			if(curID == otherID || false == otherPlayer->IsAlive()) continue;
+			
+			if(curPlayer->IsCollision(otherPlayer->GetPos())) {
 				S2C_DEL_SNAKE_PACKET sendPkt;
 				sendPkt.id = curPlayer->GetID();
 				AppendPkt(sendPkt);
 				curPlayer->SetAlive(false);
 				AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
-				
+
 				isDead = true;
-				break; // 다른 플레이어와의 체크는 더 안 함
+				break;
 			}
 
-			const auto& otherBody = other->GetBody();
+			const auto& otherBody = otherPlayer->GetBody();
 			for(const auto otherBodyPos : otherBody) {
 				if(curPlayer->IsCollision(otherBodyPos)) {
 					S2C_DEL_SNAKE_PACKET sendPkt;
@@ -209,13 +203,9 @@ void GameMap::CheckCollision()
 					break;
 				}
 			}
-
-			if(isDead) break;
 		}
 
-		if(isDead) {
-			continue;
-		}
+		if(isDead) continue;
 
 		for(const auto& [foodID, food] : m_foods) {
 			if(false == food->IsAlive()) continue;
@@ -227,13 +217,13 @@ void GameMap::CheckCollision()
 				S2C_DEL_FOOD_PACKET sendPkt;
 				sendPkt.id = foodID;
 				AppendPkt(sendPkt);
-				
+
 				AddEvent([this, f = food]() { RemoveGameObject(f); });
 
 				{
 					const auto& body = curPlayer->GetBody();
 					if(body.size() == 0) break;
-					Pos newBodyPos{ body.back().x - GameObject::GAME_OBJECT_SIZE, body.back().y- GameObject::GAME_OBJECT_SIZE };
+					Pos newBodyPos{ body.back().x - GameObject::GAME_OBJECT_SIZE, body.back().y - GameObject::GAME_OBJECT_SIZE };
 					curPlayer->AddBody(newBodyPos);
 				}
 			}

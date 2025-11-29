@@ -2,110 +2,110 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>main</Filter>
+      <Filter>00. main</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>pch</Filter>
+      <Filter>99. pch</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
-      <Filter>Session</Filter>
+      <Filter>04. Session</Filter>
     </ClCompile>
     <ClCompile Include="GameMap.cpp">
-      <Filter>GameMap</Filter>
+      <Filter>02. GameMap</Filter>
     </ClCompile>
     <ClCompile Include="RecvBuffer.cpp">
-      <Filter>RecvBuffer</Filter>
+      <Filter>06. RecvBuffer</Filter>
     </ClCompile>
     <ClCompile Include="SendBuffer.cpp">
-      <Filter>SendBuffer</Filter>
+      <Filter>05. SendBuffer</Filter>
     </ClCompile>
     <ClCompile Include="ServerManager.cpp">
-      <Filter>ServerManager</Filter>
+      <Filter>09. ServerManager</Filter>
     </ClCompile>
     <ClCompile Include="ClientPacketHandler.cpp">
-      <Filter>PacketHandler</Filter>
+      <Filter>08. PacketHandler</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>GameObject\Player</Filter>
+      <Filter>01. GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>Timer</Filter>
+      <Filter>03. Timer</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>GameObject</Filter>
+      <Filter>01. GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>pch</Filter>
+      <Filter>99. pch</Filter>
     </ClInclude>
     <ClInclude Include="Session.h">
-      <Filter>Session</Filter>
+      <Filter>04. Session</Filter>
     </ClInclude>
     <ClInclude Include="GameMap.h">
-      <Filter>GameMap</Filter>
+      <Filter>02. GameMap</Filter>
     </ClInclude>
     <ClInclude Include="RecvBuffer.h">
-      <Filter>RecvBuffer</Filter>
+      <Filter>06. RecvBuffer</Filter>
     </ClInclude>
     <ClInclude Include="SendBuffer.h">
-      <Filter>SendBuffer</Filter>
+      <Filter>05. SendBuffer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\protocol\protocol.h">
-      <Filter>protocol</Filter>
+      <Filter>07. protocol</Filter>
     </ClInclude>
     <ClInclude Include="ServerManager.h">
-      <Filter>ServerManager</Filter>
+      <Filter>09. ServerManager</Filter>
     </ClInclude>
     <ClInclude Include="ClientPacketHandler.h">
-      <Filter>PacketHandler</Filter>
+      <Filter>08. PacketHandler</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>GameObject\Player</Filter>
+      <Filter>01. GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Timer</Filter>
+      <Filter>03. Timer</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>GameObject</Filter>
+      <Filter>01. GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="main">
+    <Filter Include="00. main">
       <UniqueIdentifier>{7a87780c-610e-44c0-8b70-c952e7b80b44}</UniqueIdentifier>
     </Filter>
-    <Filter Include="pch">
+    <Filter Include="99. pch">
       <UniqueIdentifier>{05611874-717b-40b4-a9dc-7b85dc5a8bf9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Session">
-      <UniqueIdentifier>{64146e37-927f-430d-8e06-b8dfd0adec11}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameMap">
-      <UniqueIdentifier>{e5a0cca7-c5b2-4fb7-82e8-981eabd824f9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="RecvBuffer">
-      <UniqueIdentifier>{00bbc366-e83f-4607-a113-c62c11d5369e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SendBuffer">
-      <UniqueIdentifier>{4d387ab6-2506-4efd-a5b4-4983cd746029}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="protocol">
-      <UniqueIdentifier>{eff2511f-32a5-4540-ad8f-b295ebe9d28e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ServerManager">
-      <UniqueIdentifier>{d4b1a730-7f63-4e9a-bf6a-c419b7654697}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject">
+    <Filter Include="01. GameObject">
       <UniqueIdentifier>{b2163046-071f-4805-ac62-b296a785e610}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Player">
+    <Filter Include="01. GameObject\Player">
       <UniqueIdentifier>{a9daf22a-37b1-4861-a5f9-dcceff3891d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Timer">
+    <Filter Include="02. GameMap">
+      <UniqueIdentifier>{e5a0cca7-c5b2-4fb7-82e8-981eabd824f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. PacketHandler">
+      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. protocol">
+      <UniqueIdentifier>{eff2511f-32a5-4540-ad8f-b295ebe9d28e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. RecvBuffer">
+      <UniqueIdentifier>{00bbc366-e83f-4607-a113-c62c11d5369e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. SendBuffer">
+      <UniqueIdentifier>{4d387ab6-2506-4efd-a5b4-4983cd746029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Session">
+      <UniqueIdentifier>{64146e37-927f-430d-8e06-b8dfd0adec11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Timer">
       <UniqueIdentifier>{66087019-b1a4-4fbb-857f-43fca07939ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="PacketHandler">
-      <UniqueIdentifier>{ec640409-ba32-4277-b304-c70731840061}</UniqueIdentifier>
+    <Filter Include="09. ServerManager">
+      <UniqueIdentifier>{d4b1a730-7f63-4e9a-bf6a-c419b7654697}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
