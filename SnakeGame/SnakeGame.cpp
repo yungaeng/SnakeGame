@@ -239,30 +239,27 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
            
             //g_game.Update();
             
-            //if (g_game.m_isgameover) {
-            //    int killer_id = g_game.m_killer_id;
-            //    wchar_t message_buffer[256];
-            //    wchar_t* name = g_game.GetNameById(killer_id);
-            //    swprintf_s(message_buffer,
-            //        256,
-            //        L"당신은 %s 에게 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d",
-            //        name, g_game.GetScoreById(0));
-            //    int result = MessageBox(hwnd,
-            //        message_buffer,
-            //        L"Game Over",
-            //        MB_YESNO | MB_ICONQUESTION);
-            //    if (result == IDYES) {
-            //        // '예'를 선택한 경우: 
-            //        g_game.ReStart();
-            //        continue;
-            //    }
-            //    else {
-            //        // 사용자가 '아니오' (종료)을 눌렀을 때 
-            //        PostQuitMessage(0);        // 게임 종료
-            //        break;
-            //    }
-            //    continue;
-            //}
+            if (g_game.GetGameover()) {
+                wchar_t message_buffer[256];
+                swprintf_s(message_buffer,
+                    256,
+                    L"당신은 죽었습니다!! 다시하시겠습니까?\nYOUR SCORE : %d", g_game.GetScoreById(0));
+                int result = MessageBox(hwnd,
+                    message_buffer,
+                    L"Game Over",
+                    MB_YESNO | MB_ICONQUESTION);
+                if (result == IDYES) {
+                    // '예'를 선택한 경우: 
+                    g_game.ReStart();
+                    continue;
+                }
+                else {
+                    // 사용자가 '아니오' (종료)을 눌렀을 때 
+                    PostQuitMessage(0);        // 게임 종료
+                    break;
+                }
+                continue;
+            }
             
             // 업데이트 후 화면 무효화.
             InvalidateRect(hwnd, NULL, false);

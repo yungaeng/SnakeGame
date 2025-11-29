@@ -43,6 +43,7 @@ void Game::Update()
 }
 void Game::ReStart()
 {
+	m_isgameover = false;
 	SendRestart();
 }
 
@@ -238,10 +239,10 @@ void Game::ProcessPacket(char* data)
 		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
 		game_lock.lock();
 
-		// TODO: 재시작 구현
-		//if(m_userdata.id == p->id) {
-		//	SendRestart();
-		//}
+		// 내 아이디이면 게임오버
+		if(m_userdata.id == p->id) {
+			m_isgameover = true;
+		}
 
 		o.DeleteSnake(p->id); 
 		game_lock.unlock();
@@ -250,6 +251,9 @@ void Game::ProcessPacket(char* data)
 	case PACKET_ID::S2C_DEL_FOOD:
 	{
 		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
+
+		
+
 		game_lock.lock();
 		o.DeleteFood(p->id);
 		game_lock.unlock();

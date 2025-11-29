@@ -27,6 +27,7 @@ struct userdata {
 class Game {
 	bool m_isconnect = false;
 	bool m_islogin = false;
+	bool m_isgameover = false;
 
 	SOCKET m_socket = {};
 	char m_send_buf[BUF_SIZE];
@@ -41,6 +42,8 @@ public:
 	{
 		m_isconnect = true;
 		m_islogin = false;
+		m_isgameover = false;
+
 		m_socket = INVALID_SOCKET;
 		m_send_buf[0] = '\0';
 		m_recv_buf[0] = '\0';
@@ -90,6 +93,7 @@ public:
 
 	bool GetConnect() { return m_isconnect; };
 	bool GetLogin() { return m_islogin; };
+	bool GetGameover() { return m_isgameover; };
 private:
 	void SetLogin(bool st) { m_islogin = st; };
 	void DrawBackGround(HDC hdc);
