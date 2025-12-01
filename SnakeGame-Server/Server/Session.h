@@ -52,7 +52,6 @@ private:
 	uint32	ProcessRecv(const char* const readPos, const uint32 dataSize);
 	void	Disconnect(const std::string_view reason);
 	void	OnRecvPacket(const char* const buffer);
-public:
 
 };
 

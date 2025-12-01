@@ -19,10 +19,5 @@ public:
 	void DeleteFood(unsigned long long id);
 	void DeleteSnake(unsigned long long id);
 
-	// void MoveSnake(unsigned long long id, double deltaTime);
-private:
-	// void FoodCollisions();
-	// int SnakeCollisions();
-	// void GarbageCollector();
 };
 

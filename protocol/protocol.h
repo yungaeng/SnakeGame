@@ -26,7 +26,7 @@ enum class PACKET_ID : uint8 {
 	//client
 	C2S_LOGIN, C2S_MOVE, C2S_RESTART, C2S_LEAVE,
 	//server
-	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_PLAYER, S2C_FOOD, S2C_MOVE, S2C_DEL_SNAKE, S2C_DEL_FOOD, S2C_EAT_FOOD, S2C_SNAKE_BODY, S2C_ADD_SNAKE_BODY
+	S2C_LOGIN_OK, S2C_LOGIN_FAIL, S2C_SNAKE, S2C_FOOD, S2C_MOVE, S2C_DEL_SNAKE, S2C_DEL_FOOD, S2C_EAT_FOOD, S2C_SNAKE_BODY, S2C_ADD_SNAKE_BODY
 };
 
 //client
@@ -57,14 +57,6 @@ struct C2S_RESTART_PACKET : public PacketHeader {
 	C2S_RESTART_PACKET() : PacketHeader{ sizeof(C2S_RESTART_PACKET), static_cast<uint8>(PACKET_ID::C2S_RESTART) } {}
 };
 
-
-/// <summary>
-///  LEAVE
-/// </summary>
-struct C2S_LEAVE_PACKET : public PacketHeader {
-	C2S_LEAVE_PACKET() : PacketHeader{ sizeof(C2S_LEAVE_PACKET), static_cast<uint8>(PACKET_ID::C2S_LEAVE) } {}
-};
-
 //server
 
 /// <summary>
@@ -88,12 +80,12 @@ struct S2C_LOGIN_FAIL_PACKET : public PacketHeader {
 /// <summary>
 /// PLAYER
 /// </summary>
-struct S2C_PLAYER_PACKET : public PacketHeader {
+struct S2C_SNAKE_PACKET : public PacketHeader {
 	wchar_t name[10];
 	COLORREF color;
 	float x, y;
 	unsigned long long id;
-	S2C_PLAYER_PACKET() : PacketHeader{ sizeof(S2C_PLAYER_PACKET), static_cast<uint8>(PACKET_ID::S2C_PLAYER) } {}
+	S2C_SNAKE_PACKET() : PacketHeader{ sizeof(S2C_SNAKE_PACKET), static_cast<uint8>(PACKET_ID::S2C_SNAKE) } {}
 };
 
 
@@ -112,7 +104,6 @@ struct S2C_FOOD_PACKET : public PacketHeader {
 /// MOVE
 /// </summary>
 struct S2C_MOVE_PACKET : public PacketHeader {
-	double deltaTime;
 	unsigned long long id;
 	float x, y;
 	S2C_MOVE_PACKET() : PacketHeader{ sizeof(S2C_MOVE_PACKET), static_cast<uint8>(PACKET_ID::S2C_MOVE) } {}

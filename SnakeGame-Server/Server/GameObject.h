@@ -12,7 +12,7 @@ private:
 	Pos						m_pos;
 
 public:
-	static constexpr float	GAME_OBJECT_SIZE = 20;
+	static constexpr float	GAME_OBJECT_SIZE = 20.f;
 
 public:
 	explicit GameObject(GAME_OBJECT_TYPE type);
