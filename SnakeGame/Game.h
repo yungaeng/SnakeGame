@@ -84,6 +84,7 @@ public:
 	bool InitNetwork();
 	void Recv();
 	void ProcessPacket(char* data);
+	bool Connect();
 
 	void SendLogin();
 	void SendMove(float x, float y);
