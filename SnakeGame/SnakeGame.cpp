@@ -79,6 +79,11 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         case IDOK: {
             if (!pSettings) break;
 
+            // 서버 ip 가져오기
+            wchar_t input_ip[64];
+            GetDlgItemText(hDlg, IDC_SERVERIP_EDIT, input_ip, 64);
+            g_game.SetIP(input_ip);
+
             // 1. 닉네임 가져오기 및 확인
             GetDlgItemText(hDlg, IDC_NICKNAME_EDIT, pSettings->name, MAX_NAME_SIZE);
             if (pSettings->name[0] == L'\0') {

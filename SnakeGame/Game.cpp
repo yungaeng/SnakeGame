@@ -79,11 +79,14 @@ bool Game::InitNetwork()
 		return false;
 	}
 
+	char char_ip[64];
+	int size_needed = WideCharToMultiByte(CP_ACP, 0, m_ip, -1, char_ip, 64, NULL, NULL);
+
 	// connect()
 	struct sockaddr_in serveraddr;
 	memset(&serveraddr, 0, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
+	inet_pton(AF_INET, char_ip, &serveraddr.sin_addr);
 	serveraddr.sin_port = htons(SERVER_PORT);
 	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 

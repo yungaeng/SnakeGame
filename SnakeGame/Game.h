@@ -14,7 +14,7 @@
 #include "..\SnakeGame-Server\Server\pch.h"
 #include "ObjManager.h"
 
-#define SERVER_IP "127.0.0.1"
+//#define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 9000
 #define BUF_SIZE 512
 
@@ -26,6 +26,7 @@ struct userdata {
 };
 
 class Game {
+	wchar_t m_ip[64];
 	bool m_isconnect = false;
 	bool m_islogin = false;
 	bool m_isgameover = false;
@@ -79,7 +80,7 @@ public:
 	
 
 	//  Network --------------------------------------------------------------------------
-
+	void SetIP(const wchar_t* ip) { memcpy(m_ip, ip, sizeof(m_ip)); };
 	bool InitNetwork();
 	void Recv();
 	void ProcessPacket(char* data);
