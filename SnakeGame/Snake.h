@@ -28,6 +28,5 @@ public:
 	Object m_head;
 
 	const auto& GetBody() const { return m_body; }
-	// void Eat();
 };
 

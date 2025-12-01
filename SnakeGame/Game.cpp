@@ -1,23 +1,5 @@
 #include "Game.h"
 
-void Game::Init(HDC hdc)
-{
-	// 이제는 init 가 할 게 없음
-	
-	// 이제 loginok 패킷을 받으면 추가해 줌 
-	// o.AddSnake(m_userdata, rand() % 700, rand() % 700);
-	// 먹이 만들기
-	//for (int i = 0; i < 10; i++)
-	//{
-	//	int x = rand() % 600;
-	//	int y = rand() % 600;
-	//	COLORREF col = RGB(rand() % 256, rand() % 256, rand() % 256);
-	//	o.AddFood(x, y, col);
-	//}
-	// 타이머 시작
-	//m_timer = std::chrono::steady_clock::now();
-	//m_last_food_spawn_time = std::chrono::steady_clock::now();
-}
 void Game::Draw(HDC hdc)
 {
 	DrawBackGround(hdc);
@@ -30,17 +12,7 @@ void Game::Draw(HDC hdc)
 		s.second.Draw(hdc);
 	game_lock.unlock();
 }
-void Game::Update()
-{
-	// 업데이트도 이제는 없데이트...
 
-	//double deltaTime = GetElapsedTime();
-	/*game_lock.lock();
-	for (auto& s : o.m_snakes) {
-		o.MoveSnake(s.first, deltaTime);
-	}
-	game_lock.unlock();*/
-}
 void Game::ReStart()
 {
 	m_userdata.score = 0;
@@ -176,9 +148,9 @@ void Game::ProcessPacket(char* data)
 	{
 		break;
 	}
-	case PACKET_ID::S2C_PLAYER:
+	case PACKET_ID::S2C_SNAKE:
 	{
-		S2C_PLAYER_PACKET* p = reinterpret_cast<S2C_PLAYER_PACKET*>(data);
+		S2C_SNAKE_PACKET* p = reinterpret_cast<S2C_SNAKE_PACKET*>(data);
 		game_lock.lock();
 		o.AddSnake(p->id, p->name, p->x, p->y, p->color);
 		game_lock.unlock();
@@ -247,22 +219,6 @@ void Game::ProcessPacket(char* data)
 
 		break;
 	}
-	//case PACKET_ID::S2C_EAT_FOOD:
-	//{
-	//	S2C_EAT_FOOD_PACKET* p = reinterpret_cast<S2C_EAT_FOOD_PACKET*>(data);
-	//	game_lock.lock();
-	//	// 안전하게 뱀 객체를 찾습니다.
-	//	auto it = o.m_snakes.find(p->id);
-	//	if (it != o.m_snakes.end()) {
-	//		it->second.Eat(); // 객체가 존재할 때만 Eat() 호출
-	//	}
-	//	else {
-	//		// Snake가 존재하지 않음 (오래된 패킷 또는 오류)
-	//		// Log를 남기거나 무시
-	//	}
-	//	game_lock.unlock();
-	//	break;
-	//}
 	default:
 	{
 		// 알 수 없는 패킷을 받았으므로 연결을 끊거나 무시할 수 있습니다.
@@ -332,15 +288,7 @@ void Game::SendRestart()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-////void Game::SendLeave()
-//{
-//	if (m_isconnect)
-//	{
-//		C2S_LEAVE_PACKET sendPkt = {};
-//		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
-//		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
-//	}
-//}
+
 void Game::EndNetwork()
 {
 	m_isconnect = false;
@@ -367,25 +315,3 @@ void Game::DrawBackGround(HDC hdc)
 	TextOutA(hdc, 10, 10, textBuffer, (int)strlen(textBuffer));
 	game_lock.unlock();
 }
-
-
-//double Game::GetElapsedTime() {
-//	auto now = std::chrono::steady_clock::now();
-//	auto duration = now - m_timer;
-//	return std::chrono::duration_cast<std::chrono::duration<double>>(duration).count();
-//}
-//void Game::SpawnFood()
-//{
-//	auto now = std::chrono::steady_clock::now();
-//	const std::chrono::milliseconds SPAWN_INTERVAL(1000);
-//
-//	/*if (now - m_last_food_spawn_time >= SPAWN_INTERVAL) {
-//		int x = rand() % 700;
-//		int y = rand() % 700;	
-//
-//		COLORREF c = RGB(rand() % 256, rand() % 256, rand() % 256);
-//		o.AddFood(x, y, c);
-//
-//		m_last_food_spawn_time = now;
-//	}*/
-//}

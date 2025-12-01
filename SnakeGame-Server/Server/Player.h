@@ -16,8 +16,9 @@ public:
 public:
 	void SetSession(std::shared_ptr<Session> session) { m_session = session; }
 	std::shared_ptr<Session> GetSession() { return m_session; }
-	const auto& GetBody() const noexcept { return m_body; }
+	
 	void AddBody(const Pos pos);
+	const auto& GetBody() const noexcept { return m_body; }
 
 	void Update(const float dt);
 };

@@ -28,7 +28,7 @@ void Player::Update(const float dt)
 {
     Pos targetPos = GetPos();
 
-    const float segmentDist = 20.f;
+    const float segmentDist = GameObject::GAME_OBJECT_SIZE;
     const float followSpeed = m_moveSpeed * dt;
 
     const float maxStep = followSpeed;

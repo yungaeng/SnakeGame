@@ -39,7 +39,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 		{
 			for(const auto& [id, p] : m_players) {
 				{
-					S2C_PLAYER_PACKET sendPkt{};
+					S2C_SNAKE_PACKET sendPkt{};
 					const auto nameLen = p->GetName().size();
 					memcpy(sendPkt.name, p->GetName().data(), nameLen * sizeof(wchar_t));
 					sendPkt.name[nameLen] = L'\0';
@@ -61,7 +61,7 @@ void GameMap::AddGameObject(std::shared_ptr<GameObject> gameObject)
 				}
 
 				{
-					S2C_PLAYER_PACKET sendPkt{};
+					S2C_SNAKE_PACKET sendPkt{};
 					const auto nameLen = gameObject->GetName().size();
 					memcpy(sendPkt.name, gameObject->GetName().data(), nameLen * sizeof(wchar_t));
 					sendPkt.name[nameLen] = L'\0';

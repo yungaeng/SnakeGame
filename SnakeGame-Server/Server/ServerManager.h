@@ -18,17 +18,10 @@ private:
 	std::mutex												m_sessionThreadsMutex;
 	std::vector<std::jthread>								m_sessionThreads;
 
-	std::mutex												m_sendBufferMutex;
-	SendBuffer												m_sendBuffer;
-
 public:
 	bool Init();
 	void Finish()noexcept;
 	void Broadcast(SendBuffer* sendBuffer);
-
-public:
-	template<typename PacketType>
-	void AppendPkt(PacketType&& pkt) { m_sendBuffer.Append<PacketType>(std::forward<PacketType>(pkt)); }
 
 public:
 	void DoAccept(const std::stop_token& st);

@@ -52,7 +52,6 @@ public:
 		m_userdata = {};
 	};
 	~Game() {};
-	void Init(HDC hdc);
 	void Draw(HDC hdc);
 	void Input(WPARAM wParam, LPARAM lParam)
 	{
@@ -89,7 +88,6 @@ public:
 	void SendLogin();
 	void SendMove(float x, float y);
 	void SendRestart();
-	//void SendLeave();
 	
 	void EndNetwork();
 
@@ -99,8 +97,4 @@ public:
 private:
 	void SetLogin(bool st) { m_islogin = st; };
 	void DrawBackGround(HDC hdc);
-	//double GetElapsedTime();
-	// void SpawnFood();
-	//std::chrono::time_point<std::chrono::steady_clock> m_last_food_spawn_time;
-	//std::chrono::time_point<std::chrono::steady_clock> m_timer;	
 };
