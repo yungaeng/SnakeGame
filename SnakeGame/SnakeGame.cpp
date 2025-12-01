@@ -79,6 +79,15 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
         case IDOK: {
             if (!pSettings) break;
 
+            // 서버 ip 가져오기
+            wchar_t input_ip[64];
+            GetDlgItemText(hDlg, IDC_SERVERIP_EDIT, input_ip, 64);
+            g_game.SetIP(input_ip);
+
+            // TODO: IP 입력
+
+            g_game.Connect();
+
             // 1. 닉네임 가져오기 및 확인
             GetDlgItemText(hDlg, IDC_NICKNAME_EDIT, pSettings->name, MAX_NAME_SIZE);
             if (pSettings->name[0] == L'\0') {
@@ -161,35 +170,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-
     // 서버와 연결
-    if (!g_game.InitNetwork())
-        return 0;
-
-    while (!g_game.GetLogin()) {
-        // 다이얼로그 박스 표시 및 설정값 입력
-        INT_PTR dialogResult = DialogBoxParam(
-            hInstance,
-            MAKEINTRESOURCE(IDD_START_DIALOG),
-            NULL,
-            StartDialogProc,
-            (LPARAM)g_game.GetUserdata()
-            );
-
-        // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-        if (dialogResult != IDOK) {
-            return 0;
-        }
-
-        if (!g_game.GetConnect()) {
-            MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-            g_game.InitNetwork();
-            std::this_thread::sleep_for(1ms);
-        }
-        else if(!g_game.GetLogin())
-            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
-    }
-
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
@@ -218,6 +199,33 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     if (!hwnd) {
         MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
         return -1;
+    }
+
+    if(!g_game.InitNetwork())
+        return 0;
+
+    while(!g_game.GetLogin()) {
+        // 다이얼로그 박스 표시 및 설정값 입력
+        INT_PTR dialogResult = DialogBoxParam(
+            hInstance,
+            MAKEINTRESOURCE(IDD_START_DIALOG),
+            NULL,
+            StartDialogProc,
+            (LPARAM)g_game.GetUserdata()
+        );
+
+        // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+        if(dialogResult != IDOK) {
+            return 0;
+        }
+
+        if(!g_game.GetConnect()) {
+            MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+            g_game.InitNetwork();
+            std::this_thread::sleep_for(1ms);
+        }
+        else if(!g_game.GetLogin())
+            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
     }
 
     //g_game.StartBGM();

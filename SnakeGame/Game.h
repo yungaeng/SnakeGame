@@ -4,19 +4,19 @@
 
 //Network
 #include <winsock2.h>			
-#include <ws2tcpip.h>			
+#include <ws2tcpip.h>
+#include <mmsystem.h>
+//#include <chrono>
+//#include <cstdlib> // wcstombs
+
 #pragma comment(lib, "ws2_32")
+
 #include "..\SnakeGame-Server\Server\pch.h"
-#include <cstdlib> // wcstombs
-
-#define SERVER_IP "127.0.0.1"
-#define SERVER_PORT 9000
-#define BUF_SIZE 512
-
 #include "ObjManager.h"
 
-#include <mmsystem.h>
-#include <chrono>
+//#define SERVER_IP "127.0.0.1"
+#define SERVER_PORT 9000
+#define BUF_SIZE 512
 
 struct userdata {
 	wchar_t name[MAX_NAME_SIZE];
@@ -26,6 +26,7 @@ struct userdata {
 };
 
 class Game {
+	wchar_t m_ip[64];
 	bool m_isconnect = false;
 	bool m_islogin = false;
 	bool m_isgameover = false;
@@ -65,7 +66,6 @@ public:
 		SendMove(x, y);
 	};
 
-	double m_time;
 	void Update();
 	void ReStart();
 
@@ -80,15 +80,16 @@ public:
 	
 
 	//  Network --------------------------------------------------------------------------
-
+	void SetIP(const wchar_t* ip) { memcpy(m_ip, ip, sizeof(m_ip)); };
 	bool InitNetwork();
 	void Recv();
 	void ProcessPacket(char* data);
+	bool Connect();
 
 	void SendLogin();
 	void SendMove(float x, float y);
 	void SendRestart();
-	void SendLeave();
+	//void SendLeave();
 	
 	void EndNetwork();
 

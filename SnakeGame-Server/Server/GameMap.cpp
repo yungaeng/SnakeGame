@@ -185,7 +185,6 @@ void GameMap::CheckCollision()
 				AppendPkt(sendPkt);
 				curPlayer->SetAlive(false);
 
-				// TODO: 재시작 할거면 없애야 함.
 				AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
 
 				isDead = true;
@@ -200,7 +199,6 @@ void GameMap::CheckCollision()
 					AppendPkt(sendPkt);
 					curPlayer->SetAlive(false);
 
-					// TODO: 재시작 할 거면 없애야 함
 					AddEvent([this, p = curPlayer]() { RemoveGameObject(p); });
 					isDead = true;
 					break;

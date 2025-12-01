@@ -78,31 +78,6 @@ bool Game::InitNetwork()
 		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
 		return false;
 	}
-
-	// connect()
-	struct sockaddr_in serveraddr;
-	memset(&serveraddr, 0, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	inet_pton(AF_INET, SERVER_IP, &serveraddr.sin_addr);
-	serveraddr.sin_port = htons(SERVER_PORT);
-	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
-
-	if (retval == SOCKET_ERROR) {
-		int errCode = WSAGetLastError();
-		if (errCode != WSAEWOULDBLOCK) {
-			// 연결 시도 자체가 불가능한 심각한 오류
-			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
-			return false;
-		}
-		else { 
-			std::this_thread::sleep_for(2s); 
-		};
-		// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
-	}
-
-	m_isconnect = true; // 연결 시도가 시작되었으므로 true
-	std::thread([this]() { Recv(); }).detach();
-
 	return true;
 }
 void Game::Recv()
@@ -296,6 +271,38 @@ void Game::ProcessPacket(char* data)
 	}
 }
 
+bool Game::Connect()
+{
+	char char_ip[64];
+	int size_needed = WideCharToMultiByte(CP_ACP, 0, m_ip, -1, char_ip, 64, NULL, NULL);
+
+	// connect()
+	struct sockaddr_in serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	inet_pton(AF_INET, char_ip, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVER_PORT);
+	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+
+	if(retval == SOCKET_ERROR) {
+		int errCode = WSAGetLastError();
+		if(errCode != WSAEWOULDBLOCK) {
+			// 연결 시도 자체가 불가능한 심각한 오류
+			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
+			return false;
+		}
+		else {
+			std::this_thread::sleep_for(1ms);
+			// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
+		}
+	}
+
+	m_isconnect = true; // 연결 시도가 시작되었으므로 true
+	std::thread([this]() { Recv(); }).detach();
+
+	return true;
+}
+
 void Game::SendLogin()
 {
 	if (m_isconnect)
@@ -325,15 +332,15 @@ void Game::SendRestart()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-void Game::SendLeave()
-{
-	if (m_isconnect)
-	{
-		C2S_LEAVE_PACKET sendPkt = {};
-		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
-		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
-	}
-}
+////void Game::SendLeave()
+//{
+//	if (m_isconnect)
+//	{
+//		C2S_LEAVE_PACKET sendPkt = {};
+//		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+//		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
+//	}
+//}
 void Game::EndNetwork()
 {
 	m_isconnect = false;
