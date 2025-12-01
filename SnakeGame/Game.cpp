@@ -325,15 +325,15 @@ void Game::SendRestart()
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
 	}
 }
-void Game::SendLeave()
-{
-	if (m_isconnect)
-	{
-		C2S_LEAVE_PACKET sendPkt = {};
-		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
-		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
-	}
-}
+////void Game::SendLeave()
+//{
+//	if (m_isconnect)
+//	{
+//		C2S_LEAVE_PACKET sendPkt = {};
+//		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
+//		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
+//	}
+//}
 void Game::EndNetwork()
 {
 	m_isconnect = false;
