@@ -95,6 +95,10 @@ public:
 	bool GetLogin() { return m_islogin; };
 	bool GetGameover() { return m_isgameover; };
 private:
-	void SetLogin(bool st) { m_islogin = st; };
+	void SetLogin(bool st) {
+		game_lock.lock();
+		m_islogin = st;
+		game_lock.unlock();
+	};
 	void DrawBackGround(HDC hdc);
 };

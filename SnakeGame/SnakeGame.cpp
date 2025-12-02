@@ -222,8 +222,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
             g_game.InitNetwork();
             std::this_thread::sleep_for(1ms);
         }
-        else if(!g_game.GetLogin())
-            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
+        //else if(!g_game.GetLogin())
+            //MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
     }
 
     //g_game.StartBGM();
