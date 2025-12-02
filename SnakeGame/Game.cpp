@@ -161,13 +161,11 @@ void Game::ProcessPacket(char* data)
 
 			// 본인 아이디 저장
 			m_userdata.id = p->id;
-			sendLoginPkt = true;
 			SetLogin(true);
 			break;
 		}
 		case PACKET_ID::S2C_LOGIN_FAIL:
 		{
-			sendLoginPkt = true;
 			SetLogin(false);
 			break;
 		}
