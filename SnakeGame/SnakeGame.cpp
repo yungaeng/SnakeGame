@@ -25,7 +25,6 @@ int GetIntFromEdit(HWND hDlg, int nIDDlgItem)
 
 INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
 	// 게임 설명 텍스트
 	const wchar_t* descriptionText =
 		L"게임 설명\n"
@@ -87,8 +86,8 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 					wchar_t input_ip[64];
 					GetDlgItemText(hDlg, IDC_SERVERIP_EDIT, input_ip, 64);
 					g_game.SetIP(input_ip);
-					
-					if(false == g_game.IsOneConnect())
+
+					if(false == g_game.GetConnect())
 						g_game.Connect();
 
 					// 1. 닉네임 가져오기 및 확인
@@ -172,7 +171,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	// 서버와 연결
 	WNDCLASS wc = { 0 };
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = hInstance;
@@ -208,25 +206,23 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	if(!g_game.InitNetwork())
 		return 0;
 
-	while(!g_game.GetLogin()) {
-		// 다이얼로그 박스 표시 및 설정값 입력
-		INT_PTR dialogResult = DialogBoxParam(
-			hInstance,
-			MAKEINTRESOURCE(IDD_START_DIALOG),
-			NULL,
-			StartDialogProc,
-			(LPARAM)g_game.GetUserdata()
-		);
+	// 다이얼로그 박스 표시 및 설정값 입력
+
+	while(false == g_game.GetConnect()) {
+
+
+		INT_PTR dialogResult = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_START_DIALOG), NULL, StartDialogProc, (LPARAM)g_game.GetUserdata());
 
 		// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
 		if(dialogResult != IDOK) {
 			return 0;
 		}
-		std::this_thread::sleep_for(1000ms);
-		if(!g_game.GetConnect()) {
-			MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-			std::this_thread::sleep_for(1ms);
-		}
+			if(!g_game.GetLogin()) {
+				MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+				std::this_thread::sleep_for(1ms);
+	}
+	else break;
+
 	}
 
 	//g_game.StartBGM();

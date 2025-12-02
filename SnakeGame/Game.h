@@ -28,8 +28,7 @@ struct userdata {
 class Game {
 	wchar_t m_ip[64];
 	std::atomic_bool m_isconnect = false;
-	bool m_islogin = false;
-	bool m_oneConnect{ false };
+	std::atomic_bool m_islogin = false;
 	bool m_isgameover = false;
 
 	SOCKET m_socket = {};
@@ -45,7 +44,7 @@ class Game {
 public:
 	Game()
 	{
-		m_isconnect = true;
+		m_isconnect = false;
 		m_islogin = false;
 		m_isgameover = false;
 
@@ -76,7 +75,7 @@ public:
 	void StopBGM();
 
 	void SetUserdata(userdata ud) { m_userdata = ud; };
-	bool IsOneConnect() { return m_oneConnect; }
+	// bool IsOneConnect() { return m_oneConnect; }
 
 	userdata* GetUserdata() { return &m_userdata; };	
 	wchar_t* GetNameById(int id) { return o.m_snakes[id].GetName(); };
