@@ -30,7 +30,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 	const wchar_t* descriptionText =
 		L"게임 설명\n"
 		L"------------------------------------------\n"
-		L"방향 키: 상하좌우 이동\n"
+		L"마우스로 이동\n"
 		L"Q 키: 게임 종료\n"
 		L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
 		L"------------------------------------------";
