@@ -176,7 +176,7 @@ void GameMap::CheckCollision()
 	for(const auto& [curID, curPlayer] : m_players) {
 		if(false == curPlayer->IsAlive()) continue;
 
-		for(const auto& [otherID, otherPlayer] : m_players) {
+			for(const auto& [otherID, otherPlayer] : m_players) {
 			if(curID == otherID || false == otherPlayer->IsAlive()) continue;
 			
 			if(curPlayer->IsCollision(otherPlayer->GetPos())) {

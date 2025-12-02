@@ -87,8 +87,6 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 					GetDlgItemText(hDlg, IDC_SERVERIP_EDIT, input_ip, 64);
 					g_game.SetIP(input_ip);
 
-					if(false == g_game.GetConnect())
-						g_game.Connect();
 
 					// 1. 닉네임 가져오기 및 확인
 					GetDlgItemText(hDlg, IDC_NICKNAME_EDIT, pSettings->name, MAX_NAME_SIZE);
@@ -111,7 +109,13 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
 					// 3. GameSettings에 저장 및 다이얼로그 종료
 					pSettings->color = RGB(r, g, b);
-					g_game.SendLogin();
+
+
+					if(false == g_game.GetConnect())
+						g_game.Connect();
+					
+					if(g_game.GetConnect())
+						g_game.SendLogin();
 
 					EndDialog(hDlg, IDOK); // IDOK로 종료
 					return TRUE;
@@ -200,32 +204,33 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
 		return -1;
 	}
-
+	
 	g_game.Init(hwnd);
 
 	if(!g_game.InitNetwork())
 		return 0;
-		INT_PTR dialogResult = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_START_DIALOG), NULL, StartDialogProc, (LPARAM)g_game.GetUserdata());
-	
-		// 다이얼로그 박스 표시 및 설정값 입력
 
-	while(false == g_game.GetLogin()) {
+	while(!g_game.GetLogin()) {
+		INT_PTR dialogResult = DialogBoxParam(
+			hInstance,
+			MAKEINTRESOURCE(IDD_START_DIALOG),
+			NULL,
+			StartDialogProc,
+			(LPARAM)g_game.GetUserdata()
+		);
 
-		// std::this_thread::sleep_for(1ms);
+		if(dialogResult != IDOK) {
+			continue;
+		}
 
-
-		//// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-		//if(dialogResult != IDOK) {
-		//	return 0;
-		//}
-		//if(!g_game.GetLogin()) {
-		//	MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-		//	std::this_thread::sleep_for(1ms);
-		//}
-		//else break;
-
+	/*	if(!g_game.GetConnect()) {
+			MessageBox(NULL, L"서버 접속 아직 안됨.", L"Error", MB_ICONERROR);
+			g_game.InitNetwork();
+			std::this_thread::sleep_for(1ms);
+		}
+		else */if(!g_game.GetLogin())
+			MessageBox(NULL, L"로그인 실패.", L"Error", MB_ICONERROR);
 	}
-
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
 	MSG msg;
