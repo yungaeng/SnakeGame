@@ -248,7 +248,7 @@ bool Game::Connect()
 			return false;
 		}
 		else {
-			std::this_thread::sleep_for(100ms);
+			std::this_thread::sleep_for(500ms);
 			// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
 		}
 	}

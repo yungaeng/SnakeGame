@@ -10,7 +10,7 @@ bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>&, const C2S_MOVE_PAC
 
 using PacketHandlerFunc = bool(*)(const std::shared_ptr<Session>&, const char* const);
 extern inline constinit std::array<PacketHandlerFunc, std::numeric_limits<uint16>::max() + 1> PacketHandlerFuncs{};
-
+	
 class ClientPacketHandler {
 private:
 	ClientPacketHandler() = delete;
