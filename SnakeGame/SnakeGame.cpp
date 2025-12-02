@@ -238,11 +238,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			return 0;
 		}
 
-		if(false == g_game.GetConnect())
+		if(false == g_game.GetConnect()) {
 			g_game.Connect();
+			WaitForSingleObject(g_game.m_eveHandle, INFINITE);
+		}
 
-		WaitForSingleObject(g_game.m_eveHandle, INFINITE);
-		
 		if(!g_game.GetConnect()) {
 			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
 			continue;
@@ -250,8 +250,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		if(g_game.GetConnect())
 			g_game.SendLogin();
 
-		while(g_game.GetLogin() == false);
-		break;
+		std::this_thread::sleep_for(500ms);
+
+		if(g_game.GetLogin() == false) {
+			MessageBox(hwnd, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
+		}
+		else break;
 	}
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);

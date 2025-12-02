@@ -3,7 +3,7 @@
 class Session;	
 
 bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>&, const char* const);
-
+	
 bool Process_C2S_LOGIN_PACKET(const std::shared_ptr<Session>&, const C2S_LOGIN_PACKET&);
 bool Process_C2S_RESTART_PACKET(const std::shared_ptr<Session>&, const C2S_RESTART_PACKET&);
 bool Process_C2S_MOVE_PACKET(const std::shared_ptr<Session>&, const C2S_MOVE_PACKET&);

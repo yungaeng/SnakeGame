@@ -143,7 +143,6 @@ void Game::ProcessPacket(char* data)
 		}
 		case PACKET_ID::S2C_LOGIN_FAIL:
 		{
-			MessageBox(m_hWnd, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
 			break;
 		}
 		case PACKET_ID::S2C_SNAKE:
