@@ -244,11 +244,11 @@ bool Game::Connect()
 			return false;
 		}
 		else {
-			std::this_thread::sleep_for(1ms);
+			std::this_thread::sleep_for(100ms);
 			// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
 		}
 	}
-	m_oneConnect = true;
+	// m_oneConnect = true;
 	m_isconnect = true; // 연결 시도가 시작되었으므로 true
 	std::thread([this]() { Recv(); }).detach();
 
