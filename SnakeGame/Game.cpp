@@ -3,6 +3,8 @@
 void Game::Init(HWND hwnd)
 {
 	m_hWnd = hwnd;
+
+	::CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 void Game::Draw(HDC hdc)
@@ -250,6 +252,7 @@ bool Game::Connect()
 	}
 	// m_oneConnect = true;
 	m_isconnect = true; // 연결 시도가 시작되었으므로 true
+	SetEvent(m_eveHandle);
 	std::thread([this]() { Recv(); }).detach();
 
 	return true;

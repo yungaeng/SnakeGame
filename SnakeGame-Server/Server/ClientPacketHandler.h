@@ -1,6 +1,6 @@
 #pragma once
 
-class Session;
+class Session;	
 
 bool Process_HANDLE_INVALID_PACKET(const std::shared_ptr<Session>&, const char* const);
 

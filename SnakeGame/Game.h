@@ -40,6 +40,9 @@ class Game {
 	userdata m_userdata = {};
 	std::mutex game_lock;
 	HWND m_hWnd;
+	
+public:
+	HANDLE m_eveHandle;
 
 public:
 	Game()

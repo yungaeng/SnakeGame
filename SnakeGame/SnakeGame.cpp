@@ -241,15 +241,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		if(false == g_game.GetConnect())
 			g_game.Connect();
 
-		std::this_thread::sleep_for(100ms);
-
+		WaitForSingleObject(g_game.m_eveHandle, INFINITE);
+		
+		if(!g_game.GetConnect()) {
+			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
+			continue;
+		}
 		if(g_game.GetConnect())
 			g_game.SendLogin();
 
-		if(!g_game.GetConnect()) {
-			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
-		}
-		else break;
+		while(g_game.GetLogin() == false);
+		break;
 	}
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
