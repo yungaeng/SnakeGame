@@ -110,13 +110,6 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 					// 3. GameSettings에 저장 및 다이얼로그 종료
 					pSettings->color = RGB(r, g, b);
 
-
-					if(false == g_game.GetConnect())
-						g_game.Connect();
-					
-					if(g_game.GetConnect())
-						g_game.SendLogin();
-
 					EndDialog(hDlg, IDOK); // IDOK로 종료
 					return TRUE;
 				}
@@ -245,10 +238,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			return 0;
 		}
 
+		if(false == g_game.GetConnect())
+			g_game.Connect();
+
+		std::this_thread::sleep_for(100ms);
+
+		if(g_game.GetConnect())
+			g_game.SendLogin();
+
 		if(!g_game.GetConnect()) {
 			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
-			std::this_thread::sleep_for(1ms);
 		}
+		else break;
 	}
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
