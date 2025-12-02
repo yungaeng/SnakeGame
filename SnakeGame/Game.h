@@ -96,9 +96,9 @@ public:
 	bool GetGameover() { return m_isgameover; };
 private:
 	void SetLogin(bool st) {
-		game_lock.lock();
+	//	game_lock.lock();
 		m_islogin = st;
-		game_lock.unlock();
+//		game_lock.unlock();
 	};
 	void DrawBackGround(HDC hdc);
 };
