@@ -207,27 +207,27 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	if(!g_game.InitNetwork())
 		return 0;
-	// 다이얼로그 박스 표시 및 설정값 입력
-	INT_PTR dialogResult = DialogBoxParam(
-		hInstance,
-		MAKEINTRESOURCE(IDD_START_DIALOG),
-		NULL,
-		StartDialogProc,
-		(LPARAM)g_game.GetUserdata()
-	);
-	//while(!g_game.GetLogin()) {
 
+	while(!g_game.GetLogin()) {
+		// 다이얼로그 박스 표시 및 설정값 입력
+		INT_PTR dialogResult = DialogBoxParam(
+			hInstance,
+			MAKEINTRESOURCE(IDD_START_DIALOG),
+			NULL,
+			StartDialogProc,
+			(LPARAM)g_game.GetUserdata()
+		);
 
-	//	// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-	//	if(dialogResult != IDOK) {
-	//		return 0;
-	//	}
-	//	std::this_thread::sleep_for(500ms);
-	//	if(!g_game.GetConnect()) {
-	//		MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-	//		std::this_thread::sleep_for(1ms);
-	//	}
-	//}
+		// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+		if(dialogResult != IDOK) {
+			return 0;
+		}
+		std::this_thread::sleep_for(1000ms);
+		if(!g_game.GetConnect()) {
+			MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+			std::this_thread::sleep_for(1ms);
+		}
+	}
 
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
