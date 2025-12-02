@@ -29,9 +29,9 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
     const wchar_t* descriptionText =
         L"게임 설명\n"
         L"------------------------------------------\n"
-        L"방향 키: 상하좌우 이동\n"
+        L"마우스: 이동\n"
         L"Q 키: 게임 종료\n"
-        L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
+        L"게임 종료 조건: 머리가 타인의 몸통에 부딪힐 경우\n"
         L"------------------------------------------";
 
     static userdata* pSettings = g_game.GetUserdata();
@@ -180,10 +180,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
         if (dialogResult != IDOK) {
             return 0;
         }
-
+       std::this_thread::sleep_for(1ms);
         if (!g_game.GetConnect()) {
             MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
             g_game.InitNetwork();
+     
             std::this_thread::sleep_for(1ms);
         }
         else if(!g_game.GetLogin())
