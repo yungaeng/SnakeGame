@@ -42,7 +42,7 @@ class Game {
 	HWND m_hWnd;
 	
 public:
-	bool sendLoginPkt = false;
+	std::atomic_bool sendLoginPkt = false;
 
 public:
 	HANDLE m_eveHandle;

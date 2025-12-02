@@ -247,10 +247,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
 			continue;
 		}
-		if(g_game.GetConnect())
+		else {
 			g_game.SendLogin();
-
-		while(g_game.IsRecvSendLogin() == false) {};
+		}
+		
+		while(true) {
+			if(g_game.IsRecvSendLogin())
+				break;
+		}
 
 		if(g_game.GetLogin() == false) {
 			MessageBox(hwnd, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
