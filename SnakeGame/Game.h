@@ -14,7 +14,7 @@
 #include "..\SnakeGame-Server\Server\pch.h"
 #include "ObjManager.h"
 
-//#define SERVER_IP "127.0.0.1"
+#define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 9000
 #define BUF_SIZE 512
 
@@ -27,8 +27,8 @@ struct userdata {
 
 class Game {
 	wchar_t m_ip[64];
-	std::atomic_bool m_isconnect = false;
-	std::atomic_bool m_islogin = false;
+	bool m_isconnect = true;
+	bool m_islogin = false;
 	bool m_isgameover = false;
 
 	SOCKET m_socket = {};
@@ -40,9 +40,6 @@ class Game {
 	userdata m_userdata = {};
 	std::mutex game_lock;
 	HWND m_hWnd;
-	
-public:
-	std::atomic_bool sendLoginPkt = false;
 
 public:
 	HANDLE m_eveHandle;
@@ -105,7 +102,6 @@ public:
 	bool GetLogin() { return m_islogin; };
 	bool GetGameover() { return m_isgameover; };
 
-	bool IsRecvSendLogin() { return sendLoginPkt; }
 private:
 	void SetLogin(bool st) {
 		m_islogin = st;
