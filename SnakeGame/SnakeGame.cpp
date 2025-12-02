@@ -32,7 +32,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 		L"------------------------------------------\n"
 		L"마우스: 위치 이동\n"
 		L"Q 키: 게임 종료\n"
-		L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
+		L"게임 종료 조건: 머리가 타인의 몸통에 부딪힐 경우\n"
 		L"------------------------------------------";
 
 	static userdata* pSettings = g_game.GetUserdata();
