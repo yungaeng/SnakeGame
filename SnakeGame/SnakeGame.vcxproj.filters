@@ -33,9 +33,6 @@
     <ClInclude Include="Object.h">
       <Filter>소스 파일\Game\obj\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>소스 파일\Game</Filter>
-    </ClInclude>
     <ClInclude Include="ObjManager.h">
       <Filter>소스 파일\Game\obj</Filter>
     </ClInclude>
@@ -44,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="Snake.h">
       <Filter>소스 파일\Game\obj\Snake</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>소스 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -27,8 +27,9 @@ struct userdata {
 
 class Game {
 	wchar_t m_ip[64];
-	bool m_isconnect = false;
+	std::atomic_bool m_isconnect = false;
 	bool m_islogin = false;
+	bool m_oneConnect{ false };
 	bool m_isgameover = false;
 
 	SOCKET m_socket = {};
@@ -39,6 +40,8 @@ class Game {
 	ObjManager o = {};
 	userdata m_userdata = {};
 	std::mutex game_lock;
+	HWND m_hWnd;
+
 public:
 	Game()
 	{
@@ -52,6 +55,7 @@ public:
 		m_userdata = {};
 	};
 	~Game() {};
+	void Init(HWND hwnd);
 	void Draw(HDC hdc);
 	void Input(WPARAM wParam, LPARAM lParam)
 	{
@@ -72,6 +76,7 @@ public:
 	void StopBGM();
 
 	void SetUserdata(userdata ud) { m_userdata = ud; };
+	bool IsOneConnect() { return m_oneConnect; }
 
 	userdata* GetUserdata() { return &m_userdata; };	
 	wchar_t* GetNameById(int id) { return o.m_snakes[id].GetName(); };
@@ -96,9 +101,7 @@ public:
 	bool GetGameover() { return m_isgameover; };
 private:
 	void SetLogin(bool st) {
-	//	game_lock.lock();
 		m_islogin = st;
-//		game_lock.unlock();
 	};
 	void DrawBackGround(HDC hdc);
 };
