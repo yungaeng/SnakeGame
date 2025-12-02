@@ -122,7 +122,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     {
     case WM_CREATE: 
     {
-        g_game.Init(hdc);
+        //g_game.Init(hdc);
 
         HDC hdc = GetDC(hwnd);
         g_hMemDC = CreateCompatibleDC(hdc);
