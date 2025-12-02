@@ -210,6 +210,28 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	if(!g_game.InitNetwork())
 		return 0;
 
+	//while(!g_game.GetLogin()) {
+	//	INT_PTR dialogResult = DialogBoxParam(
+	//		hInstance,
+	//		MAKEINTRESOURCE(IDD_START_DIALOG),
+	//		NULL,
+	//		StartDialogProc,
+	//		(LPARAM)g_game.GetUserdata()
+	//	);
+
+	//	if(dialogResult != IDOK) {
+	//		continue;
+	//	}
+
+	///*	if(!g_game.GetConnect()) {
+	//		MessageBox(NULL, L"서버 접속 아직 안됨.", L"Error", MB_ICONERROR);
+	//		g_game.InitNetwork();
+	//		std::this_thread::sleep_for(1ms);
+	//	}
+	//	else */if(!g_game.GetLogin())
+	//		MessageBox(NULL, L"로그인 실패.", L"Error", MB_ICONERROR);
+	//}
+
 	while(!g_game.GetLogin()) {
 		INT_PTR dialogResult = DialogBoxParam(
 			hInstance,
@@ -220,16 +242,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		);
 
 		if(dialogResult != IDOK) {
-			continue;
+			return 0;
 		}
 
-	/*	if(!g_game.GetConnect()) {
-			MessageBox(NULL, L"서버 접속 아직 안됨.", L"Error", MB_ICONERROR);
-			g_game.InitNetwork();
+		if(!g_game.GetConnect()) {
+			MessageBox(NULL, L"서버 접속 실패.", L"Error", MB_ICONERROR);
 			std::this_thread::sleep_for(1ms);
 		}
-		else */if(!g_game.GetLogin())
-			MessageBox(NULL, L"로그인 실패.", L"Error", MB_ICONERROR);
 	}
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
