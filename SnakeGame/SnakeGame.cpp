@@ -30,7 +30,7 @@ INT_PTR CALLBACK StartDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 	const wchar_t* descriptionText =
 		L"게임 설명\n"
 		L"------------------------------------------\n"
-		L"방향 키: 상하좌우 이동\n"
+		L"마우스로 이동\n"
 		L"Q 키: 게임 종료\n"
 		L"게임 종료 조건: 머리가 본인 또는 타인의 몸통에 부딪힐 경우\n"
 		L"------------------------------------------";
@@ -202,31 +202,32 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		MessageBox(NULL, L"Failed to create window!", L"Error", MB_ICONERROR);
 		return -1;
 	}
+
 	g_game.Init(hwnd);
 
 	if(!g_game.InitNetwork())
 		return 0;
+	// 다이얼로그 박스 표시 및 설정값 입력
+	INT_PTR dialogResult = DialogBoxParam(
+		hInstance,
+		MAKEINTRESOURCE(IDD_START_DIALOG),
+		NULL,
+		StartDialogProc,
+		(LPARAM)g_game.GetUserdata()
+	);
+	//while(!g_game.GetLogin()) {
 
-	while(!g_game.GetLogin()) {
-		// 다이얼로그 박스 표시 및 설정값 입력
-		INT_PTR dialogResult = DialogBoxParam(
-			hInstance,
-			MAKEINTRESOURCE(IDD_START_DIALOG),
-			NULL,
-			StartDialogProc,
-			(LPARAM)g_game.GetUserdata()
-		);
 
-		// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-		if(dialogResult != IDOK) {
-			return 0;
-		}
-		std::this_thread::sleep_for(500ms);
-		if(!g_game.GetConnect()) {
-			MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-			std::this_thread::sleep_for(1ms);
-		}
-	}
+	//	// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+	//	if(dialogResult != IDOK) {
+	//		return 0;
+	//	}
+	//	std::this_thread::sleep_for(500ms);
+	//	if(!g_game.GetConnect()) {
+	//		MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+	//		std::this_thread::sleep_for(1ms);
+	//	}
+	//}
 
 	//g_game.StartBGM();
 	ShowWindow(hwnd, nCmdShow);
