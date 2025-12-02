@@ -42,6 +42,9 @@ class Game {
 	HWND m_hWnd;
 	
 public:
+	bool sendLoginPkt = false;
+
+public:
 	HANDLE m_eveHandle;
 
 public:
@@ -101,6 +104,8 @@ public:
 	bool GetConnect() { return m_isconnect; };
 	bool GetLogin() { return m_islogin; };
 	bool GetGameover() { return m_isgameover; };
+
+	bool IsRecvSendLogin() { return sendLoginPkt; }
 private:
 	void SetLogin(bool st) {
 		m_islogin = st;

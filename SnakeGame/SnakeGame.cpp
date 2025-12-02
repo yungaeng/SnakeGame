@@ -250,10 +250,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		if(g_game.GetConnect())
 			g_game.SendLogin();
 
-		std::this_thread::sleep_for(500ms);
+		while(g_game.IsRecvSendLogin() == false) {};
 
 		if(g_game.GetLogin() == false) {
 			MessageBox(hwnd, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
+			g_game.sendLoginPkt = false;
 		}
 		else break;
 	}
