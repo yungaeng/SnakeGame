@@ -4,7 +4,7 @@
 #include "Session.h"
 #include "GameMap.h"
 #include "Player.h"
-
+	
 Pos GetRandomPos()
 {
 	static std::uniform_real_distribution<float> randomPosX{ 40.f, GameMap::MAP_WIDTH-40.f};

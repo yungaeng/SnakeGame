@@ -19,8 +19,8 @@ int main()
 		while(true) {
 			std::cin >> word;
 			if("EXIT" == word) {
-				MANAGER(ServerManager)->Finish();
-				break;
+					MANAGER(ServerManager)->Finish();
+				break;	
 			}
 		}
 

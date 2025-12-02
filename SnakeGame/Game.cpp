@@ -1,14 +1,19 @@
 #include "Game.h"
 
+void Game::Init(HWND hwnd)
+{
+	m_hWnd = hwnd;
+}
+
 void Game::Draw(HDC hdc)
 {
 	DrawBackGround(hdc);
 
 	game_lock.lock();
-	for (auto& f : o.m_foods)
+	for(auto& f : o.m_foods)
 		f.second.Draw(hdc);
-	
-	for (auto& s : o.m_snakes)
+
+	for(auto& s : o.m_snakes)
 		s.second.Draw(hdc);
 	game_lock.unlock();
 }
@@ -33,20 +38,20 @@ bool Game::InitNetwork()
 {
 	// 윈속 초기화
 	WSADATA wsa;
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+	if(WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 		MessageBox(NULL, L"WSADATA Init Error", L"Error", MB_ICONERROR);
 		return false;
 	}
 
 	// 소켓 생성
 	m_socket = socket(AF_INET, SOCK_STREAM, 0);
-	if (m_socket == INVALID_SOCKET) {
+	if(m_socket == INVALID_SOCKET) {
 		MessageBox(NULL, L"Socket Error", L"Error", MB_ICONERROR);
 		return false;
 	}
 
 	u_long non_blocking_mode = 1;
-	if (ioctlsocket(m_socket, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
+	if(ioctlsocket(m_socket, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
 		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
 		return false;
 	}
@@ -54,22 +59,18 @@ bool Game::InitNetwork()
 }
 void Game::Recv()
 {
-	while (m_isconnect)
-	{
-		int recvLen = ::recv(m_socket, m_recv_buf + m_received_bytes,BUF_SIZE - m_received_bytes, 0);
+	while(m_isconnect) {
+		int recvLen = ::recv(m_socket, m_recv_buf + m_received_bytes, BUF_SIZE - m_received_bytes, 0);
 
-		if (recvLen == 0)
-		{
+		if(recvLen == 0) {
 			// 연결 종료
 			EndNetwork();
 			break;
 		}
-		else if (recvLen < 0)
-		{
+		else if(recvLen < 0) {
 			// 오류 처리 (넌블로킹 소켓이므로 WSAEWOULDBLOCK은 정상)
 			int errCode = WSAGetLastError();
-			if (errCode != WSAEWOULDBLOCK)
-			{
+			if(errCode != WSAEWOULDBLOCK) {
 				EndNetwork();
 				break;
 			}
@@ -82,11 +83,9 @@ void Game::Recv()
 		m_received_bytes += recvLen;
 
 		// 3. 패킷 조립 및 처리 루프 (이전 논블로킹 로직 복구)
-		while (m_received_bytes > 0)
-		{
+		while(m_received_bytes > 0) {
 			// 헤더가 불완전하면 다음 recv를 기다립니다.
-			if (m_received_bytes < sizeof(PacketHeader))
-			{
+			if(m_received_bytes < sizeof(PacketHeader)) {
 				break;
 			}
 
@@ -94,8 +93,7 @@ void Game::Recv()
 			uint8_t totalSize = header->packetSize;
 
 			// [추가된 안전 검사]
-			if (totalSize == 0 || totalSize > BUF_SIZE || totalSize < sizeof(PacketHeader))
-			{
+			if(totalSize == 0 || totalSize > BUF_SIZE || totalSize < sizeof(PacketHeader)) {
 				// 심각한 오류로 간주하고 연결 종료
 				MessageBox(NULL, L"Corrupt Packet Size!", L"Error", MB_ICONERROR);
 				EndNetwork();
@@ -103,8 +101,7 @@ void Game::Recv()
 			}
 
 			// 완전한 패킷이 도착했는지 확인
-			if (m_received_bytes < totalSize)
-			{
+			if(m_received_bytes < totalSize) {
 				break;
 			}
 
@@ -113,8 +110,7 @@ void Game::Recv()
 
 			// 5. 처리된 패킷만큼 버퍼 이동 및 잔여 바이트 갱신
 			m_received_bytes -= totalSize;
-			if (m_received_bytes > 0)
-			{
+			if(m_received_bytes > 0) {
 				memmove(m_recv_buf, m_recv_buf + totalSize, m_received_bytes);
 			}
 		}
@@ -130,100 +126,100 @@ void Game::ProcessPacket(char* data)
 	PACKET_ID pid = static_cast<PACKET_ID>(header->packetID);
 
 	// 2. 패킷 ID에 따라 적절히 처리
-	switch (pid)
-	{
-	case PACKET_ID::S2C_LOGIN_OK:
-	{
-		S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
-		game_lock.lock();
-		o.AddSnake(p->id, m_userdata.name, p->x, p->y, m_userdata.color);
-		game_lock.unlock();
+	switch(pid) {
+		case PACKET_ID::S2C_LOGIN_OK:
+		{
+			S2C_LOGIN_OK_PACKET* p = reinterpret_cast<S2C_LOGIN_OK_PACKET*>(data);
+			game_lock.lock();
+			o.AddSnake(p->id, m_userdata.name, p->x, p->y, m_userdata.color);
+			game_lock.unlock();
 
-		// 본인 아이디 저장
-		m_userdata.id = p->id;
-		SetLogin(true);
-		break;
-	}
-	case PACKET_ID::S2C_LOGIN_FAIL:
-	{
-		break;
-	}
-	case PACKET_ID::S2C_SNAKE:
-	{
-		S2C_SNAKE_PACKET* p = reinterpret_cast<S2C_SNAKE_PACKET*>(data);
-		game_lock.lock();
-		o.AddSnake(p->id, p->name, p->x, p->y, p->color);
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_FOOD:
-	{
-		S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
-		game_lock.lock();
-		o.AddFood(p->id, p->x, p->y, p->color);
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_MOVE:
-	{
-		S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
-		game_lock.lock();
-		if(o.m_snakes.contains(p->id))
-			o.m_snakes[p->id].m_head.SetPos(p->x, p->y);
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_SNAKE_BODY:
-	{
-		S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
-		game_lock.lock();
-		if(o.m_snakes.contains(p->id))
-			o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_DEL_SNAKE:
-	{
-		S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
-		game_lock.lock();
-		o.DeleteSnake(p->id); 
-		// 내 아이디이면 게임오버
-		if(m_userdata.id == p->id) {
-			m_isgameover = true;
+			// 본인 아이디 저장
+			m_userdata.id = p->id;
+			SetLogin(true);
+			break;
 		}
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_DEL_FOOD:
-	{
-		S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
-		game_lock.lock();
-		o.DeleteFood(p->id);
-		game_lock.unlock();
-		break;
-	}
-	case PACKET_ID::S2C_ADD_SNAKE_BODY:
-	{
-		S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
-		game_lock.lock();
-		if(o.m_snakes.contains(p->id)) {
-			o.m_snakes[p->id].AddBody(p->bodyIndex);
-			o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+		case PACKET_ID::S2C_LOGIN_FAIL:
+		{
+			MessageBox(m_hWnd, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
+			break;
 		}
-		if(p->id == m_userdata.id) {
-			if(o.m_snakes[p->id].GetBody().size()>=2)
-				m_userdata.score += 10;
+		case PACKET_ID::S2C_SNAKE:
+		{
+			S2C_SNAKE_PACKET* p = reinterpret_cast<S2C_SNAKE_PACKET*>(data);
+			game_lock.lock();
+			o.AddSnake(p->id, p->name, p->x, p->y, p->color);
+			game_lock.unlock();
+			break;
 		}
-		//o.m_snakes[p->id].AddBody(p->x,p->y);
-		game_lock.unlock();
+		case PACKET_ID::S2C_FOOD:
+		{
+			S2C_FOOD_PACKET* p = reinterpret_cast<S2C_FOOD_PACKET*>(data);
+			game_lock.lock();
+			o.AddFood(p->id, p->x, p->y, p->color);
+			game_lock.unlock();
+			break;
+		}
+		case PACKET_ID::S2C_MOVE:
+		{
+			S2C_MOVE_PACKET* p = reinterpret_cast<S2C_MOVE_PACKET*>(data);
+			game_lock.lock();
+			if(o.m_snakes.contains(p->id))
+				o.m_snakes[p->id].m_head.SetPos(p->x, p->y);
+			game_lock.unlock();
+			break;
+		}
+		case PACKET_ID::S2C_SNAKE_BODY:
+		{
+			S2C_SNAKE_BODY_PACKET* p = reinterpret_cast<S2C_SNAKE_BODY_PACKET*>(data);
+			game_lock.lock();
+			if(o.m_snakes.contains(p->id))
+				o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+			game_lock.unlock();
+			break;
+		}
+		case PACKET_ID::S2C_DEL_SNAKE:
+		{
+			S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
+			game_lock.lock();
+			o.DeleteSnake(p->id);
+			// 내 아이디이면 게임오버
+			if(m_userdata.id == p->id) {
+				m_isgameover = true;
+			}
+			game_lock.unlock();
+			break;
+		}
+		case PACKET_ID::S2C_DEL_FOOD:
+		{
+			S2C_DEL_FOOD_PACKET* p = reinterpret_cast<S2C_DEL_FOOD_PACKET*>(data);
+			game_lock.lock();
+			o.DeleteFood(p->id);
+			game_lock.unlock();
+			break;
+		}
+		case PACKET_ID::S2C_ADD_SNAKE_BODY:
+		{
+			S2C_ADD_SNAKE_BDOY_PACKET* p = reinterpret_cast<S2C_ADD_SNAKE_BDOY_PACKET*>(data);
+			game_lock.lock();
+			if(o.m_snakes.contains(p->id)) {
+				o.m_snakes[p->id].AddBody(p->bodyIndex);
+				o.m_snakes[p->id].SetBody(p->bodyIndex, p->x, p->y);
+			}
+			if(p->id == m_userdata.id) {
+				if(o.m_snakes[p->id].GetBody().size() >= 2)
+					m_userdata.score += 10;
+			}
+			//o.m_snakes[p->id].AddBody(p->x,p->y);
+			game_lock.unlock();
 
-		break;
-	}
-	default:
-	{
-		// 알 수 없는 패킷을 받았으므로 연결을 끊거나 무시할 수 있습니다.
-		break;
-	}
+			break;
+		}
+		default:
+		{
+			// 알 수 없는 패킷을 받았으므로 연결을 끊거나 무시할 수 있습니다.
+			break;
+		}
 	}
 }
 
@@ -252,7 +248,7 @@ bool Game::Connect()
 			// WSAEWOULDBLOCK: 연결 시도가 진행 중임 (정상적인 논블로킹 동작)
 		}
 	}
-
+	m_oneConnect = true;
 	m_isconnect = true; // 연결 시도가 시작되었으므로 true
 	std::thread([this]() { Recv(); }).detach();
 
@@ -261,8 +257,7 @@ bool Game::Connect()
 
 void Game::SendLogin()
 {
-	if (m_isconnect)
-	{
+	if(m_isconnect) {
 		C2S_LOGIN_PACKET sendPkt = {};
 		memcpy(sendPkt.name, m_userdata.name, sizeof(m_userdata.name));
 		sendPkt.color = m_userdata.color;
@@ -271,8 +266,7 @@ void Game::SendLogin()
 }
 void Game::SendMove(float x, float y)
 {
-	if (m_isconnect && m_islogin)
-	{
+	if(m_isconnect && m_islogin) {
 		C2S_MOVE_PACKET sendPkt = {};
 		sendPkt.x = x; sendPkt.y = y;
 		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
@@ -281,8 +275,7 @@ void Game::SendMove(float x, float y)
 }
 void Game::SendRestart()
 {
-	if (m_isconnect)
-	{
+	if(m_isconnect) {
 		C2S_RESTART_PACKET sendPkt = {};
 		memcpy(m_send_buf, &sendPkt, sizeof(sendPkt));
 		send(m_socket, (char*)&sendPkt, sizeof(sendPkt), 0);
@@ -301,11 +294,11 @@ void Game::DrawBackGround(HDC hdc)
 {
 	game_lock.lock();
 
-	RECT backgroundRect = { 0, 0, 1024, 768};
+	RECT backgroundRect = { 0, 0, 1024, 768 };
 	HBRUSH backgroundBrush = CreateSolidBrush(RGB(10, 10, 10));
 	FillRect(hdc, &backgroundRect, backgroundBrush);
 	DeleteObject(backgroundBrush);
-	
+
 	// --- 텍스트 출력 추가 부분 ---
 	char textBuffer[50];
 	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d", (int)o.m_foods.size(), (int)o.m_snakes.size(), m_userdata.score);
