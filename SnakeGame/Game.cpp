@@ -1,4 +1,4 @@
-#include "Game.h"
+ï»¿#include "Game.h"
 
 void Game::Init(HWND hwnd)
 {
@@ -38,25 +38,25 @@ void Game::StopBGM()
 
 bool Game::InitNetwork()
 {
-	// À©¼Ó ÃÊ±âÈ­
+	// ìœˆì† ì´ˆê¸°í™”
 	WSADATA wsa;
 	if(WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
 		MessageBox(NULL, L"WSADATA Init Error", L"Error", MB_ICONERROR);
 		return false;
 	}
 
-	// ¼ÒÄÏ »ı¼º
+	// ì†Œì¼“ ìƒì„±
 	m_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if(m_socket == INVALID_SOCKET) {
 		MessageBox(NULL, L"Socket Error", L"Error", MB_ICONERROR);
 		return false;
 	}
 
-	u_long non_blocking_mode = 1;
+	/*u_long non_blocking_mode = 1;
 	if(ioctlsocket(m_socket, FIONBIO, &non_blocking_mode) == SOCKET_ERROR) {
 		MessageBox(NULL, L"Non-Blocking Error!", L"Error", MB_ICONERROR);
 		return false;
-	}
+	}*/
 
 	// connect()
 	struct sockaddr_in serveraddr;
@@ -66,22 +66,20 @@ bool Game::InitNetwork()
 	serveraddr.sin_port = htons(SERVER_PORT);
 	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 
-	if(retval == SOCKET_ERROR) {
+	if (retval == SOCKET_ERROR) {
 		int errCode = WSAGetLastError();
-		if(errCode != WSAEWOULDBLOCK) {
-			// ¿¬°á ½Ãµµ ÀÚÃ¼°¡ ºÒ°¡´ÉÇÑ ½É°¢ÇÑ ¿À·ù
+		if (errCode != WSAEWOULDBLOCK) {
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½Ãµï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ò°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½É°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
 			return false;
 		}
 		else {
-			// WSAEWOULDBLOCK: ¿¬°á ½Ãµµ°¡ ÁøÇà ÁßÀÓ (Á¤»óÀûÀÎ ³íºí·ÎÅ· µ¿ÀÛ)
-			std::this_thread::sleep_for(1s);
-		}
+			std::this_thread::sleep_for(2s);
+		};
 	}
-	m_isconnect = true; // ¿¬°á ½Ãµµ°¡ ½ÃÀÛµÇ¾úÀ¸¹Ç·Î true
-	SetEvent(m_eveHandle);
-	std::thread([this]() { Recv(); }).detach();
 
+	m_isconnect = true;
+	std::thread([this]() { Recv(); }).detach();
 	return true;
 }
 void Game::Recv()
@@ -90,28 +88,28 @@ void Game::Recv()
 		int recvLen = ::recv(m_socket, m_recv_buf + m_received_bytes, BUF_SIZE - m_received_bytes, 0);
 
 		if(recvLen == 0) {
-			// ¿¬°á Á¾·á
+			// ì—°ê²° ì¢…ë£Œ
 			EndNetwork();
 			break;
 		}
 		else if(recvLen < 0) {
-			// ¿À·ù Ã³¸® (³Íºí·ÎÅ· ¼ÒÄÏÀÌ¹Ç·Î WSAEWOULDBLOCKÀº Á¤»ó)
+			// ì˜¤ë¥˜ ì²˜ë¦¬ (ë„Œë¸”ë¡œí‚¹ ì†Œì¼“ì´ë¯€ë¡œ WSAEWOULDBLOCKì€ ì •ìƒ)
 			int errCode = WSAGetLastError();
 			if(errCode != WSAEWOULDBLOCK) {
 				EndNetwork();
 				break;
 			}
-			// WSAEWOULDBLOCKÀÌ ¹ß»ıÇÏ¸é Àá½Ã ½¬°í ´Ù½Ã ½Ãµµ (¸ŞÀÎ ½º·¹µå ºí·ÎÅ· ¹æÁö)
+			// WSAEWOULDBLOCKì´ ë°œìƒí•˜ë©´ ì ì‹œ ì‰¬ê³  ë‹¤ì‹œ ì‹œë„ (ë©”ì¸ ìŠ¤ë ˆë“œ ë¸”ë¡œí‚¹ ë°©ì§€)
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-			continue; // Àç½Ãµµ
+			continue; // ì¬ì‹œë„
 		}
 
-		// 2. ¼ö½Å ¼º°ø: ´©Àû ¹ÙÀÌÆ® ¾÷µ¥ÀÌÆ®
+		// 2. ìˆ˜ì‹  ì„±ê³µ: ëˆ„ì  ë°”ì´íŠ¸ ì—…ë°ì´íŠ¸
 		m_received_bytes += recvLen;
 
-		// 3. ÆĞÅ¶ Á¶¸³ ¹× Ã³¸® ·çÇÁ (ÀÌÀü ³íºí·ÎÅ· ·ÎÁ÷ º¹±¸)
+		// 3. íŒ¨í‚· ì¡°ë¦½ ë° ì²˜ë¦¬ ë£¨í”„ (ì´ì „ ë…¼ë¸”ë¡œí‚¹ ë¡œì§ ë³µêµ¬)
 		while(m_received_bytes > 0) {
-			// Çì´õ°¡ ºÒ¿ÏÀüÇÏ¸é ´ÙÀ½ recv¸¦ ±â´Ù¸³´Ï´Ù.
+			// í—¤ë”ê°€ ë¶ˆì™„ì „í•˜ë©´ ë‹¤ìŒ recvë¥¼ ê¸°ë‹¤ë¦½ë‹ˆë‹¤.
 			if(m_received_bytes < sizeof(PacketHeader)) {
 				break;
 			}
@@ -119,23 +117,23 @@ void Game::Recv()
 			PacketHeader* header = reinterpret_cast<PacketHeader*>(m_recv_buf);
 			uint8_t totalSize = header->packetSize;
 
-			// [Ãß°¡µÈ ¾ÈÀü °Ë»ç]
+			// [ì¶”ê°€ëœ ì•ˆì „ ê²€ì‚¬]
 			if(totalSize == 0 || totalSize > BUF_SIZE || totalSize < sizeof(PacketHeader)) {
-				// ½É°¢ÇÑ ¿À·ù·Î °£ÁÖÇÏ°í ¿¬°á Á¾·á
+				// ì‹¬ê°í•œ ì˜¤ë¥˜ë¡œ ê°„ì£¼í•˜ê³  ì—°ê²° ì¢…ë£Œ
 				MessageBox(NULL, L"Corrupt Packet Size!", L"Error", MB_ICONERROR);
 				EndNetwork();
-				break; // Recv ·çÇÁ Á¾·á
+				break; // Recv ë£¨í”„ ì¢…ë£Œ
 			}
 
-			// ¿ÏÀüÇÑ ÆĞÅ¶ÀÌ µµÂøÇß´ÂÁö È®ÀÎ
+			// ì™„ì „í•œ íŒ¨í‚·ì´ ë„ì°©í–ˆëŠ”ì§€ í™•ì¸
 			if(m_received_bytes < totalSize) {
 				break;
 			}
 
-			// 4. ¿ÏÀüÇÑ ÆĞÅ¶ Ã³¸®
+			// 4. ì™„ì „í•œ íŒ¨í‚· ì²˜ë¦¬
 			ProcessPacket(m_recv_buf);
 
-			// 5. Ã³¸®µÈ ÆĞÅ¶¸¸Å­ ¹öÆÛ ÀÌµ¿ ¹× ÀÜ¿© ¹ÙÀÌÆ® °»½Å
+			// 5. ì²˜ë¦¬ëœ íŒ¨í‚·ë§Œí¼ ë²„í¼ ì´ë™ ë° ì”ì—¬ ë°”ì´íŠ¸ ê°±ì‹ 
 			m_received_bytes -= totalSize;
 			if(m_received_bytes > 0) {
 				memmove(m_recv_buf, m_recv_buf + totalSize, m_received_bytes);
@@ -143,16 +141,16 @@ void Game::Recv()
 		}
 	}
 
-	// ·çÇÁ Á¾·á ½Ã ³×Æ®¿öÅ© Á¤¸®
+	// ë£¨í”„ ì¢…ë£Œ ì‹œ ë„¤íŠ¸ì›Œí¬ ì •ë¦¬
 	EndNetwork();
 }
 void Game::ProcessPacket(char* data)
 {
-	// 1. ÆĞÅ¶ Çì´õ¿¡¼­ ID ÃßÃâ
+	// 1. íŒ¨í‚· í—¤ë”ì—ì„œ ID ì¶”ì¶œ
 	PacketHeader* header = reinterpret_cast<PacketHeader*>(data);
 	PACKET_ID pid = static_cast<PACKET_ID>(header->packetID);
 
-	// 2. ÆĞÅ¶ ID¿¡ µû¶ó ÀûÀıÈ÷ Ã³¸®
+	// 2. íŒ¨í‚· IDì— ë”°ë¼ ì ì ˆíˆ ì²˜ë¦¬
 	switch(pid) {
 		case PACKET_ID::S2C_LOGIN_OK:
 		{
@@ -161,13 +159,15 @@ void Game::ProcessPacket(char* data)
 			o.AddSnake(p->id, m_userdata.name, p->x, p->y, m_userdata.color);
 			game_lock.unlock();
 
-			// º»ÀÎ ¾ÆÀÌµğ ÀúÀå
+			// ë³¸ì¸ ì•„ì´ë”” ì €ì¥
 			m_userdata.id = p->id;
+			sendLoginPkt = true;
 			SetLogin(true);
 			break;
 		}
 		case PACKET_ID::S2C_LOGIN_FAIL:
 		{
+			sendLoginPkt = true;
 			SetLogin(false);
 			break;
 		}
@@ -210,7 +210,7 @@ void Game::ProcessPacket(char* data)
 			S2C_DEL_SNAKE_PACKET* p = reinterpret_cast<S2C_DEL_SNAKE_PACKET*>(data);
 			game_lock.lock();
 			o.DeleteSnake(p->id);
-			// ³» ¾ÆÀÌµğÀÌ¸é °ÔÀÓ¿À¹ö
+			// ë‚´ ì•„ì´ë””ì´ë©´ ê²Œì„ì˜¤ë²„
 			if(m_userdata.id == p->id) {
 				m_isgameover = true;
 			}
@@ -244,7 +244,7 @@ void Game::ProcessPacket(char* data)
 		}
 		default:
 		{
-			// ¾Ë ¼ö ¾ø´Â ÆĞÅ¶À» ¹Ş¾ÒÀ¸¹Ç·Î ¿¬°áÀ» ²÷°Å³ª ¹«½ÃÇÒ ¼ö ÀÖ½À´Ï´Ù.
+			// ì•Œ ìˆ˜ ì—†ëŠ” íŒ¨í‚·ì„ ë°›ì•˜ìœ¼ë¯€ë¡œ ì—°ê²°ì„ ëŠê±°ë‚˜ ë¬´ì‹œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 			break;
 		}
 	}
@@ -252,6 +252,33 @@ void Game::ProcessPacket(char* data)
 
 bool Game::Connect()
 {
+	char char_ip[64];
+	int size_needed = WideCharToMultiByte(CP_ACP, 0, m_ip, -1, char_ip, 64, NULL, NULL);
+
+	// connect()
+	struct sockaddr_in serveraddr;
+	memset(&serveraddr, 0, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	inet_pton(AF_INET, char_ip, &serveraddr.sin_addr);
+	serveraddr.sin_port = htons(SERVER_PORT);
+	int retval = connect(m_socket, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
+
+	if(retval == SOCKET_ERROR) {
+		int errCode = WSAGetLastError();
+		if(errCode != WSAEWOULDBLOCK) {
+			// ì—°ê²° ì‹œë„ ìì²´ê°€ ë¶ˆê°€ëŠ¥í•œ ì‹¬ê°í•œ ì˜¤ë¥˜
+			MessageBox(NULL, L"Connect Error!", L"Error", MB_ICONERROR);
+			return false;
+		}
+		else {
+			// WSAEWOULDBLOCK: ì—°ê²° ì‹œë„ê°€ ì§„í–‰ ì¤‘ì„ (ì •ìƒì ì¸ ë…¼ë¸”ë¡œí‚¹ ë™ì‘)
+			std::this_thread::sleep_for(1s);
+		}
+	}
+	m_isconnect = true; // ì—°ê²° ì‹œë„ê°€ ì‹œì‘ë˜ì—ˆìœ¼ë¯€ë¡œ true
+	SetEvent(m_eveHandle);
+	std::thread([this]() { Recv(); }).detach();
+
 	return true;
 }
 
@@ -285,7 +312,7 @@ void Game::SendRestart()
 void Game::EndNetwork()
 {
 	m_isconnect = false;
-	// ¼ÒÄÏ ´İ±â
+	// ì†Œì¼“ ë‹«ê¸°
 	closesocket(m_socket);
 	WSACleanup();
 }
@@ -299,7 +326,7 @@ void Game::DrawBackGround(HDC hdc)
 	FillRect(hdc, &backgroundRect, backgroundBrush);
 	DeleteObject(backgroundBrush);
 
-	// --- ÅØ½ºÆ® Ãâ·Â Ãß°¡ ºÎºĞ ---
+	// --- í…ìŠ¤íŠ¸ ì¶œë ¥ ì¶”ê°€ ë¶€ë¶„ ---
 	char textBuffer[50];
 	sprintf_s(textBuffer, sizeof(textBuffer), "FOODS : %d | SNAKES : %d | SCORE : %d", (int)o.m_foods.size(), (int)o.m_snakes.size(), m_userdata.score);
 	SetBkMode(hdc, OPAQUE);

@@ -122,7 +122,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     {
     case WM_CREATE: 
     {
-        // g_game.Init(hdc);
+        //g_game.Init(hdc);
 
         HDC hdc = GetDC(hwnd);
         g_hMemDC = CreateCompatibleDC(hdc);
@@ -163,30 +163,32 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 
     // 서버와 연결
-    if(!g_game.InitNetwork())
+    if (!g_game.InitNetwork())
         return 0;
 
-    while(!g_game.GetLogin()) {
+    while (!g_game.GetLogin()) {
+        // 다이얼로그 박스 표시 및 설정값 입력
         INT_PTR dialogResult = DialogBoxParam(
             hInstance,
             MAKEINTRESOURCE(IDD_START_DIALOG),
             NULL,
             StartDialogProc,
             (LPARAM)g_game.GetUserdata()
-        );
+            );
 
-        if(dialogResult != IDOK) {
+        // IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+        if (dialogResult != IDOK) {
             return 0;
         }
-        std::this_thread::sleep_for(1s);
-        if(!g_game.GetConnect()) {
-            MessageBox(NULL, L"서버 에러.", L"Error", MB_ICONERROR);
+
+        if (!g_game.GetConnect()) {
+            MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+            g_game.InitNetwork();
             std::this_thread::sleep_for(1ms);
         }
         else if(!g_game.GetLogin())
-            MessageBox(NULL, L"로그인 실패.", L"Error", MB_ICONERROR);
+            MessageBox(NULL, L"이미 같은 이름이 존재합니다.", L"Error", MB_ICONERROR);
     }
-
 
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
