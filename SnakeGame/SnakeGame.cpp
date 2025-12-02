@@ -205,23 +205,24 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	if(!g_game.InitNetwork())
 		return 0;
-
-	// 다이얼로그 박스 표시 및 설정값 입력
-
-	while(false == g_game.GetConnect()) {
-
-
 		INT_PTR dialogResult = DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_START_DIALOG), NULL, StartDialogProc, (LPARAM)g_game.GetUserdata());
+	
+		// 다이얼로그 박스 표시 및 설정값 입력
 
-		// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
-		if(dialogResult != IDOK) {
-			return 0;
-		}
-			if(!g_game.GetLogin()) {
-				MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
-				std::this_thread::sleep_for(1ms);
-	}
-	else break;
+	while(false == g_game.GetLogin()) {
+
+		// std::this_thread::sleep_for(1ms);
+
+
+		//// IDOK가 아니면 (IDCANCEL 또는 오류) 프로그램 종료
+		//if(dialogResult != IDOK) {
+		//	return 0;
+		//}
+		//if(!g_game.GetLogin()) {
+		//	MessageBox(NULL, L"서버에 연결되지 않았습니다. 잠시 후 재시작 합니다.", L"Error", MB_ICONERROR);
+		//	std::this_thread::sleep_for(1ms);
+		//}
+		//else break;
 
 	}
 
